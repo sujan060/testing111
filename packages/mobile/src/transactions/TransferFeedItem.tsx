@@ -42,6 +42,10 @@ interface CurrencySymbolProps {
   direction: string
 }
 
+function isDollar(currency: string) {
+  return currency === CURRENCY_ENUM.DOLLAR || currency === 'Celo Dollar'
+}
+
 export function getCurrencyStyles(currency: string, type: string): CurrencySymbolProps {
   if (
     type === TransactionTypes.SENT ||
@@ -50,7 +54,7 @@ export function getCurrencyStyles(currency: string, type: string): CurrencySymbo
   ) {
     return {
       color: colors.darkSecondary,
-      symbol: currency === CURRENCY_ENUM.DOLLAR ? '₱' : '',
+      symbol: isDollar(currency) ? '₱' : '',
       direction: '',
     }
   }
@@ -60,7 +64,7 @@ export function getCurrencyStyles(currency: string, type: string): CurrencySymbo
     type === TransactionTypes.VERIFICATION_REWARD ||
     type === TransactionTypes.INVITE_RECEIVED
   ) {
-    if (currency === CURRENCY_ENUM.DOLLAR) {
+    if (isDollar(currency)) {
       return {
         color: colors.celoGreen,
         symbol: '₱',
@@ -76,7 +80,7 @@ export function getCurrencyStyles(currency: string, type: string): CurrencySymbo
     }
   }
 
-  Logger.error(TAG, 'Unsupported Transaction Type In Feed')
+  Logger.error(TAG, `Unsupported Transaction Type In Feed: ${type}`)
   return {
     color: colors.darkSecondary,
     symbol: '',

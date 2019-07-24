@@ -11,7 +11,7 @@ import { CURRENCY_ENUM, resolveCurrency } from 'src/geth/consts'
 import { Namespaces } from 'src/i18n'
 import { navigateToExchangeReview } from 'src/transactions/actions'
 import { ExchangeStandby, TransactionStatus } from 'src/transactions/reducer'
-import { getMoneyDisplayValue } from 'src/utils/formatting'
+import { getLocalDisplayValue, getMoneyDisplayValue } from 'src/utils/formatting'
 import { formatFeedTime, getDatetimeDisplayString } from 'src/utils/time'
 
 type Props = (HomeExchangeFragment | ExchangeStandby) &
@@ -116,14 +116,18 @@ export class ExchangeFeedItem extends React.PureComponent<Props> {
             <View style={[styles.amountContainer, opacityStyle]}>
               <Text style={[fontStyles.activityCurrency, inStyle]}>
                 {inCurrency === CURRENCY_ENUM.DOLLAR && '₱'}
-                {getMoneyDisplayValue(inValue)}
+                {inCurrency === CURRENCY_ENUM.DOLLAR
+                  ? getLocalDisplayValue(inValue)
+                  : getMoneyDisplayValue(inValue)}
               </Text>
               <View style={styles.arrow}>
                 <ExchangeArrow />
               </View>
               <Text style={[fontStyles.activityCurrency, outStyle]}>
                 {outCurrency === CURRENCY_ENUM.DOLLAR && '₱'}
-                {getMoneyDisplayValue(outValue)}
+                {outCurrency === CURRENCY_ENUM.DOLLAR
+                  ? getLocalDisplayValue(outValue)
+                  : getMoneyDisplayValue(outValue)}
               </Text>
             </View>
           </View>
