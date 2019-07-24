@@ -17,6 +17,7 @@ import Backup from 'src/backup/Backup'
 import ReclaimPaymentConfirmationScreen from 'src/escrow/ReclaimPaymentConfirmationScreen'
 import ExchangeReview from 'src/exchange/ExchangeReview'
 import ExchangeTradeScreen from 'src/exchange/ExchangeTradeScreen'
+import WalletHome from 'src/home/WalletHome'
 import ImportContacts from 'src/import/ImportContacts'
 import ImportWallet from 'src/import/ImportWallet'
 import EnterInviteCode from 'src/invite/EnterInviteCode'
@@ -75,6 +76,7 @@ const NuxStack = createStackNavigator(
     [Screens.JoinCelo]: { screen: JoinCelo },
     [Screens.EnterInviteCode]: { screen: EnterInviteCode },
     [Screens.ImportContacts]: { screen: ImportContacts },
+    [Screens.WalletHome]: { screen: WalletHome },
     ...commonScreens,
   },
   {
