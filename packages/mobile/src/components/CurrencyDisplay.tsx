@@ -41,9 +41,9 @@ export default class CurrencyDisplay extends React.PureComponent<Props> {
     return this.props.amount == null ? '0.00' : getMoneyDisplayValue(this.props.amount || 0)
   }
 
-  foreignAmount() {
-    const foreignAmount = DOLLAR_TO_PH * +(this.props.amount || 0)
-    return getMoneyDisplayValue(foreignAmount)
+  localAmount() {
+    const localAmount = DOLLAR_TO_PH * +(this.props.amount || 0)
+    return getMoneyDisplayValue(localAmount)
   }
 
   render() {
@@ -56,7 +56,7 @@ export default class CurrencyDisplay extends React.PureComponent<Props> {
         {this.props.type === Tokens.DOLLAR ? (
           <View style={styles.stableCurrencyContainer}>
             <Text numberOfLines={1} style={[styles.currency, fontStyles.regular, dollarStyle]}>
-              {'₱' + this.foreignAmount()}
+              {'₱' + this.localAmount()}
             </Text>
             <Text numberOfLines={1} style={[styles.currency, fontStyles.bodySecondary]}>
               {'($' + this.amount() + ')'}
