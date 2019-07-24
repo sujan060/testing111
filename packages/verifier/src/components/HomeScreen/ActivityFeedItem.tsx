@@ -11,7 +11,11 @@ import { MessagePhoneMapping } from 'src/app/reducer'
 import { DOLLAR_TO_PH } from 'src/geth/consts'
 import { Screens } from 'src/navigator/Screens'
 import { RootState } from 'src/redux/reducers'
-import { getDatetimeDisplayString, maskPhoneNumber } from 'src/utils/formatting'
+import {
+  getDatetimeDisplayString,
+  getLocalDisplayValue,
+  maskPhoneNumber,
+} from 'src/utils/formatting'
 import logger from 'src/utils/logger'
 
 const tag = 'ActivityFeedItem'
@@ -91,7 +95,7 @@ class ActivityFeedItem extends React.PureComponent<Props> {
               </Text>
               <Text style={[fontStyles.bodySmall, styles.date]}>{dateTimeFormatted}</Text>
             </View>
-            <Text style={styles.deposit}>+ {'₱' + pesoValue}</Text>
+            <Text style={styles.deposit}>+ {'₱' + getLocalDisplayValue(value)}</Text>
           </View>
         </View>
       </Touchable>

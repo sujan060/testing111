@@ -13,7 +13,7 @@ import { PROMOTE_REWARDS_APP } from 'src/config'
 import { EscrowedPayment } from 'src/escrow/actions'
 import { setEducationCompleted as setGoldEducationCompleted } from 'src/goldToken/actions'
 import i18n, { Namespaces } from 'src/i18n'
-import { backupIcon, homeIcon, inviteFriendsIcon, rewardsAppIcon } from 'src/images/Images'
+import { backupIcon, homeIcon, rewardsAppIcon } from 'src/images/Images'
 import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
 import EscrowedPaymentReminderNotification from 'src/notifications/EscrowedPaymentReminderNotification'
@@ -98,13 +98,7 @@ export class NotificationBox extends React.Component<Props, State> {
   }
 
   generalNotifications = (): Array<React.ReactElement<any>> => {
-    const {
-      t,
-      backupCompleted,
-      goldEducationCompleted,
-      dismissedEarnRewards,
-      dismissedInviteFriends,
-    } = this.props
+    const { t, backupCompleted, goldEducationCompleted, dismissedEarnRewards } = this.props
     const actions = []
 
     if (!backupCompleted) {
@@ -174,6 +168,7 @@ export class NotificationBox extends React.Component<Props, State> {
       })
     }
 
+    /*
     if (!dismissedInviteFriends) {
       actions.push({
         title: i18n.t('inviteFlow11:inviteFriendsToCelo'),
@@ -198,6 +193,7 @@ export class NotificationBox extends React.Component<Props, State> {
         ],
       })
     }
+    */
 
     return actions.map((notification, i) => <SimpleNotification key={i} {...notification} />)
   }

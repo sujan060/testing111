@@ -238,7 +238,7 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
 
     const tx = exchangeContract.methods.exchange(
       convertedMakerAmount.toString(),
-      convertedTakerAmount.toString(),
+      '', // convertedTakerAmount.toString(),
       sellGold
     )
 
