@@ -9,6 +9,7 @@ import ExchangeRate from 'src/exchange/ExchangeRate'
 import { CURRENCY_ENUM, DOLLAR_TO_PH } from 'src/geth/consts'
 import { Namespaces } from 'src/i18n'
 import RoundedArrow from 'src/shared/RoundedArrow'
+import { getLocalDisplayValue } from 'src/utils/formatting'
 
 export interface ExchangeConfirmationCardProps {
   token: CURRENCY_ENUM
@@ -40,7 +41,7 @@ class ExchangeConfirmationCard extends React.PureComponent<Props> {
         <View style={styles.tabular}>
           <Text style={fontStyles.bodySecondary}>{t('celoDollars')}</Text>
           <Text numberOfLines={1} style={[fontStyles.currency, styles.dollar]}>
-            ₱{DOLLAR_TO_PH * +newDollarBalance}
+            ₱{getLocalDisplayValue(newDollarBalance)}
           </Text>
         </View>
 
