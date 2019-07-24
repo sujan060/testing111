@@ -54,7 +54,7 @@ const MAX_COMMENT_LENGTH = 70
 
 interface State {
   amount: string
-  foreignAmount: string
+  localAmount: string
   reason: string
   numberOfDecimals: number
   characterLimitExeeded: boolean
@@ -94,7 +94,7 @@ export class SendAmount extends React.PureComponent<Props, State> {
 
   state: State = {
     amount: '',
-    foreignAmount: '',
+    localAmount: '',
     reason: '',
     numberOfDecimals: 2,
     characterLimitExeeded: false,
@@ -191,7 +191,7 @@ export class SendAmount extends React.PureComponent<Props, State> {
 
   onAmountChanged = (amount: string) => {
     const amountInDollars = String(+amount / DOLLAR_TO_PH)
-    this.setState({ amount: amountInDollars, foreignAmount: String(amount) })
+    this.setState({ amount: amountInDollars, localAmount: String(amount) })
     this.calculateFeeDebounced()
   }
 
@@ -383,7 +383,7 @@ export class SendAmount extends React.PureComponent<Props, State> {
             placeholder={t('amount')}
             labelStyle={style.amountLabel as TextStyle}
             placeholderColor={colors.celoGreenInactive}
-            value={this.state.foreignAmount}
+            value={this.state.localAmount}
             onValueChanged={this.onAmountChanged}
             autoFocus={true}
             numberOfDecimals={this.state.numberOfDecimals}
