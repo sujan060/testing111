@@ -19,7 +19,7 @@ export class GethAwareButton extends React.PureComponent<Props> {
     return (
       <Button
         {...this.props}
-        disabled={!this.props.connected || this.props.disabled}
+        disabled={this.props.disabled} // {!this.props.connected || this.props.disabled}
         testID={this.props.testID}
       />
     )
