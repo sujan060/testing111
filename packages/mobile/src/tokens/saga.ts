@@ -10,7 +10,7 @@ import { TransactionStatus, TransactionTypes } from 'src/transactions/reducer'
 import { sendAndMonitorTransaction } from 'src/transactions/saga'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { getConnectedAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
+import { getAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
 import * as utf8 from 'utf8'
 
 interface TokenFetchFactory {
@@ -29,7 +29,8 @@ export const tokenFetchFactory = ({
   function* tokenFetch() {
     try {
       Logger.debug(tag, 'Fetching balance')
-      const account = yield call(getConnectedAccount)
+      // TODO ensure connection to full node
+      const account = yield call(getAccount)
       const tokenContract = yield call(contractGetter, web3)
       const balance = yield call(getErc20Balance, tokenContract, account, web3)
       yield put(actionCreator(balance.toString()))

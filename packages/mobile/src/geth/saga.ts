@@ -2,11 +2,7 @@ import { AppState, DeviceEventEmitter } from 'react-native'
 import { eventChannel } from 'redux-saga'
 import { call, cancelled, delay, fork, put, race, select, take } from 'redux-saga/effects'
 import { Actions, setGethConnected, setInitState } from 'src/geth/actions'
-import {
-  FailedToFetchGenesisBlockError,
-  FailedToFetchStaticNodesError,
-  getGeth,
-} from 'src/geth/geth'
+import { FailedToFetchGenesisBlockError, FailedToFetchStaticNodesError } from 'src/geth/geth'
 import { InitializationState, isGethConnectedSelector } from 'src/geth/reducer'
 import { navigateToError } from 'src/navigator/NavigationService'
 import { restartApp } from 'src/utils/AppRestart'
