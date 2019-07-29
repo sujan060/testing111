@@ -248,7 +248,7 @@ export function* getAccount() {
 
 // Wait for geth to be connected and account ready
 export function* getConnectedAccount() {
-  yield waitForGethConnectivity()
+  // yield waitForGethConnectivity()
   const account: string = yield getAccount()
   return account
 }

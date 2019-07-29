@@ -26,7 +26,7 @@ import { sendAndMonitorTransaction } from 'src/transactions/saga'
 import { sendTransaction } from 'src/transactions/send'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { getConnectedUnlockedAccount } from 'src/web3/saga'
+import { getAccount } from 'src/web3/saga'
 
 const TAG = 'escrow/saga'
 
@@ -36,7 +36,7 @@ function* transferStableTokenToEscrow(action: TransferPaymentAction) {
     const escrow = yield call(getEscrowContract, web3)
     const stableToken = yield call(getStableTokenContract, web3)
 
-    const account = yield call(getConnectedUnlockedAccount)
+    const account = yield call(getAccount)
 
     Logger.debug(TAG + '@transferToEscrow', 'Approving escrow transfer')
     const convertedAmount = web3.utils.toWei(amount.toString())
@@ -77,7 +77,7 @@ function* withdrawFromEscrow(action: EndVerificationAction) {
 
   try {
     const escrow = yield call(getEscrowContract, web3)
-    const account = yield call(getConnectedUnlockedAccount)
+    const account = yield call(getAccount)
     const inviteCode: string = yield select((state: RootState) => state.invite.redeemedInviteCode)
 
     Logger.debug(TAG + '@withdrawFromEscrow', 'Withdrawing escrowed payment')
@@ -127,7 +127,7 @@ function* reclaimFromEscrow(action: ReclaimPaymentAction) {
   try {
     const { paymentID } = action
     const escrow = yield call(getEscrowContract, web3)
-    const account = yield call(getConnectedUnlockedAccount)
+    const account = yield call(getAccount)
 
     Logger.debug(TAG + '@reclaimFromEscrow', 'Reclaiming escrowed payment')
     const reclaimTx = escrow.methods.revoke(paymentID)
@@ -161,7 +161,7 @@ function* getEscrowedPayment(paymentID: string) {
 function* getSentPayments() {
   try {
     const escrow = yield call(getEscrowContract, web3)
-    const account = yield call(getConnectedUnlockedAccount)
+    const account = yield call(getAccount)
     const recipientsPhoneNumbers = yield select(inviteesSelector)
 
     Logger.debug(TAG + '@getSentPayments', 'Fetching valid sent escrowed payments')
