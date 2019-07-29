@@ -75,22 +75,11 @@ export const sendTransactionPromises = async (
 ) => {
   const stableToken = await getStableTokenContract(web3)
   const account = accountWithPrivateKey.address
-  // const {
-  //   nonce,
-  //   chainId,
-  //   from,
-  //   to,
-  //   data,
-  //   value,
-  //   gas,
-  //   gasPrice,
-  // } = tx
-  // @ts-ignore
-  const web3Tx: Tx = { ...tx }
   const accountWithPrivateKeyObject = web3.eth.accounts.privateKeyToAccount(
     accountWithPrivateKey.privateKey
   )
-  accountWithPrivateKeyObject.signTransaction(web3Tx)
+  // @ts-ignore
+  accountWithPrivateKeyObject.signTransaction(tx)
   return sendTransactionAsync(tx, account, stableToken, getLogger(tag, txId), web3)
 }
 
