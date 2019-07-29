@@ -66,6 +66,11 @@ export const reducer = (
         ...state,
         account: action.address,
       }
+    case Actions.SET_ACCOUNT_WITH_PRIVATE_KEY:
+      return {
+        ...state,
+        accountWithPrivateKey: action.accountWithPrivateKey,
+      }
     case Actions.SET_COMMENT_KEY:
       return {
         ...state,

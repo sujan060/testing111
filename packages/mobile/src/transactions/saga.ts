@@ -33,12 +33,16 @@ function* onSendAndMonitorTransactionError(txId: string) {
 export function* sendAndMonitorTransaction(
   txId: string,
   tx: any,
-  account: string,
+  account: object,
   currency?: CURRENCY_ENUM
 ) {
   try {
     Logger.debug(TAG + '@sendAndMonitorTransaction', 'Sending transaction with id: ', txId)
-
+    Logger.debug(
+      TAG + '@sendAndMonitorTransaction',
+      'Sending account with info: ',
+      JSON.stringify(account)
+    )
     const { transactionHash, confirmation } = yield call(
       sendTransactionPromises,
       tx,
