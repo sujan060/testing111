@@ -31,7 +31,7 @@ import {
 } from 'src/web3/actions'
 import { web3 } from 'src/web3/contracts'
 import { refreshGasPrice } from 'src/web3/gas'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector, currentAccountWithPrivateKeySelector } from 'src/web3/selectors'
 import { Block } from 'web3/eth/types'
 
 const ETH_PRIVATE_KEY_LENGTH = 64
@@ -244,6 +244,12 @@ export function* getAccount() {
       return action.address
     }
   }
+}
+
+export function* getAccountWithPrivateKey() {
+  // TODO make sure account exists
+  const accountWithPrivateKey = yield select(currentAccountWithPrivateKeySelector)
+  return accountWithPrivateKey
 }
 
 // Wait for geth to be connected and account ready
