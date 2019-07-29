@@ -7,7 +7,7 @@ import {
 } from '@celo/contractkit'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { TransactionObject } from 'web3/eth/types'
+import { Account, TransactionObject } from 'web3/eth/types'
 
 // As per https://www.typescriptlang.org/docs/handbook/advanced-types.html#exhaustiveness-checking
 function assertNever(x: never): never {
@@ -46,14 +46,6 @@ const getLogger = (tag: string, txId: string) => {
     }
   }
 }
-
-interface AccountWithPrivateKey {
-  address: string
-  privateKey: string
-}
-
-type AccountWithPrivateKeyType = AccountWithPrivateKey
-
 export interface Tx {
   nonce?: string | number
   chainId?: string | number
@@ -69,7 +61,7 @@ export interface Tx {
 // Only use this method if you need more granular control of the different events
 export const sendTransactionPromises = async (
   tx: TransactionObject<any>,
-  accountWithPrivateKey: AccountWithPrivateKeyType,
+  accountWithPrivateKey: Account,
   tag: string,
   txId: string
 ) => {
@@ -88,7 +80,7 @@ export const sendTransactionPromises = async (
 // Use this method for sending transactions and awaiting them to be confirmed
 export const sendTransaction = async (
   tx: TransactionObject<any>,
-  accountWithPrivateKey: AccountWithPrivateKeyType,
+  accountWithPrivateKey: Account,
   tag: string,
   txId: string
 ) => {
