@@ -27,7 +27,7 @@ import { getRateForMakerToken, getTakerAmount } from 'src/utils/currencyExchange
 import { roundedDownNumber } from 'src/utils/formatting'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { getConnectedAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
+import { getConnectedUnlockedAccount } from 'src/web3/saga'
 
 const TAG = 'exchange/actions'
 const LARGE_DOLLARS_SELL_AMOUNT_IN_WEI = new BigNumber(1000 * 1000000000000000000) // To estimate exchange rate from exchange contract
@@ -96,8 +96,7 @@ export function* doFetchExchangeRate(makerAmount?: BigNumber, makerToken?: Token
   }
 
   try {
-    yield call(getConnectedAccount)
-
+    // Note that there is no check to make sure web3 is connected
     const dollarMakerExchangeRate: BigNumber = yield call(
       ContractUtils.getExchangeRate,
       web3,
