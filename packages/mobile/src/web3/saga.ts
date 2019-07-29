@@ -21,10 +21,10 @@ import {
   Actions,
   getLatestBlock,
   setAccount,
+  setAccountWithPrivateKey,
   setIsReady,
   setLatestBlockNumber,
   setPrivateCommentKey,
-  setPrivateKey,
   setSyncProgress,
   unlockAccount,
   updateWeb3SyncProgress,
@@ -197,7 +197,7 @@ export function* assignAccountFromPrivateKey(key: string) {
       throw Error('Cannot create account without having the pin set')
     }
     // @ts-ignore
-    const account = web3.eth.accounts.privateKeyToAccount(key).address
+    const account = web3.eth.accounts.privateKeyToAccount(key)
     // yield call(web3.eth.personal.unlockAccount, account, password, UNLOCK_DURATION)
     // Unclear why the account needed to be unlocked here
     Logger.debug(
@@ -205,14 +205,14 @@ export function* assignAccountFromPrivateKey(key: string) {
       `Created account from mnemonic and added to wallet: ${account}`
     )
 
-    yield put(setAccount(account))
-    yield put(setPrivateKey(key))
+    yield put(setAccount(account.address))
+    yield put(setAccountWithPrivateKey(account))
     // TODO(cmcewen): remove invite code entered
     yield put(setInviteCodeEntered(true))
     yield put(setAccountCreationTime())
     yield call(assignDataKeyFromPrivateKey, key)
 
-    web3.eth.defaultAccount = account
+    web3.eth.defaultAccount = account.address
     AssignAccountLock = false
     return account
   } catch (e) {

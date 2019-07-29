@@ -11,7 +11,7 @@ export interface State {
   }
   latestBlockNumber: number
   account: string | null
-  privateKey: string | null // Note that this is not secure, just a workaround for pilot
+  accountWithPrivateKey: any // Note that this is not secure, just a workaround for pilot
   commentKey: string | null
   gasPrice?: number
   gasPriceLastUpdated: number
@@ -27,7 +27,7 @@ const initialState: State = {
   },
   latestBlockNumber: 0,
   account: null,
-  privateKey: null,
+  accountWithPrivateKey: null,
   commentKey: null,
   gasPriceLastUpdated: 0,
 }
