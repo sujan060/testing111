@@ -1,4 +1,4 @@
-import { getGoldTokenContract, getStableTokenContract } from '@celo/contractkit'
+import { getErc20Balance, getGoldTokenContract, getStableTokenContract } from '@celo/contractkit'
 import BigNumber from 'bignumber.js'
 import { call, put, take, takeEvery } from 'redux-saga/effects'
 import { showError } from 'src/alert/actions'
@@ -31,17 +31,8 @@ export const tokenFetchFactory = ({
       Logger.debug(tag, 'Fetching balance')
       const account = yield call(getConnectedAccount)
       const tokenContract = yield call(contractGetter, web3)
-      Logger.debug(tag, 'got contract. ', tokenContract)
-      // @ts-ignore
-      const balance = yield call(web3.eth.getBalance, account)
-      Logger.debug(tag, 'found balance of ', balance)
-      yield put(actionCreator(balance.toString()))
-      /*
-
       const balance = yield call(getErc20Balance, tokenContract, account, web3)
-      Logger.debug(tag, 'found balance of ', balance)
       yield put(actionCreator(balance.toString()))
-      */
     } catch (error) {
       Logger.error(tag, 'Error fetching balance', error)
     }

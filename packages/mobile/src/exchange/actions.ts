@@ -246,7 +246,7 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
       Logger.error(TAG, 'No txId. Did not exchange.')
       return
     }
-    yield call(sendAndMonitorTransaction, txId, tx, account)
+    yield call(sendAndMonitorTransaction, txId, tx, accountWithPrivateKey)
   } catch (error) {
     Logger.error(TAG, 'Error doing exchange', error)
     yield put(showError(ErrorMessages.EXCHANGE_FAILED, ERROR_BANNER_DURATION))
