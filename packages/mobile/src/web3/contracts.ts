@@ -1,5 +1,3 @@
-import { DocumentDirectoryPath } from 'react-native-fs'
-import * as net from 'react-native-tcp'
 import Logger from 'src/utils/Logger'
 import { DEFAULT_TESTNET, Testnets } from 'src/web3/testnets'
 import Web3 from 'web3'
@@ -10,6 +8,11 @@ const tag = 'web3/contracts'
 export const getWeb3Provider = (testnet: Testnets) => {
   Logger.debug(tag, 'creating IPCProvider...')
 
+  const providerUrl = 'http://35.247.50.59:8545'
+  const httpProvider = new Web3.providers.HttpProvider(providerUrl)
+  Logger.debug(tag, 'created HTTPProvider')
+
+  /*
   const ipcProvider = new Web3.providers.IpcProvider(
     `${DocumentDirectoryPath}/.${testnet}/geth.ipc`,
     net
@@ -39,12 +42,13 @@ export const getWeb3Provider = (testnet: Testnets) => {
       oldDataHandler(data)
     }
   }
+  */
 
   // In the future, we might decide to over-ride the error handler via the following code.
   // ipcProvider.on("error", () => {
   //   Logger.showError("Error occurred");
   // })
-  return ipcProvider
+  return httpProvider
 }
 
 export const setWeb3Provider = (testnet: Testnets) => {
