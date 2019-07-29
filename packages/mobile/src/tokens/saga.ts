@@ -10,7 +10,7 @@ import { TransactionStatus, TransactionTypes } from 'src/transactions/reducer'
 import { sendAndMonitorTransaction } from 'src/transactions/saga'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { getConnectedAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
+import { getAccountWithPrivateKey, getConnectedAccount } from 'src/web3/saga'
 import * as utf8 from 'utf8'
 
 interface TokenFetchFactory {
@@ -117,7 +117,7 @@ export const tokenTransferFactory = ({
       )
 
       try {
-        const account = yield call(getConnectedUnlockedAccount)
+        const accountWithPrivateKey = yield call(getAccountWithPrivateKey)
 
         const tx = yield call(createTransaction, contractGetter, {
           recipientAddress,
@@ -125,7 +125,7 @@ export const tokenTransferFactory = ({
           comment,
         })
 
-        yield call(sendAndMonitorTransaction, txId, tx, account, currency)
+        yield call(sendAndMonitorTransaction, txId, tx, accountWithPrivateKey, currency)
       } catch (error) {
         Logger.error(tag, 'Error transfering token', error)
         yield put(removeStandbyTransaction(txId))
