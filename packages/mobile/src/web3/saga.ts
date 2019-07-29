@@ -198,11 +198,12 @@ export function* assignAccountFromPrivateKey(key: string) {
     }
     // @ts-ignore
     const account = web3.eth.accounts.privateKeyToAccount(key)
+    Logger.debug(TAG + '@assignAccountFromPrivateKey', `Private key: ${key}`)
     // yield call(web3.eth.personal.unlockAccount, account, password, UNLOCK_DURATION)
     // Unclear why the account needed to be unlocked here
     Logger.debug(
       TAG + '@assignAccountFromPrivateKey',
-      `Created account from mnemonic and added to wallet: ${account}`
+      `Created account from mnemonic and added to wallet: ${account.address}`
     )
 
     yield put(setAccount(account.address))

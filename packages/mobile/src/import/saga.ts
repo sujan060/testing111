@@ -6,11 +6,14 @@ import { ErrorMessages } from 'src/app/ErrorMessages'
 import { Actions, ImportBackupPhraseAction } from 'src/import/actions'
 import { navigateReset } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
+import Logger from 'src/utils/Logger'
 import { assignAccountFromPrivateKey } from 'src/web3/saga'
 
 export function* importBackupPhraseSaga(action: ImportBackupPhraseAction) {
   const { phrase } = action
+  Logger.debug('@importBackupPhraseSaga', `phrase: ${phrase}`)
   const privateKey = mnemonicToSeedHex(phrase)
+  Logger.debug('@importBackupPhraseSaga', `privateKey: ${privateKey}`)
   const account = yield call(assignAccountFromPrivateKey, privateKey)
   if (account) {
     yield put(setBackupCompleted())
