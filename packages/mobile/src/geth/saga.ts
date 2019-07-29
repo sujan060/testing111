@@ -40,10 +40,11 @@ export function* waitForGethConnectivity() {
 
 function* waitForGethInstance() {
   try {
-    const gethInstance = yield call(getGeth)
-    if (gethInstance == null) {
-      throw new Error('geth instance is null')
-    }
+    // HACK: just return success
+    // const gethInstance = yield call(getGeth)
+    // if (gethInstance == null) {
+    //   throw new Error('geth instance is null')
+    // }
     return GethInitOutcomes.SUCCESS
   } catch (error) {
     switch (error) {

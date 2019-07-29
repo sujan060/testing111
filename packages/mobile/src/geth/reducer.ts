@@ -33,5 +33,6 @@ export function gethReducer(state: State = initialState, action: ActionTypes) {
   }
 }
 
-export const isGethConnectedSelector = (state: RootState) =>
-  state.geth.initialized === InitializationState.INITIALIZED && state.geth.connected
+export const isGethConnectedSelector = (state: RootState) => true
+// HACK: no more geth connect
+// state.geth.initialized === InitializationState.INITIALIZED && state.geth.connected

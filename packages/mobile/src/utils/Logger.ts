@@ -6,7 +6,9 @@ import { CELO_SUPPORT_EMAIL_ADDRESS } from 'src/config'
 
 class Logger extends ReactNativeLogger {
   getGethLogFilePath = () => {
-    return RNFS.CachesDirectoryPath + '/geth_logs.txt'
+    // HACK: Just a copy of RN logs for now
+    return RNFS.ExternalDirectoryPath + '/celo_logs.txt'
+    // return RNFS.CachesDirectoryPath + '/geth_logs.txt'
   }
 
   getCombinedLogsFilePath = () => {

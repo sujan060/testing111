@@ -47,6 +47,7 @@ enum ErrorType {
 }
 
 async function createNewGeth(): Promise<typeof RNGeth> {
+  // HACK here is where we actually connect
   Logger.debug('Geth@newGeth', 'Configure and create new Geth')
   const { nodeDir, syncMode } = currentConfig
   const genesis: string = await readGenesisBlockFile(nodeDir)
@@ -78,7 +79,6 @@ async function createNewGeth(): Promise<typeof RNGeth> {
 
 async function initGeth() {
   Logger.info('Geth@init', 'Create a new Geth instance')
-
   if (gethLock) {
     Logger.warn('Geth@init', 'Geth create already in progress.')
     return
@@ -86,6 +86,9 @@ async function initGeth() {
   gethLock = true
 
   try {
+    // HACK don't init
+    return
+
     if (gethInstance) {
       Logger.debug('Geth@init', 'Geth already exists, trying to stop it.')
       await stop()
@@ -125,12 +128,14 @@ async function initGeth() {
   }
 }
 
-export async function getGeth(): Promise<typeof gethInstance> {
+export async function getGeth(): Promise<any> {
   Logger.debug('Geth@getGeth', 'Getting Geth Instance')
-  if (!gethInstance) {
-    await initGeth()
-  }
-  return gethInstance
+  // HACK don't need this
+  return
+  // if (!gethInstance) {
+  //   await initGeth()
+  // }
+  // return gethInstance
 }
 
 async function ensureStaticNodesInitialized(): Promise<boolean> {
