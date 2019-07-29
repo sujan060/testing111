@@ -95,7 +95,8 @@ export class ExchangeTradeScreen extends React.Component<Props, State> {
   setExchangeAmount = (amount: string) => {
     // remove $ we inserted for display purposes
     amount = amount.replace(/\₱/g, '')
-    const amountInDollars = String(+amount / DOLLAR_TO_PH)
+    // Round to three decimals to ensure value in Wei is integer
+    const amountInDollars = String(Math.round((+amount * 1000) / DOLLAR_TO_PH) / 1000)
     this.setState({ makerTokenAmount: amountInDollars, localMakerTokenAmount: amount }, () => {
       this.updateError(amountInDollars)
     })
