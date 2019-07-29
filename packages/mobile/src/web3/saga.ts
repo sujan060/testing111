@@ -12,7 +12,6 @@ import { setInviteCodeEntered } from 'src/app/actions'
 import { ErrorMessages } from 'src/app/ErrorMessages'
 import { currentLanguageSelector } from 'src/app/reducers'
 import { getWordlist } from 'src/backup/utils'
-import { UNLOCK_DURATION } from 'src/geth/consts'
 import { deleteChainData } from 'src/geth/geth'
 import { waitForGethConnectivity } from 'src/geth/saga'
 import { navigate } from 'src/navigator/NavigationService'
@@ -198,8 +197,9 @@ export function* assignAccountFromPrivateKey(key: string) {
       throw Error('Cannot create account without having the pin set')
     }
     // @ts-ignore
-    const account = yield call(web3.eth.personal.importRawKey, String(key), password)
-    yield call(web3.eth.personal.unlockAccount, account, password, UNLOCK_DURATION)
+    const account = yield call(web3.eth.accounts.privateKeyToAccount(key))
+    // yield call(web3.eth.personal.unlockAccount, account, password, UNLOCK_DURATION)
+    // Unclear why the account needed to be unlocked here
     Logger.debug(
       TAG + '@assignAccountFromPrivateKey',
       `Created account from mnemonic and added to wallet: ${account}`
