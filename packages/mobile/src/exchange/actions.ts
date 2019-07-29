@@ -27,7 +27,7 @@ import { getRateForMakerToken, getTakerAmount } from 'src/utils/currencyExchange
 import { roundedDownNumber } from 'src/utils/formatting'
 import Logger from 'src/utils/Logger'
 import { web3 } from 'src/web3/contracts'
-import { getConnectedUnlockedAccount } from 'src/web3/saga'
+import { getAccountWithPrivateKey, getConnectedAccount } from 'src/web3/saga'
 
 const TAG = 'exchange/actions'
 const LARGE_DOLLARS_SELL_AMOUNT_IN_WEI = new BigNumber(1000 * 1000000000000000000) // To estimate exchange rate from exchange contract
@@ -140,7 +140,8 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
   Logger.debug(TAG, `Exchanging ${makerAmount.toString()} of Tokens ${makerToken}`)
   let txId: string | null = null
   try {
-    const account: string = yield call(getConnectedUnlockedAccount)
+    const account: string = yield call(getConnectedAccount)
+    const accountWithPrivateKey = yield call(getAccountWithPrivateKey)
     const exchangeRatePair: ExchangeRatePair = yield select(
       (state: RootState) => state.exchange.exchangeRatePair
     )
@@ -232,7 +233,7 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
       Logger.error(TAG, `Unexpected maker token ${makerToken}`)
       return
     }
-    yield call(sendTransaction, approveTx, account, TAG, 'approval')
+    yield call(sendTransaction, approveTx, accountWithPrivateKey, TAG, 'approval')
     Logger.debug(TAG, `Transaction approved: ${approveTx}`)
 
     const tx = exchangeContract.methods.exchange(

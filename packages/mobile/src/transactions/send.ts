@@ -47,25 +47,60 @@ const getLogger = (tag: string, txId: string) => {
   }
 }
 
+interface AccountWithPrivateKey {
+  address: string
+  privateKey: string
+}
+
+type AccountWithPrivateKeyType = AccountWithPrivateKey
+
+export interface Tx {
+  nonce?: string | number
+  chainId?: string | number
+  from?: string
+  to?: string
+  data?: string
+  value?: string | number
+  gas?: string | number
+  gasPrice?: string | number
+}
+
 // Sends a transaction and async returns promises for the txhash, confirmation, and receipt
 // Only use this method if you need more granular control of the different events
 export const sendTransactionPromises = async (
   tx: TransactionObject<any>,
-  account: string,
+  accountWithPrivateKey: AccountWithPrivateKeyType,
   tag: string,
   txId: string
 ) => {
   const stableToken = await getStableTokenContract(web3)
-  return sendTransactionAsync(tx, account, stableToken, getLogger(tag, txId))
+  const account = accountWithPrivateKey.address
+  // const {
+  //   nonce,
+  //   chainId,
+  //   from,
+  //   to,
+  //   data,
+  //   value,
+  //   gas,
+  //   gasPrice,
+  // } = tx
+  // @ts-ignore
+  const web3Tx: Tx = { ...tx }
+  const accountWithPrivateKeyObject = web3.eth.accounts.privateKeyToAccount(
+    accountWithPrivateKey.privateKey
+  )
+  accountWithPrivateKeyObject.signTransaction(web3Tx)
+  return sendTransactionAsync(tx, account, stableToken, getLogger(tag, txId), web3)
 }
 
 // Send a transaction and await for its confirmation
 // Use this method for sending transactions and awaiting them to be confirmed
 export const sendTransaction = async (
   tx: TransactionObject<any>,
-  account: string,
+  accountWithPrivateKey: AccountWithPrivateKeyType,
   tag: string,
   txId: string
 ) => {
-  return sendTransactionPromises(tx, account, tag, txId).then(awaitConfirmation)
+  return sendTransactionPromises(tx, accountWithPrivateKey, tag, txId).then(awaitConfirmation)
 }
