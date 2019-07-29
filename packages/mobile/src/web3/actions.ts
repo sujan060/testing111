@@ -9,6 +9,7 @@ const TAG = 'web3/actions'
 
 export enum Actions {
   SET_ACCOUNT = 'WEB3/SET_ACCOUNT',
+  SET_PRIVATE_KEY = 'WEB3/SET_PRIVATE_KEY',
   SET_COMMENT_KEY = 'WEB3/SET_COMMENT_KEY',
   SET_PROGRESS = 'WEB3/SET_PROGRESS',
   SET_IS_READY = 'WEB3/SET_IS_READY',
@@ -21,6 +22,11 @@ export enum Actions {
 export interface SetAccountAction {
   type: Actions.SET_ACCOUNT
   address: string
+}
+
+export interface SetPrivateKeyAction {
+  type: Actions.SET_PRIVATE_KEY
+  privateKey: string
 }
 
 export interface SetCommentKeyAction {
@@ -64,6 +70,7 @@ export interface SetGasPriceAction {
 
 export type ActionTypes =
   | SetAccountAction
+  | SetPrivateKeyAction
   | SetCommentKeyAction
   | SetProgressAction
   | SetIsReadyAction
@@ -76,6 +83,13 @@ export const setAccount = (address: string): SetAccountAction => {
   return {
     type: Actions.SET_ACCOUNT,
     address,
+  }
+}
+
+export const setPrivateKey = (privateKey: string): SetPrivateKeyAction => {
+  return {
+    type: Actions.SET_PRIVATE_KEY,
+    privateKey,
   }
 }
 

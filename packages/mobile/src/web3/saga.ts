@@ -25,6 +25,7 @@ import {
   setIsReady,
   setLatestBlockNumber,
   setPrivateCommentKey,
+  setPrivateKey,
   setSyncProgress,
   unlockAccount,
   updateWeb3SyncProgress,
@@ -205,6 +206,7 @@ export function* assignAccountFromPrivateKey(key: string) {
     )
 
     yield put(setAccount(account))
+    yield put(setPrivateKey(key))
     // TODO(cmcewen): remove invite code entered
     yield put(setInviteCodeEntered(true))
     yield put(setAccountCreationTime())
