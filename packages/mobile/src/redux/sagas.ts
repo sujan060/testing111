@@ -5,7 +5,6 @@ import { appSaga, waitForRehydrate } from 'src/app/saga'
 import { escrowSaga } from 'src/escrow/saga'
 import { exchangeSaga } from 'src/exchange/saga'
 import { firebaseSaga } from 'src/firebase/saga'
-import { gethSaga } from 'src/geth/saga'
 import { goldTokenSaga } from 'src/goldToken/saga'
 import { homeSaga } from 'src/home/saga'
 import { abeSaga } from 'src/identity/saga'
@@ -53,7 +52,6 @@ export function* rootSaga() {
   yield spawn(loggerSaga)
   yield spawn(appSaga)
   yield spawn(networkInfoSaga)
-  yield spawn(gethSaga)
   yield spawn(web3Saga)
   yield spawn(abeSaga)
   yield spawn(goldTokenSaga)

@@ -66,7 +66,6 @@ export const sendTransactionPromises = async (
   txId: string
 ) => {
   const stableToken = await getStableTokenContract(web3)
-  Logger.debug(tag, `ACCOUNT!!! ${JSON.stringify(accountWithPrivateKey)}`)
   const account = accountWithPrivateKey.address
   const accountWithPrivateKeyObject = web3.eth.accounts.privateKeyToAccount(
     accountWithPrivateKey.privateKey
