@@ -50,14 +50,8 @@ export class AccountInfo extends React.Component<Props> {
   }
 
   handlePhotoClicked = () => {
-    const { photosNUXClicked } = this.props
-    if (!photosNUXClicked) {
-      CeloAnalytics.track(CustomEventNames.photos_education)
-      navigate(Screens.PhotosEducation)
-    } else {
-      CeloAnalytics.track(CustomEventNames.qrcode_main_screen_visit)
-      navigate(Screens.QRCode)
-    }
+    CeloAnalytics.track(CustomEventNames.qrcode_main_screen_visit)
+    navigate(Screens.QRCode)
   }
 
   render() {
