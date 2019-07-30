@@ -154,7 +154,7 @@ function* getEscrowedPayment(paymentID: string) {
     return payment
   } catch (e) {
     Logger.error(TAG + '@getEscrowedPayment', 'Error fetching escrowed payment', e)
-    throw e
+    showError(ErrorMessages.NO_NETWORK_CONNECTION, ERROR_BANNER_DURATION)
   }
 }
 
