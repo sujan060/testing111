@@ -25,7 +25,8 @@ function createNetworkStatusChannel() {
 }
 
 const isConnected = (connectionInfo: ConnectionInfo) => {
-  return !(connectionInfo.type === 'none')
+  Logger.debug(TAG, `Connection Info Type ${connectionInfo.type}`)
+  return !(connectionInfo.type === 'none' || connectionInfo.type === 'unknown')
 }
 
 function* subscribeToNetworkStatus() {
