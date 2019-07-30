@@ -190,21 +190,9 @@ class Send extends React.Component<Props, State> {
 
     return (
       <View style={style.body}>
-        {loading ? (
-          <View style={style.container}>
-            <ActivityIndicator style={style.icon} size="large" color={colors.celoGreen} />
-            <Text style={[fontStyles.bodySecondary]}>{t('loadingContacts')}</Text>
-          </View>
-        ) : (
-          <RecipientPicker
-            sections={sections}
-            searchQuery={searchQuery}
-            defaultCountryCode={defaultCountryCode}
-            onSelectRecipient={this.onSelectRecipient}
-            onSearchQueryChanged={this.onSearchQueryChanged}
-            showQRCode={true}
-          />
-        )}
+        <View style={style.container}>
+          <Text style={[fontStyles.bodySecondary]}>Cannot send on merchant app.</Text>
+        </View>
       </View>
     )
   }

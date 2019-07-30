@@ -110,10 +110,13 @@ const ExchangeStack = createStackNavigator(
 
 const AppStack = createStackNavigator(
   {
+    /*
     TabNavigator: {
       screen: TabNavigator,
       navigationOptions: { header: null },
     },
+    */
+    [Screens.WalletHome]: { screen: WalletHome },
     [Screens.Debug]: { screen: Debug },
     [Screens.Language]: { screen: Language },
     [Screens.Analytics]: { screen: Analytics },

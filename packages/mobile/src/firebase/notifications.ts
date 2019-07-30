@@ -29,6 +29,10 @@ const handlePaymentRequested = (
   paymentRequest: PaymentRequest,
   notificationState: NotificationReceiveState
 ) => async (dispatch: DispatchType, getState: GetStateType) => {
+  // Workaround since requests don't work in merchant app
+  if (true) {
+    return
+  }
   if (notificationState === NotificationReceiveState.APP_ALREADY_OPEN) {
     return
   }

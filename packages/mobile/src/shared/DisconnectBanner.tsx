@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import componentWithAnalytics from 'src/analytics/wrapper'
 import { Namespaces } from 'src/i18n'
 import { RootState } from 'src/redux/reducers'
-import { isAppConnected } from 'src/redux/selectors'
+import { getNetworkConnected } from 'src/redux/selectors'
 
 interface StateProps {
   appConnected: boolean
@@ -17,7 +17,7 @@ type Props = StateProps & WithNamespaces
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {
-    appConnected: isAppConnected(state),
+    appConnected: getNetworkConnected(state),
   }
 }
 

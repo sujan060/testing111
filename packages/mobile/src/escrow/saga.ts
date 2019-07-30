@@ -187,7 +187,8 @@ function* getSentPayments() {
     yield put(storeSentPayments(sentPaymentsNotifications))
   } catch (e) {
     Logger.error(TAG + '@getSentPayments', 'Error fetching sent escrowed payments', e)
-    throw e
+    showError(ErrorMessages.NO_NETWORK_CONNECTION, ERROR_BANNER_DURATION)
+    // throw e
   }
 }
 

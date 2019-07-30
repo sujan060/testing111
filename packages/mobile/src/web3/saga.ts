@@ -16,6 +16,7 @@ import { deleteChainData } from 'src/geth/geth'
 import { waitForGethConnectivity } from 'src/geth/saga'
 import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
+import { getNetworkConnected } from 'src/redux/selectors'
 import Logger from 'src/utils/Logger'
 import {
   Actions,
@@ -249,6 +250,7 @@ export function* getAccount() {
 
 export function* getAccountWithPrivateKey() {
   // TODO make sure account exists
+  getNetworkConnected()
   const accountWithPrivateKey = yield select(currentAccountWithPrivateKeySelector)
   return accountWithPrivateKey
 }
