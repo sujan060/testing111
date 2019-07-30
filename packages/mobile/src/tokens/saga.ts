@@ -35,6 +35,7 @@ export const tokenFetchFactory = ({
       yield put(actionCreator(balance.toString()))
     } catch (error) {
       Logger.error(tag, 'Error fetching balance', error)
+      showError(ErrorMessages.NO_NETWORK_CONNECTION, ERROR_BANNER_DURATION)
     }
   }
 

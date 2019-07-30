@@ -21,6 +21,10 @@ import { Screens } from 'src/navigator/Screens'
 import { RootState } from 'src/redux/reducers'
 import { showRefreshBalanceMessage } from 'src/redux/selectors'
 import { getMoneyDisplayValue } from 'src/utils/formatting'
+import { getNetworkConnected } from 'src/redux/selectors'
+import { showError } from 'src/alert/actions'
+import { ErrorMessages } from 'src/app/ErrorMessages'
+import { ERROR_BANNER_DURATION } from 'src/config'
 
 interface StateProps {
   exchangeRatePair: ExchangeRatePair | null
@@ -29,6 +33,7 @@ interface StateProps {
   goldBalance: string | null
   dollarBalance: string | null
   balanceOutOfSync: boolean
+  appConnected: boolean
 }
 
 interface OwnProps {
@@ -49,6 +54,7 @@ const mapStateToProps = (state: RootState): StateProps => {
     goldBalance: state.goldToken.balance,
     dollarBalance: state.stableToken.balance,
     balanceOutOfSync: showRefreshBalanceMessage(state),
+    appConnected: getNetworkConnected(state),
   }
 }
 
@@ -71,7 +77,11 @@ export class AccountOverview extends React.Component<Props> {
   }
 
   refreshBalances = () => {
-    this.props.refreshAllBalances()
+    if (this.props.appConnected) {
+      this.props.refreshAllBalances()
+    } else {
+      showError(ErrorMessages.NO_NETWORK_CONNECTION, ERROR_BANNER_DURATION)
+    }
   }
 
   render() {
