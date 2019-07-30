@@ -9,6 +9,7 @@ import { Screens, Stacks } from 'src/navigator/Screens'
 import { PersistedRootState } from 'src/redux/reducers'
 import Logger from 'src/utils/Logger'
 import { clockInSync } from 'src/utils/time'
+import { currentAccountSelector } from 'src/web3/selectors'
 
 const TAG = 'app/saga'
 
@@ -56,6 +57,7 @@ export function* checkAppDeprecation() {
 export function* navigateToProperScreen() {
   yield all([take(REHYDRATE), take(NavActions.SET_NAVIGATOR)])
   const mappedState = yield select(mapStateToProps)
+  const address = yield select(currentAccountSelector)
   if (!mappedState) {
     navigate(Stacks.NuxStack)
     return
@@ -77,22 +79,26 @@ export function* navigateToProperScreen() {
 
   const inSync = yield call(clockInSync)
 
-  if (!language) {
-    navigate(Stacks.NuxStack)
-  } else if (!inSync) {
-    navigate(Screens.SetClock)
-  } else if (!e164Number) {
-    navigate(Screens.JoinCelo)
-  } else if (!pincodeSet) {
-    navigate(Screens.Pincode)
-  } else if (!redeemComplete) {
-    navigate(Screens.EnterInviteCode)
-  } else if (!askedContactsPermission) {
-    navigate(Screens.ImportContacts)
-  } else if (!startedVerification) {
-    navigate(Screens.VerifyEducation)
-  } else if (!numberVerified) {
-    navigate(Screens.VerifyVerifying)
+  if (!address) {
+    if (!language) {
+      navigate(Stacks.NuxStack)
+    } else if (!inSync) {
+      navigate(Screens.SetClock)
+    } else if (!e164Number) {
+      navigate(Screens.JoinCelo)
+    } else if (!pincodeSet) {
+      navigate(Screens.Pincode)
+    } else if (!redeemComplete) {
+      navigate(Screens.EnterInviteCode)
+    } else if (!askedContactsPermission) {
+      navigate(Screens.ImportContacts)
+    } else if (!startedVerification) {
+      navigate(Screens.VerifyEducation)
+    } else if (!numberVerified) {
+      navigate(Screens.VerifyVerifying)
+    } else {
+      navigate(Stacks.AppStack)
+    }
   } else {
     navigate(Stacks.AppStack)
   }

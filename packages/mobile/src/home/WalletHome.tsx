@@ -187,7 +187,7 @@ export class WalletHome extends React.PureComponent<Props> {
         </Animated.View>
         <View style={[componentStyles.topBar, styles.head]}>
           <Animated.Text style={[fontStyles.headerTitle, { opacity: this.headerOpacity }]}>
-            {t('wallet')}
+            Merchant Wallet (Receive Only)
           </Animated.Text>
           <HeaderIcon />
         </View>
