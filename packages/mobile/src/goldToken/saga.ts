@@ -14,7 +14,7 @@ const tag = 'goldToken/saga'
 
 export async function getGoldTokenBalance(account: string) {
   Logger.debug('@getGoldTokenBalance', `Sending request for ${account}`)
-  fetch(
+  return fetch(
     `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=balance&address=${account}`,
     {
       method: 'GET',

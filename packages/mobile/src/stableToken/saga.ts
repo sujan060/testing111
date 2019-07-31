@@ -14,7 +14,7 @@ const tag = 'stableToken/saga'
 export async function getStableTokenBalance(account: string) {
   Logger.debug('@getStableTokenBalance', `Sending request for ${account}`)
   const stableTokenAddress = '0x299e74bdcd90d4e10f7957ef074cee32d7e9089a'
-  fetch(
+  return fetch(
     `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=tokenbalance&address=${account}&contractaddress=${stableTokenAddress}`,
     {
       method: 'GET',
