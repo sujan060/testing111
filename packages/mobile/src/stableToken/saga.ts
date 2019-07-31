@@ -28,7 +28,7 @@ export async function getStableTokenBalance(account: string) {
       return response.json()
     })
     .then((responseJson) => {
-      const balance = new BigNumber(responseJson.result).times(1e-19)
+      const balance = new BigNumber(responseJson.result).times(1e-18)
       Logger.debug('@getStableTokenBalance', `Got balance of ${balance}$`)
       if (balance.isPositive() && !balance.isNaN()) {
         return balance
