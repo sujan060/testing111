@@ -85,7 +85,9 @@ export class AccountOverview extends React.Component<Props> {
   }
 
   render() {
-    const { t, testID, goldBalance, dollarBalance, balanceOutOfSync } = this.props
+    const { t, testID, goldBalance, dollarBalance } = this.props
+
+    const balanceOutOfSync = false
 
     return (
       <View testID={testID}>
