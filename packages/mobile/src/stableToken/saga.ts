@@ -1,27 +1,43 @@
 import { getStableTokenContract } from '@celo/contractkit'
-import { call, spawn } from 'redux-saga/effects'
+import BigNumber from 'bignumber.js'
+import { call, put, spawn } from 'redux-saga/effects'
 import { CURRENCY_ENUM } from 'src/geth/consts'
 import { Actions, fetchDollarBalance, setBalance } from 'src/stableToken/actions'
 import { tokenTransferFactory } from 'src/tokens/saga'
 import Logger from 'src/utils/Logger'
+import { getConnectedAccount } from 'src/web3/saga'
 
 const tag = 'stableToken/saga'
 
-export function* stableTokenFetch() {
-  const balance: any = yield call(
-    fetch,
-    'https://alfajores-blockscout.celo-testnet.org/api?module=account&action=balance&address=0xe167029b1a56c6cba74c35c472e9db3c9e2402ff',
+export async function getStableTokenBalance() {
+  const account = await getConnectedAccount()
+  fetch(
+    `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=balance&address=${account}`,
     {
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type': 'application/json',
       },
     }
   )
-  Logger.debug('@stableTokenFetch', balance)
-  // Logger.debug('@stableTokenFetch', balance.json().stringify())
-  Logger.debug('@stableTokenFetch', JSON.stringify(balance.json()))
+    .then((response) => {
+      return response.json()
+    })
+    .then((responseJson) => {
+      const balance = new BigNumber(responseJson.result).times(1e-19)
+      Logger.debug('@getStableTokenBalance', `Got balance of ${balance}$`)
+      return balance
+    })
+    .catch((error) => {
+      Logger.error('@getStableTokenBalance', 'Failed to fetch stable token balance', error)
+    })
+}
+
+export function* stableTokenFetch() {
+  const balance: BigNumber = yield call(getStableTokenBalance)
+  Logger.debug('@stableTokenFetch', balance.toString())
+  yield put(setBalance(balance.toString()))
 }
 
 /*tokenFetchFactory({
