@@ -29,7 +29,7 @@ export async function getGoldTokenBalance(account: string) {
     })
     .then((responseJson) => {
       Logger.debug('@getGoldTokenBalance', `Received response of ${JSON.stringify(responseJson)}`)
-      const balance = new BigNumber(responseJson.result).times(1e-19)
+      const balance = new BigNumber(responseJson.result).times(1e-18)
       Logger.debug('@getGoldTokenBalance', `Got balance of ${balance}`)
       if (balance.isPositive() && !balance.isNaN()) {
         return balance
