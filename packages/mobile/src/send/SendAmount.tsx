@@ -298,7 +298,7 @@ export class SendAmount extends React.PureComponent<Props, State> {
             />
           </View>
         )}
-        <View style={[style.separatorContainer, separatorContainerStyle]}>
+        {/* <View style={[style.separatorContainer, separatorContainerStyle]}>
           <View style={[style.buttonSeparator, separatorStyle]} />
         </View>
         <View style={style.button}>
@@ -310,7 +310,7 @@ export class SendAmount extends React.PureComponent<Props, State> {
             type={BtnTypes.PRIMARY}
             disabled={sendDisabled}
           />
-        </View>
+        </View> */}
       </View>
     )
   }
