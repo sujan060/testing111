@@ -41,8 +41,10 @@ export async function getGoldTokenBalance() {
 
 export function* goldFetch() {
   const balance: BigNumber = yield call(getGoldTokenBalance)
-  Logger.debug('@stableTokenFetch', balance.toString())
-  yield put(setBalance(balance.toString()))
+  if (balance) {
+    Logger.debug('@goldTokenFetch', balance.toString())
+    yield put(setBalance(balance.toString()))
+  }
 }
 
 export const goldTransfer = tokenTransferFactory({

@@ -42,8 +42,10 @@ export async function getStableTokenBalance() {
 
 export function* stableTokenFetch() {
   const balance: BigNumber = yield call(getStableTokenBalance)
-  Logger.debug('@stableTokenFetch', balance.toString())
-  yield put(setBalance(balance.toString()))
+  if (balance) {
+    Logger.debug('@stableTokenFetch', balance.toString())
+    yield put(setBalance(balance.toString()))
+  }
 }
 
 /*tokenFetchFactory({
