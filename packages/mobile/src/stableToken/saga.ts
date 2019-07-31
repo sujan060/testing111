@@ -1,18 +1,21 @@
 import { getStableTokenContract } from '@celo/contractkit'
 import BigNumber from 'bignumber.js'
 import { call, put, spawn } from 'redux-saga/effects'
+import { showError } from 'src/alert/actions'
+import { ErrorMessages } from 'src/app/ErrorMessages'
+import { ERROR_BANNER_DURATION } from 'src/config'
 import { CURRENCY_ENUM } from 'src/geth/consts'
 import { Actions, fetchDollarBalance, setBalance } from 'src/stableToken/actions'
 import { tokenTransferFactory } from 'src/tokens/saga'
 import Logger from 'src/utils/Logger'
 import { getConnectedAccount } from 'src/web3/saga'
-
 const tag = 'stableToken/saga'
 
 export async function getStableTokenBalance() {
   const account = await getConnectedAccount()
+  const stableTokenAddress = '0x299e74bdcd90d4e10f7957ef074cee32d7e9089a'
   fetch(
-    `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=balance&address=${account}`,
+    `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=tokenbalance&address=${account}&contractaddress=${stableTokenAddress}`,
     {
       method: 'GET',
       headers: {
@@ -27,10 +30,13 @@ export async function getStableTokenBalance() {
     .then((responseJson) => {
       const balance = new BigNumber(responseJson.result).times(1e-19)
       Logger.debug('@getStableTokenBalance', `Got balance of ${balance}$`)
-      return balance
+      if (balance.isPositive() && !balance.isNaN()) {
+        return balance
+      }
     })
     .catch((error) => {
       Logger.error('@getStableTokenBalance', 'Failed to fetch stable token balance', error)
+      showError(ErrorMessages.NO_NETWORK_CONNECTION, ERROR_BANNER_DURATION)
     })
 }
 
