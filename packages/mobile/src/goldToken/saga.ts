@@ -9,10 +9,11 @@ import { Actions, fetchGoldBalance, setBalance } from 'src/goldToken/actions'
 import { tokenTransferFactory } from 'src/tokens/saga'
 import Logger from 'src/utils/Logger'
 import { getConnectedAccount } from 'src/web3/saga'
+
 const tag = 'goldToken/saga'
 
-export async function getGoldTokenBalance() {
-  const account = await getConnectedAccount()
+export async function getGoldTokenBalance(account: string) {
+  Logger.debug('@getGoldTokenBalance', `Sending request for ${account}`)
   fetch(
     `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=balance&address=${account}`,
     {
@@ -27,8 +28,9 @@ export async function getGoldTokenBalance() {
       return response.json()
     })
     .then((responseJson) => {
+      Logger.debug('@getGoldTokenBalance', `Received response of ${JSON.stringify(responseJson)}`)
       const balance = new BigNumber(responseJson.result).times(1e-19)
-      Logger.debug('@getGoldTokenBalance', `Got balance of ${balance}$`)
+      Logger.debug('@getGoldTokenBalance', `Got balance of ${balance}`)
       if (balance.isPositive() && !balance.isNaN()) {
         return balance
       }
@@ -40,7 +42,8 @@ export async function getGoldTokenBalance() {
 }
 
 export function* goldFetch() {
-  const balance: BigNumber = yield call(getGoldTokenBalance)
+  const account: string = yield call(getConnectedAccount)
+  const balance: BigNumber = yield call(getGoldTokenBalance, account)
   if (balance) {
     Logger.debug('@goldTokenFetch', balance.toString())
     yield put(setBalance(balance.toString()))

@@ -11,8 +11,8 @@ import Logger from 'src/utils/Logger'
 import { getConnectedAccount } from 'src/web3/saga'
 const tag = 'stableToken/saga'
 
-export async function getStableTokenBalance() {
-  const account = await getConnectedAccount()
+export async function getStableTokenBalance(account: string) {
+  Logger.debug('@getStableTokenBalance', `Sending request for ${account}`)
   const stableTokenAddress = '0x299e74bdcd90d4e10f7957ef074cee32d7e9089a'
   fetch(
     `http://alfajores-blockscout.celo-testnet.org/api?module=account&action=tokenbalance&address=${account}&contractaddress=${stableTokenAddress}`,
@@ -41,7 +41,8 @@ export async function getStableTokenBalance() {
 }
 
 export function* stableTokenFetch() {
-  const balance: BigNumber = yield call(getStableTokenBalance)
+  const account: string = yield call(getConnectedAccount)
+  const balance: BigNumber = yield call(getStableTokenBalance, account)
   if (balance) {
     Logger.debug('@stableTokenFetch', balance.toString())
     yield put(setBalance(balance.toString()))
