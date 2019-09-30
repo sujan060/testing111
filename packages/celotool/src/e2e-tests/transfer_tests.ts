@@ -550,8 +550,30 @@ describe('transfer tests', function(this: any) {
                     gas,
                     gasCurrency: stableTokenAddress,
                   })
+                  // Should never get here
+                  assert.fail('Txn should not succeed')
                 } catch (error) {
                   assert.include(error.toString(), 'Returned error: intrinsic gas too low')
+                }
+              })
+            })
+
+            describe('when setting a gas amount less than the gas price minimum', () => {
+              it("should not add the transaction to the pool because it's below the gpm", async function(this: any) {
+                await restartGeth(syncMode)
+                const gpm = await getGasPriceMinimum(stableTokenAddress)
+                try {
+                  await transferCeloGold(DEF_FROM_ADDR, DEF_TO_ADDR, DEF_AMOUNT, {
+                    gasCurrency: stableTokenAddress,
+                    gasPrice: gpm - 1,
+                  })
+                  // Should never get here
+                  assert.fail('Txn should not succeed')
+                } catch (error) {
+                  assert.include(
+                    error.toString(),
+                    'Returned error: gasprice does not exceed gas price minimum'
+                  )
                 }
               })
             })
