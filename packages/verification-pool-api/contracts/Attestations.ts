@@ -279,6 +279,23 @@ export default async function getInstance(web3: Web3) {
       },
       {
         "indexed": false,
+        "name": "metadataURL",
+        "type": "string"
+      }
+    ],
+    "name": "AccountMetadataURLSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "name": "walletAddress",
         "type": "address"
       }
@@ -670,6 +687,39 @@ export default async function getInstance(web3: Web3) {
     "constant": false,
     "inputs": [
       {
+        "name": "metadataURL",
+        "type": "string"
+      }
+    ],
+    "name": "setMetadataURL",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getMetadataURL",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "name": "dataEncryptionKey",
         "type": "bytes"
       }
@@ -801,6 +851,6 @@ export default async function getInstance(web3: Web3) {
     "type": "function"
   }
 ],
-   "0xAfDF1963Dac816dd84B49B8d2179296Ab32D6519"
+   "0xd86077CEaA9a84Fc113A6ca340E80dAe37419D40"
   )
 }

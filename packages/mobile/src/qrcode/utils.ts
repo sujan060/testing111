@@ -5,7 +5,6 @@ import Share from 'react-native-share'
 import { put } from 'redux-saga/effects'
 import { showError } from 'src/alert/actions'
 import { ErrorMessages } from 'src/app/ErrorMessages'
-import { ALERT_BANNER_DURATION } from 'src/config'
 import { AddressToE164NumberType } from 'src/identity/reducer'
 import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
@@ -18,11 +17,11 @@ import {
 import { QrCode, storeLatestInRecents, SVG } from 'src/send/actions'
 import Logger from 'src/utils/Logger'
 
-const TAG = 'QR/utils'
-
 export enum BarcodeTypes {
   QR_CODE = 'QR_CODE',
 }
+
+const TAG = 'QR/utils'
 
 const QRFileName = '/celo-qr.png'
 
@@ -51,23 +50,18 @@ export function* handleBarcode(
   addressToE164Number: AddressToE164NumberType,
   recipientCache: NumberToRecipient
 ) {
-  if (barcode.type !== BarcodeTypes.QR_CODE) {
-    return
-  }
-
   let data: { address: string; e164PhoneNumber: string; displayName: string } | undefined
   try {
     data = JSON.parse(barcode.data)
   } catch (e) {
     Logger.warn(TAG, 'QR code read failed with ' + e)
   }
-
   if (typeof data !== 'object' || isEmpty(data.address)) {
-    yield put(showError(ErrorMessages.QR_FAILED_NO_ADDRESS, ALERT_BANNER_DURATION))
+    yield put(showError(ErrorMessages.QR_FAILED_NO_ADDRESS))
     return
   }
   if (!isValidAddress(data.address)) {
-    yield put(showError(ErrorMessages.QR_FAILED_INVALID_ADDRESS, ALERT_BANNER_DURATION))
+    yield put(showError(ErrorMessages.QR_FAILED_INVALID_ADDRESS))
     return
   }
   if (typeof data.e164PhoneNumber !== 'string') {
@@ -78,7 +72,6 @@ export function* handleBarcode(
     // Default for invalid displayName
     data.displayName = ''
   }
-
   const cachedRecipient = getRecipientFromAddress(data.address, addressToE164Number, recipientCache)
 
   const recipient: Recipient = cachedRecipient
@@ -95,7 +88,6 @@ export function* handleBarcode(
         kind: RecipientKind.QrCode,
         displayId: data.e164PhoneNumber,
       }
-
   yield put(storeLatestInRecents(recipient))
 
   navigate(Screens.SendAmount, { recipient })

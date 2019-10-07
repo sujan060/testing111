@@ -60,16 +60,20 @@ function* produceTxSignature(action: RequestTxSignatureAction) {
   yield call(getConnectedUnlockedAccount)
   const rawTxs = yield Promise.all(
     action.request.txs.map(async (tx) => {
-      const signedTx = await web3.eth.signTransaction({
+      const params: any = {
         from: tx.from,
-        to: tx.to,
         gasPrice: '0',
         gas: tx.estimatedGas,
         data: tx.txData,
         nonce: tx.nonce,
+        value: tx.value,
         // @ts-ignore
         gasCurrency: action.request.gasCurrency,
-      })
+      }
+      if (tx.to) {
+        params.to = tx.to
+      }
+      const signedTx = await web3.eth.signTransaction(params)
       return signedTx.raw
     })
   )
@@ -97,6 +101,6 @@ export function handleDappkitDeepLink(deepLink: string) {
         Logger.warn(TAG, 'Unsupported dapp request type')
     }
   } catch (error) {
-    Logger.debug(TAG, 'Deep link not valid for dappkit. Ignoring.')
+    Logger.debug(TAG, `Deep link not valid for dappkit: ${error}`)
   }
 }
