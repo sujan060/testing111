@@ -27,7 +27,7 @@ If you are starting up a validator, please consider leaving it running for a few
   Some users have reported issues using the most recent version of node. Use the LTS for greater reliability.
 
 {% hint style="info" %}
-A note about conventions:  
+A note about conventions:
 The code you'll see on this page is bash commands and their output.
 
 A $ signifies the bash prompt. Everything following it is the command you should run in a terminal. The $ isn't part of the command, so don't copy it.
@@ -159,7 +159,25 @@ $ celocli validatorgroup:vote --from $CELO_VALIDATOR_ADDRESS --for $CELO_VALIDAT
 $ celocli validatorgroup:vote --from $CELO_VALIDATOR_GROUP_ADDRESS --for $CELO_VALIDATOR_GROUP_ADDRESS
 ```
 
-You’re all set! Note that elections are finalized at the end of each epoch, roughly once an hour in the Alfajores Testnet. After that hour, if you get elected, your node will start participating BFT consensus and validating blocks.
+### Run the attestation service
+
+As part of the [lightweight identity protocol](/celo-codebase/protocol/identity), validators are expected to run an attestation service to provide attestations that allow users to map their phone number to an account on Celo. The attestation service is a simple Node.js application that can be run with a simple docker image:
+
+`$ docker run -e ATTESTATION_KEY=XXX -p 3000:80 us.gcr.io/celo-testnet/celo-node:alfajores`
+
+In order for users to request attestations from your service, you have to register the endpoint under which your service is reachable in your [metadata](/celo-codebase/protocol/identity/metadata).
+
+`$ celocli identity:create-metadata ./metadata.json`
+
+Add your URL:
+
+`$ celocli identity:change-attestation-service-url ./metadata.json --url ATTESTATION_SERVICE_URL`
+
+And then host your metadata somewhere reachable via HTTP. You can register your metadata URL with:
+
+`$celocli identity:register-metadata --url METADATA_URL --from $CELO_VALIDATOR_ADDRESS`
+
+You’re all set! Note that elections are finalized at the end of each epoch, roughly once an hour in the Alfajores Testnet. After that hour, if you get elected, your node will start participating BFT consensus and validating blocks. Users requesting attestations will hit your registered attestation service.
 
 You can inspect the current state of voting by running:
 
