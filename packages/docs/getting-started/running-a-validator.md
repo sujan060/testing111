@@ -163,7 +163,7 @@ $ celocli validatorgroup:vote --from $CELO_VALIDATOR_GROUP_ADDRESS --for $CELO_V
 
 As part of the [lightweight identity protocol](/celo-codebase/protocol/identity), validators are expected to run an attestation service to provide attestations that allow users to map their phone number to an account on Celo. The attestation service is a simple Node.js application that can be run with a simple docker image:
 
-`$ docker run -e ATTESTATION_KEY=XXX -p 3000:80 us.gcr.io/celo-testnet/celo-node:alfajores`
+`$ docker run -e ATTESTATION_KEY=XXX -p 3000:80 us.gcr.io/celo-testnet/attestation-service:alfajores`
 
 In order for users to request attestations from your service, you have to register the endpoint under which your service is reachable in your [metadata](/celo-codebase/protocol/identity/metadata).
 
