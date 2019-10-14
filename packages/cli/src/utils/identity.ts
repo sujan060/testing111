@@ -3,15 +3,24 @@ import {
   IdentityMetadata,
   IdentityMetadataWrapper,
 } from '@celo/contractkit/lib/identity'
+import { fetch } from 'cross-fetch'
 import { writeFileSync } from 'fs'
 import moment from 'moment'
 
-export const displayMetadata = (metadata: IdentityMetadata) => {
-  metadata.claims.forEach((claim) => {
+export const displayMetadata = async (metadata: IdentityMetadata) => {
+  for (const claim of metadata.claims) {
     switch (claim.payload.type) {
       case ClaimTypes.ATTESTATION_SERVICE_URL:
         console.info(`Attestation Service Claim`)
         console.info(`URL: ${claim.payload.url}`)
+        try {
+          const statusResp = await fetch(claim.payload.url + '/status')
+          const jsonResp = await statusResp.json()
+          console.info(`Status: ${jsonResp.status}`)
+        } catch (error) {
+          console.info('Status: unavailable')
+        }
+
         break
       case ClaimTypes.NAME:
         console.info(`Name Claim`)
@@ -28,7 +37,7 @@ export const displayMetadata = (metadata: IdentityMetadata) => {
     }
 
     console.info(`(claim created ${moment.unix(claim.payload.timestamp).fromNow()})\n`)
-  })
+  }
 }
 
 export const modifyMetadata = (

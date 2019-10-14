@@ -177,6 +177,10 @@ And then host your metadata somewhere reachable via HTTP. You can register your 
 
 `$celocli identity:register-metadata --url METADATA_URL --from $CELO_VALIDATOR_ADDRESS`
 
+If everything goes well users should see that you are ready for attestations by running:
+
+`$celocli identity:get-metadata $CELO_VALIDATOR_ADDRESS`
+
 You’re all set! Note that elections are finalized at the end of each epoch, roughly once an hour in the Alfajores Testnet. After that hour, if you get elected, your node will start participating BFT consensus and validating blocks. Users requesting attestations will hit your registered attestation service.
 
 You can inspect the current state of voting by running:

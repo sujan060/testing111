@@ -19,6 +19,9 @@ async function init() {
   app.listen(port, () => console.log(`Server running on ${port}!`))
 
   app.post('/attestations', handleAttestationRequest)
+  app.get('/status', (_req: any, res: express.Response) => {
+    res.json({ status: 'ok' })
+  })
 }
 
 init().catch((err) => {
