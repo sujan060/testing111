@@ -66,5 +66,11 @@ for file_path in "${files[@]}"; do
   fi
 done
 
-echo "Encrypted files decrypted"
+
+if [[ $1 == "decrypt" ]]; then
+  echo "Encrypted files decrypted"
+elif [[ $1 == "encrypt" ]]; then
+  echo "Decrypted files encrypted"
+fi
+
 exit 0
