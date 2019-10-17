@@ -5,6 +5,10 @@ provider "google" {
   zone        = "us-west1-a"
 }
 
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 # For managing terraform state remotely
 terraform {
   backend "gcs" {
@@ -107,9 +111,13 @@ module "tx_node" {
 module "tx_node_lb" {
   source = "./modules/tx-node-load-balancer"
   # variables
-  celo_env           = var.celo_env
-  network_name       = data.google_compute_network.network.name
-  tx_node_self_links = module.tx_node.self_links
+  celo_env                = var.celo_env
+  dns_zone_name           = var.dns_zone_name
+  gcloud_credentials_path = var.gcloud_credentials_path
+  gcloud_project          = var.gcloud_project
+  infura_setup_host       = var.infura_setup_host
+  network_name            = data.google_compute_network.network.name
+  tx_node_self_links      = module.tx_node.self_links
 }
 
 module "validator" {
