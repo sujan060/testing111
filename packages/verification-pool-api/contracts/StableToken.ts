@@ -324,6 +324,52 @@ export default async function getInstance(web3: Web3) {
         "type": "uint256"
       }
     ],
+    "name": "increaseAllowance",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "decreaseAllowance",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
     "name": "approve",
     "outputs": [
       {
@@ -696,6 +742,6 @@ export default async function getInstance(web3: Web3) {
     "type": "function"
   }
 ],
-   "0xeA061E10653111013C63Df5D763A4676740f05C0"
+   "0x9497c29A140E52AA0cE681EEBA8DaC4b59d669Bc"
   )
 }

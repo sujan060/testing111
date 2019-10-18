@@ -5,6 +5,7 @@ export enum Testnets {
   integration = 'integration',
   alfajoresstaging = 'alfajoresstaging',
   alfajores = 'alfajores',
+  baklavastaging = 'baklavastaging',
   pilot = 'pilot',
   pilotstaging = 'pilotstaging',
 }
@@ -30,6 +31,11 @@ const networkConfigs: { [testnet: string]: NetworkConfig } = {
     nodeDir: `.${Testnets.alfajores}`,
     syncMode: DEFAULT_SYNC_MODE,
     blockchainApiUrl: 'https://alfajores-dot-celo-testnet-production.appspot.com/',
+  },
+  [Testnets.baklavastaging]: {
+    nodeDir: `.${Testnets.baklavastaging}`,
+    syncMode: DEFAULT_SYNC_MODE,
+    blockchainApiUrl: 'https://baklavastaging-dot-celo-testnet.appspot.com/',
   },
   [Testnets.pilot]: {
     nodeDir: `.${Testnets.pilot}`,

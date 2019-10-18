@@ -262,6 +262,23 @@ export default async function getInstance(web3: Web3) {
       },
       {
         "indexed": false,
+        "name": "attestor",
+        "type": "address"
+      }
+    ],
+    "name": "AttestorAuthorized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "name": "dataEncryptionKey",
         "type": "bytes"
       }
@@ -750,6 +767,89 @@ export default async function getInstance(web3: Web3) {
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isAuthorized",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address"
+      },
+      {
+        "name": "v",
+        "type": "uint8"
+      },
+      {
+        "name": "r",
+        "type": "bytes32"
+      },
+      {
+        "name": "s",
+        "type": "bytes32"
+      }
+    ],
+    "name": "authorizeAttestor",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getAttestorFromAccount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountOrAttestor",
+        "type": "address"
+      }
+    ],
+    "name": "getAccountFromAttestor",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -835,22 +935,8 @@ export default async function getInstance(web3: Web3) {
     "payable": false,
     "stateMutability": "view",
     "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getValidators",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
   }
 ],
-   "0x202ec0cbd312425C266dd473754Ad1719948Bd35"
+   "0xc7f5c1Ec40ac164398aEe1Bb67A573f704dCd1D6"
   )
 }

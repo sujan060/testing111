@@ -16,6 +16,7 @@ const INTEGRATION_FROM = '0x47e172F6CfB6c7D01C1574fa3E2Be7CC73269D95'
 const INTEGRATION_TESTING_FROM = '0x47e172F6CfB6c7D01C1574fa3E2Be7CC73269D95'
 const ALFAJORESSTAGING_FROM = '0xf4314cb9046bece6aa54bb9533155434d0c76909'
 const ALFAJORES_FROM = '0x456f41406B32c45D59E539e4BBA3D7898c3584dA'
+const BAKLAVASTAGING_FROM = '0x4588ABb84e1BBEFc2BcF4b2296F785fB7AD9F285'
 const PILOT_FROM = '0x387bCb16Bfcd37AccEcF5c9eB2938E30d3aB8BF2'
 const PILOTSTAGING_FROM = '0x545DEBe3030B570731EDab192640804AC8Cf65CA'
 
@@ -113,18 +114,19 @@ const networks = {
   },
   argentinastaging: freeGasConfig,
   argentinaproduction: freeGasConfig,
-
   alfajoresstaging: {
     ...defaultConfig,
     from: ALFAJORESSTAGING_FROM,
   },
-
   alfajores: {
     ...defaultConfig,
     network_id: ALFAJORES_NETWORKID,
     from: ALFAJORES_FROM,
   },
-
+  baklavastaging: {
+    ...defaultConfig,
+    from: BAKLAVASTAGING_FROM,
+  },
   pilot: {
     ...defaultConfig,
     from: PILOT_FROM,
