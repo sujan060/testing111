@@ -9,7 +9,7 @@ bytecodeLimit = 2**15 + 2**14 # doubled from Ethereum's bytecode limit
 closeDifferential = 2**14
 
 print("Limit: " + str(bytecodeLimit))
-print("Close: " + str(bytecodeLimit - closeDifferential))
+# print("Close: " + str(bytecodeLimit - closeDifferential))
 
 buildPath = "./build/contracts"
 ignorePaths = ["interfaces", "proxies", "test", "libraries"]
@@ -31,5 +31,5 @@ for fileName in sorted(os.listdir(buildPath)):
       print(colored(result, 'red'))
     elif contractLen > bytecodeLimit - closeDifferential:
       print(colored(result, 'yellow'))
-    else:
-      print(colored(result, 'green'))
+    # else:
+    #   print(colored(result, 'green'))
