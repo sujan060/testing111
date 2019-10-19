@@ -12,26 +12,19 @@ print("Limit: " + str(bytecodeLimit))
 print("Close: " + str(bytecodeLimit - closeDifferential))
 
 buildPath = "./build/contracts"
-ignorePrefixes = ["Mock", "I"] # mocks and interfaces
-ignoreSuffixes = ["Test.json", "Proxy.json"] # tests and proxies
+ignorePaths = ["interfaces", "proxies", "test", "libraries"]
 
-parsedNames = []
-for name in os.listdir(buildPath):
-  use = True
-  for prefix in ignorePrefixes:
-    if name.startswith(prefix):
-      use = False
-      break
-  for suffix in ignoreSuffixes:
-    if name.endswith(suffix):
-      use = False
-      break
-  if (use):
-    parsedNames.append(name)
-
-for fileName in sorted(parsedNames):
+for fileName in sorted(os.listdir(buildPath)):
   with open(buildPath + '/' + fileName, 'r') as f:
     contractData = json.load(f)
+
+    srcPath = contractData["sourcePath"]
+    dirEnds = srcPath.rindex('/')
+    dirStarts = srcPath.rindex('/', 0, dirEnds)
+    dirPath = srcPath[dirStarts+1:dirEnds]
+    if (dirPath in ignorePaths):
+      continue
+
     contractLen = len(contractData["deployedBytecode"])
     result = fileName + " bytecode len of " + str(contractLen)
     if contractLen > bytecodeLimit:
