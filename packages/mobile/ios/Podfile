@@ -12,7 +12,7 @@ target 'celo' do
     'RCTAnimation',
     'RCTActionSheet',
     'RCTBlob',
-    'RCTGeolocation',
+    # 'RCTGeolocation',
     'RCTImage',
     'RCTLinkingIOS',
     'RCTNetwork',
