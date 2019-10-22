@@ -8,8 +8,7 @@ from termcolor import colored
 bytecodeLimit = 2**15 + 2**14 # doubled from Ethereum's bytecode limit
 closeDifferential = 2**14
 
-print("Limit: " + str(bytecodeLimit))
-# print("Close: " + str(bytecodeLimit - closeDifferential))
+print(colored("Limit " + str(bytecodeLimit), 'magenta', attrs=['bold']))
 
 buildPath = "./build/contracts"
 ignorePaths = ["interfaces", "proxies", "test", "libraries"]
@@ -26,10 +25,13 @@ for fileName in sorted(os.listdir(buildPath)):
       continue
 
     contractLen = len(contractData["deployedBytecode"])
-    result = fileName + " bytecode len of " + str(contractLen)
+    valueStr = ''
     if contractLen > bytecodeLimit:
-      print(colored(result, 'red'))
+      valueStr = colored(str(contractLen), 'red')
     elif contractLen > bytecodeLimit - closeDifferential:
-      print(colored(result, 'yellow'))
-    # else:
-    #   print(colored(result, 'green'))
+      valueStr = colored(str(contractLen), 'yellow')
+    else:
+      valueStr = colored(str(contractLen), 'green')
+    
+    if (valueStr):
+      print(fileName[:-5] + ' ' + valueStr)
