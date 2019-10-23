@@ -2,8 +2,17 @@
 
 # ---- Set Up Logging ----
 
+echo "Installing GCP logging agent..."
+
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 bash install-logging-agent.sh
+
+# ---- Set Up Monitoring Agent ----
+
+echo "Installing GCP monitoring agent..."
+
+curl -sSO https://dl.google.com/cloudagents/install-monitoring-agent.sh
+bash install-monitoring-agent.sh
 
 # ---- Set Up Persistent Disk ----
 
