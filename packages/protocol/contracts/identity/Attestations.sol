@@ -25,6 +25,7 @@ contract Attestations is
   Initializable,
   UsingRegistry,
   ReentrancyGuard,
+  UsingLockedGold,
   UsingPrecompiles
 {
 
