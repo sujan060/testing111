@@ -5,6 +5,25 @@ export default async function getInstance(web3: Web3) {
     [
   {
     "constant": true,
+    "inputs": [
+      {
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "validatorAddressFromCurrentSet",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
     "inputs": [],
     "name": "initialized",
     "outputs": [
@@ -34,6 +53,20 @@ export default async function getInstance(web3: Web3) {
       {
         "name": "",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "numberValidatorsInCurrentSet",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -250,6 +283,23 @@ export default async function getInstance(web3: Web3) {
       }
     ],
     "name": "AttestationRequestFeeSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "attestor",
+        "type": "address"
+      }
+    ],
+    "name": "AttestorAuthorized",
     "type": "event"
   },
   {
@@ -750,6 +800,89 @@ export default async function getInstance(web3: Web3) {
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isAuthorized",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "attestor",
+        "type": "address"
+      },
+      {
+        "name": "v",
+        "type": "uint8"
+      },
+      {
+        "name": "r",
+        "type": "bytes32"
+      },
+      {
+        "name": "s",
+        "type": "bytes32"
+      }
+    ],
+    "name": "authorizeAttestor",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getAttestorFromAccount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "accountOrAttestor",
+        "type": "address"
+      }
+    ],
+    "name": "getAccountFromAttestor",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -851,6 +984,6 @@ export default async function getInstance(web3: Web3) {
     "type": "function"
   }
 ],
-   "0x202ec0cbd312425C266dd473754Ad1719948Bd35"
+   "0xd86077CEaA9a84Fc113A6ca340E80dAe37419D40"
   )
 }
