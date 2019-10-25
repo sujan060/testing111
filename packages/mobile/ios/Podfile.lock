@@ -137,6 +137,8 @@ PODS:
     - React
   - react-native-safe-area-context (0.3.6):
     - React
+  - react-native-sms (1.9.0):
+    - React
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-tcp (3.3.0):
@@ -269,6 +271,7 @@ DEPENDENCIES:
   - react-native-mail (from `../../../node_modules/react-native-mail`)
   - "react-native-netinfo (from `../../../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
+  - react-native-sms (from `../../../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../../../node_modules/react-native-splash-screen`)
   - react-native-tcp (from `../../../node_modules/react-native-tcp`)
   - react-native-udp (from `../../../node_modules/react-native-udp`)
@@ -355,6 +358,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
     :path: "../../../node_modules/react-native-safe-area-context"
+  react-native-sms:
+    :path: "../../../node_modules/react-native-sms"
   react-native-splash-screen:
     :path: "../../../node_modules/react-native-splash-screen"
   react-native-tcp:
@@ -430,6 +435,7 @@ SPEC CHECKSUMS:
   react-native-mail: 021d8ee60e374609f5689ef354dc8e36839a9ba6
   react-native-netinfo: 1ea4efa22c02519ac8043ac3f000062a4e320795
   react-native-safe-area-context: e380a6f783ccaec848e2f3cc8eb205a62362950d
+  react-native-sms: 6fc6a1581970f77253981c8c69cd0d303e1d991c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-tcp: e1a8c3ac010774cd71811989805ff3eaebb62f17
   react-native-udp: 54a1aa9bf5c0824f930b1ba6dbfb3fd3e733bba9
@@ -453,6 +459,6 @@ SPEC CHECKSUMS:
   SentryReactNative: 07237139c00366ea2e75ae3e5c566e7a71c27a90
   yoga: 684513b14b03201579ba3cee20218c9d1298b0cc
 
-PODFILE CHECKSUM: 0fd48ce0fe56e66c2ecae449229f68bd5175e3b8
+PODFILE CHECKSUM: 56ff3fda31e75c922764d5366d3cf4e2926963e5
 
 COCOAPODS: 1.7.5
