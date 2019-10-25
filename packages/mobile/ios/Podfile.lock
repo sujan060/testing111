@@ -145,6 +145,8 @@ PODS:
     - React
   - react-native-version-check (3.0.2):
     - React
+  - react-native-webview (5.12.1):
+    - React
   - React/Core (0.59.10):
     - yoga (= 0.59.10.React)
   - React/CxxBridge (0.59.10):
@@ -271,6 +273,7 @@ DEPENDENCIES:
   - react-native-tcp (from `../../../node_modules/react-native-tcp`)
   - react-native-udp (from `../../../node_modules/react-native-udp`)
   - react-native-version-check (from `../../../node_modules/react-native-version-check`)
+  - react-native-webview (from `../../../node_modules/react-native-webview`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
@@ -360,6 +363,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-udp"
   react-native-version-check:
     :path: "../../../node_modules/react-native-version-check"
+  react-native-webview:
+    :path: "../../../node_modules/react-native-webview"
   RNAnalytics:
     :path: "../../../node_modules/@segment/analytics-react-native"
   RNAnalyticsIntegration-Firebase:
@@ -429,6 +434,7 @@ SPEC CHECKSUMS:
   react-native-tcp: e1a8c3ac010774cd71811989805ff3eaebb62f17
   react-native-udp: 54a1aa9bf5c0824f930b1ba6dbfb3fd3e733bba9
   react-native-version-check: 901616b6d258b385628120441bd0b285b24c7be1
+  react-native-webview: 5036ed4a973ad1deeeff118262d2df7b60b3419d
   RNAnalytics: 05243c1fa17186f07be3eae30514b43aeb2e0578
   RNAnalyticsIntegration-Firebase: 82b879019b012d1aa1cbcb6dfc466acd7233bb97
   RNDeviceInfo: 2b4f76adc479657bf37bfc927bbfb027b17515d4
@@ -447,6 +453,6 @@ SPEC CHECKSUMS:
   SentryReactNative: 07237139c00366ea2e75ae3e5c566e7a71c27a90
   yoga: 684513b14b03201579ba3cee20218c9d1298b0cc
 
-PODFILE CHECKSUM: fcc07171316f82174fa231c48bea0c4092937bb4
+PODFILE CHECKSUM: 0fd48ce0fe56e66c2ecae449229f68bd5175e3b8
 
 COCOAPODS: 1.7.5
