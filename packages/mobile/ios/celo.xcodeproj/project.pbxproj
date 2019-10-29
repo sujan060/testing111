@@ -771,7 +771,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.alfajores;
 				PRODUCT_NAME = celo;
 				SWIFT_OBJC_BRIDGING_HEADER = "celo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -803,7 +803,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.alfajores;
 				PRODUCT_NAME = celo;
 				SWIFT_OBJC_BRIDGING_HEADER = "celo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
