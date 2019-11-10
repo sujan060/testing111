@@ -8,6 +8,7 @@ import {
   generateGenesis,
   getPrivateKeysFor,
   getValidators,
+  privateKeyToAddress,
   privateKeyToPublicKey,
   Validator,
 } from '../lib/generate_utils'
@@ -19,19 +20,20 @@ export interface GethInstanceConfig {
   validating: boolean
   syncmode: string
   port: number
-  sentryport?: number
+  proxyport?: number
   rpcport?: number
   wsport?: number
   lightserv?: boolean
   privateKey?: string
   etherbase?: string
   peers?: string[]
-  sentries?: string[2][]
+  proxies?: string[2][]
   pid?: number
   isProxied?: boolean
-  isSentry?: boolean
+  isProxy?: boolean
   bootnodeEnode?: string
-  sentry?: string
+  proxy?: string
+  proxiedValidatorAddress?: string
 }
 
 export interface GethTestConfig {
@@ -235,14 +237,14 @@ export async function addStaticPeers(datadir: string, enodes: string[]) {
   fs.writeFileSync(`${datadir}/static-nodes.json`, JSON.stringify(enodes))
 }
 
-export async function addSentryPeer(gethBinaryPath: string, instance: GethInstanceConfig) {
-  if (instance.sentries) {
+export async function addProxyPeer(gethBinaryPath: string, instance: GethInstanceConfig) {
+  if (instance.proxies) {
     await execCmdWithExitOnFailure(gethBinaryPath, [
       '--datadir',
       getDatadir(instance),
       'attach',
       '--exec',
-      `istanbul.addSentry('${instance.sentries[0]!}', '${instance.sentries[1]!}')`,
+      `istanbul.addProxy('${instance.proxies[0]!}', '${instance.proxies[1]!}')`,
     ])
   }
 }
@@ -281,9 +283,9 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     wsport,
     validating,
     bootnodeEnode,
-    isSentry,
+    isProxy,
     isProxied,
-    sentryport,
+    proxyport,
   } = instance
   const privateKey = instance.privateKey || ''
   const lightserv = instance.lightserv || false
@@ -300,7 +302,7 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     '--networkid',
     NetworkId.toString(),
     '--verbosity',
-    '4',
+    '5',
     '--consoleoutput=stdout', // Send all logs to stdout
     '--consoleformat=term',
     '--nat',
@@ -339,14 +341,14 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     gethArgs.push('--mine', '--minerthreads=10', `--nodekeyhex=${privateKey}`)
 
     if (isProxied) {
-      gethArgs.push('--istanbul.proxied')
+      gethArgs.push('--proxy.proxied')
     }
-  } else if (isSentry) {
-    gethArgs.push('--sentry')
-    if (sentryport) {
-      gethArgs.push('--proxiedvalidatorendpoint')
-      gethArgs.push(`127.0.0.1:${sentryport.toString()}`)
+  } else if (isProxy) {
+    gethArgs.push('--proxy.proxy')
+    if (proxyport) {
+      gethArgs.push(`--proxy.internalendpoint=127.0.0.1:${proxyport.toString()}`)
     }
+    gethArgs.push(`--proxy.proxiedvalidatoraddress=${instance.proxiedValidatorAddress}`)
     gethArgs.push(`--nodekeyhex=${privateKey}`)
   }
 
@@ -354,6 +356,10 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     gethArgs.push(`--bootnodes=${bootnodeEnode}`)
   } else {
     gethArgs.push('--nodiscover')
+  }
+
+  if (isProxied && instance.proxies) {
+    gethArgs.push(`--proxy.proxyenodeurlpair=${instance.proxies[0]!};${instance.proxies[1]!}`)
   }
 
   const gethProcess = spawnWithLog(gethBinaryPath, gethArgs, `${datadir}/logs.txt`)
@@ -369,10 +375,6 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     } else {
       console.info(`geth:${instance.name}: jsonRPC port open ${waitForPort}`)
     }
-  }
-
-  if (isProxied) {
-    addSentryPeer(gethBinaryPath, instance)
   }
 
   return instance
@@ -480,13 +482,13 @@ export function getContext(gethConfig: GethTestConfig) {
   const validatorPrivateKeys = getPrivateKeysFor(AccountType.VALIDATOR, mnemonic, numValidators)
   const validators = getValidators(mnemonic, numValidators)
 
-  const sentryInstances = gethConfig.instances.filter((x: any) => x.isSentry)
-  const numSentries = sentryInstances.length
-  const sentryPrivateKeys = getPrivateKeysFor(AccountType.SENTRY, mnemonic, numSentries)
-  const sentryEnodes = sentryPrivateKeys.map((x: any, i: number) => [
-    sentryInstances[i].name,
-    getEnodeAddress(privateKeyToPublicKey(x), '127.0.0.1', sentryInstances[i].sentryport!),
-    getEnodeAddress(privateKeyToPublicKey(x), '127.0.0.1', sentryInstances[i].port),
+  const proxyInstances = gethConfig.instances.filter((x: any) => x.isProxy)
+  const numProxies = proxyInstances.length
+  const proxyPrivateKeys = getPrivateKeysFor(AccountType.PROXY, mnemonic, numProxies)
+  const proxyEnodes = proxyPrivateKeys.map((x: any, i: number) => [
+    proxyInstances[i].name,
+    getEnodeAddress(privateKeyToPublicKey(x), '127.0.0.1', proxyInstances[i].proxyport!),
+    getEnodeAddress(privateKeyToPublicKey(x), '127.0.0.1', proxyInstances[i].port),
   ])
 
   const argv = require('minimist')(process.argv.slice(2))
@@ -509,34 +511,52 @@ export function getContext(gethConfig: GethTestConfig) {
       bootnodeEnode = await startBootnode(bootnodeBinaryPath, mnemonic)
     }
     let validatorIndex = 0
-    let sentryIndex = 0
+    let proxyIndex = 0
     for (const instance of gethConfig.instances) {
-      // Non proxied validators and sentries should to the bootnode
-      if ((instance.validating && !instance.isProxied) || instance.isSentry) {
+      // Non proxied validators and proxies should connect to the bootnode
+      if ((instance.validating && !instance.isProxied) || instance.isProxy) {
         if (gethConfig.useBootnode) {
           instance.bootnodeEnode = bootnodeEnode
         }
-
-        // Proxied validators should connect to only the sentry
       } else if (instance.validating && instance.isProxied) {
-        const sentryEnode = sentryEnodes.filter((x: any, _: number) => x[0] === instance.sentry)
+        // Proxied validators should connect to only the proxy
+        // Find this proxied validator's proxy
+        const proxyEnode = proxyEnodes.filter((x: any, _: number) => x[0] === instance.proxy)
 
-        if (sentryEnode.length != 1) {
-          throw new Error('proxied validator must have exactly one sentry')
+        if (proxyEnode.length != 1) {
+          throw new Error('proxied validator must have exactly one proxy')
         }
 
-        instance.sentries = [sentryEnode[0][1]!, sentryEnode[0][2]!]
+        instance.proxies = [proxyEnode[0][1]!, proxyEnode[0][2]!]
       }
 
-      // Set the private key for the validator or sentry instance
+      // Set the private key for the validator or proxy instance
       if (instance.validating) {
         instance.privateKey = instance.privateKey || validatorPrivateKeys[validatorIndex]
         validatorIndex++
-      } else if (instance.isSentry) {
-        instance.privateKey = instance.privateKey || sentryPrivateKeys[sentryIndex]
-        sentryIndex++
+      } else if (instance.isProxy) {
+        instance.privateKey = instance.privateKey || proxyPrivateKeys[proxyIndex]
+        proxyIndex++
       }
+    }
 
+    // The proxies will need to know their proxied validator's address
+    for (const instance of gethConfig.instances) {
+      if (instance.isProxy) {
+        const proxiedValidator = gethConfig.instances.filter(
+          (x: GethInstanceConfig, _: number) => x.proxy == instance.name
+        )
+
+        if (proxiedValidator.length != 1) {
+          throw new Error('proxied validator must have exactly one proxy')
+        }
+
+        instance.proxiedValidatorAddress = privateKeyToAddress(proxiedValidator[0].privateKey!)
+      }
+    }
+
+    // Start all the instances
+    for (const instance of gethConfig.instances) {
       await initAndStartGeth(gethBinaryPath, instance)
     }
 

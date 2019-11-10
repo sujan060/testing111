@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { getHooks, sleep } from './utils'
 
-describe('sentry tests', function(this: any) {
+describe('proxy tests', function(this: any) {
   this.timeout(0)
 
   const gethConfig = {
@@ -14,16 +14,16 @@ describe('sentry tests', function(this: any) {
         port: 30303,
         rpcport: 8545,
         isProxied: true,
-        sentry: 'sentry0',
+        proxy: 'proxy0',
       },
       {
-        name: 'sentry0',
+        name: 'proxy0',
         validating: false,
         syncmode: 'full',
         port: 30304,
-        sentryport: 30305,
+        proxyport: 30305,
         rpcport: 8546,
-        isSentry: true,
+        isProxy: true,
       },
       {
         name: 'validator1',
@@ -32,16 +32,16 @@ describe('sentry tests', function(this: any) {
         port: 30306,
         rpcport: 8547,
         isProxied: true,
-        sentry: 'sentry1',
+        proxy: 'proxy1',
       },
       {
-        name: 'sentry1',
+        name: 'proxy1',
         validating: false,
         syncmode: 'full',
         port: 30307,
-        sentryport: 30308,
+        proxyport: 30308,
         rpcport: 8548,
-        isSentry: true,
+        isProxy: true,
       },
       { name: 'validator2', validating: true, syncmode: 'full', port: 30309, rpcport: 8549 },
       { name: 'validator3', validating: true, syncmode: 'full', port: 30310, rpcport: 8550 },
