@@ -130,18 +130,6 @@ yargs
           description: 'Name of network',
           demand: true,
         })
-        .option('goldTokenAddress', {
-          type: 'string',
-          description: 'Address for gold token contract',
-        })
-        .option('stableTokenAddress', {
-          type: 'string',
-          description: 'Address for stable token contract',
-        })
-        .option('escrowAddress', {
-          type: 'string',
-          description: 'Address for escrow contract',
-        })
         .option('expirarySeconds', {
           type: 'number',
           description: 'Seconds before the escrow expires',
@@ -174,9 +162,6 @@ yargs
         inviteDollarAmount: args.inviteDollarAmount,
         escrowDollarAmount: args.escrowDollarAmount,
         nodeUrl: args.nodeUrl,
-        goldTokenAddress: args.goldTokenAddress,
-        stableTokenAddress: args.stableTokenAddress,
-        escrowAddress: args.escrowAddress,
         minAttestations: args.minAttestations,
         expirarySeconds: args.expirarySeconds,
         twilioPhoneNumber: args.twilioPhoneNumber,
@@ -203,9 +188,6 @@ function setConfig(network: string, config: Partial<NetworkConfig & TwilioParams
     setIfPresent('node_url', config.nodeUrl),
     setIfPresent('faucet_gold_amount', config.faucetGoldAmount),
     setIfPresent('faucet_dollar_amount', config.faucetDollarAmount),
-    setIfPresent('gold_token_address', config.goldTokenAddress),
-    setIfPresent('stable_token_address', config.stableTokenAddress),
-    setIfPresent('escrow_address', config.escrowAddress),
     setIfPresent('invite_gold_amount', config.inviteGoldAmount),
     setIfPresent('invite_dollar_amount', config.inviteDollarAmount),
     setIfPresent('escrow_dollar_amount', config.escrowDollarAmount),

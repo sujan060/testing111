@@ -1,47 +1,23 @@
-import Web3 from 'web3'
-import getEscrowInstance from './contracts/Escrow'
-import getGoldTokenInstance from './contracts/GoldToken'
-import getStableTokenInstance from './contracts/StableToken'
-import { Escrow } from './contracts/types/Escrow'
-import { GoldToken } from './contracts/types/GoldToken'
-import { StableToken } from './contracts/types/StableToken'
-import { getAddress, sendTx } from './tx'
+import { ContractKit, newKit } from '@celo/contractkit'
 
 export class CeloAdapter {
-  public readonly defaultAddress: string
-  private readonly goldToken: GoldToken
-  private readonly stableToken: StableToken
-  private readonly escrow: Escrow
-  private readonly privateKey: string
+  readonly kit: ContractKit
 
-  constructor(
-    private readonly web3: Web3,
-    pk: string,
-    private readonly stableTokenAddress: string,
-    private readonly escrowAddress: string,
-    private readonly goldTokenAddress: string
-  ) {
-    // To add more logging:
-    // Uncomment when in need for debug
-    // injectDebugProvider(web3)
-
-    this.privateKey = this.web3.utils.isHexStrict(pk) ? pk : '0x' + pk
-    this.defaultAddress = getAddress(this.web3, this.privateKey)
-    this.goldToken = getGoldTokenInstance(this.web3, goldTokenAddress)
-    this.stableToken = getStableTokenInstance(this.web3, stableTokenAddress)
-    this.escrow = getEscrowInstance(this.web3, escrowAddress)
+  constructor(nodeUrl: string, pk: string) {
+    this.kit = newKit(nodeUrl)
+    const privateKey = this.kit.web3.utils.isHexStrict(pk) ? pk : '0x' + pk
+    this.kit.addAccount(privateKey)
+    this.kit.defaultAccount = this.kit.web3.eth.accounts.privateKeyToAccount(privateKey).address
   }
 
   async transferGold(to: string, amount: string) {
-    return sendTx(this.web3, this.goldToken.methods.transfer(to, amount), this.privateKey, {
-      to: this.goldTokenAddress,
-    })
+    const goldToken = await this.kit.contracts.getGoldToken()
+    return goldToken.transfer(to, amount).send()
   }
 
   async transferDollars(to: string, amount: string) {
-    return sendTx(this.web3, this.stableToken.methods.transfer(to, amount), this.privateKey, {
-      to: this.stableTokenAddress,
-    })
+    const stableToken = await this.kit.contracts.getStableToken()
+    return stableToken.transfer(to, amount).send()
   }
 
   async escrowDollars(
@@ -51,35 +27,44 @@ export class CeloAdapter {
     expirarySeconds: number,
     minAttestations: number
   ) {
-    // Wait to approve escrow transfer
-    const approveTx = await sendTx(
-      this.web3,
-      this.stableToken.methods.approve(this.escrowAddress, amount),
-      this.privateKey,
-      { to: this.stableTokenAddress }
-    )
-    await approveTx.waitReceipt()
-    return sendTx(
-      this.web3,
-      this.escrow.methods.transfer(
+    const stableToken = await this.kit.contracts.getStableToken()
+    const escrow = await this.kit.contracts.getEscrow()
+
+    await stableToken.approve(escrow.address, amount).sendAndWaitForReceipt()
+
+    return escrow
+      .transfer(
         phoneHash,
-        this.stableTokenAddress,
+        stableToken.address,
         amount,
         expirarySeconds,
         tempWallet,
         minAttestations
-      ),
-      this.privateKey,
-      {
-        to: this.escrowAddress,
-      }
-    )
+      )
+      .send()
   }
 
-  getDollarsBalance(accountAddress: string = this.defaultAddress) {
-    return this.stableToken.methods.balanceOf(accountAddress).call()
+  async getDollarsBalance(accountAddress: string = this.kit.defaultAccount) {
+    const stableToken = await this.kit.contracts.getStableToken()
+    return stableToken.balanceOf(accountAddress)
   }
-  getGoldBalance(accountAddress: string = this.defaultAddress) {
-    return this.web3.eth.getBalance(accountAddress)
+  async getGoldBalance(accountAddress: string = this.kit.defaultAccount) {
+    const goldToken = await this.kit.contracts.getGoldToken()
+    return goldToken.balanceOf(accountAddress)
+  }
+
+  /**
+   * Generates a temporary account and invite code.
+   */
+  generateInviteCode(): {
+    address: string
+    inviteCode: string
+  } {
+    const tempAccount = this.kit.web3.eth.accounts.create()
+    const address = tempAccount.address
+    const temporaryPrivateKey = tempAccount.privateKey
+    // Buffer.from doesn't expect a 0x for hex input
+    const inviteCode = Buffer.from(temporaryPrivateKey.substring(2), 'hex').toString('base64')
+    return { address, inviteCode }
   }
 }

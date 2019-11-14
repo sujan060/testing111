@@ -1,9 +1,9 @@
 import * as admin from 'firebase-admin'
 import * as rlp from 'rlp'
-import Web3 from 'web3'
 import { CeloAdapter } from './celo-adapter'
 import * as fbHelper from './database-helper'
-import { wait } from './utils'
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const serviceAccount = require('./serviceAccountKey.json')
 admin.initializeApp({
@@ -56,17 +56,10 @@ function fakeAction(pool: fbHelper.AccountPool) {
 
 // @ts-ignore
 async function web3Playground() {
-  const web3 = await new Web3('http://localhost:8545')
   const pk = 'b2f37985e95fb350f83040b4b7cdc5ea925a2a6417aab481358ff5c79bd7b6b7'
   const to = '0x35e48988157f5cf7fdcfe62805174ee385f7e5df'
   // Values for `alfajores`
-  const celo = new CeloAdapter(
-    web3,
-    pk,
-    '0x299E74bdCD90d4E10f7957EF074ceE32d7e9089a',
-    '0x202ec0cbd312425C266dd473754Ad1719948Bd35',
-    '0x4813BFD311E132ade22c70dFf7e5DB045d26D070'
-  )
+  const celo = new CeloAdapter('http://localhost:8545', pk)
 
   const printBalance = async (addr: string) => {
     console.log(`Account: ${addr}`)
@@ -76,7 +69,7 @@ async function web3Playground() {
   }
 
   console.log('Before')
-  await printBalance(celo.defaultAddress)
+  await printBalance(celo.kit.defaultAccount)
   await printBalance(to)
 
   // const tx = await celo.transferGold(to, '50000000000000')
@@ -88,7 +81,7 @@ async function web3Playground() {
   console.log('receipt', await tx2.waitReceipt())
 
   console.log('After')
-  await printBalance(celo.defaultAddress)
+  await printBalance(celo.kit.defaultAccount)
   await printBalance(to)
 }
 

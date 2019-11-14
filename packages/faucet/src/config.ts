@@ -8,9 +8,6 @@ export interface NetworkConfig {
   inviteGoldAmount: string
   inviteDollarAmount: string
   escrowDollarAmount: string
-  goldTokenAddress: string
-  stableTokenAddress: string
-  escrowAddress: string
   expirarySeconds: number
   minAttestations: number
   twilioPhoneNumber: string
@@ -44,9 +41,6 @@ export function getNetworkConfig(net: string): NetworkConfig {
     inviteGoldAmount: config[net].invite_gold_amount,
     inviteDollarAmount: config[net].invite_dollar_amount,
     escrowDollarAmount: config[net].escrow_dollar_amount,
-    goldTokenAddress: config[net].gold_token_address,
-    stableTokenAddress: config[net].stable_token_address,
-    escrowAddress: config[net].escrow_address,
     expirarySeconds: Number(config[net].expirary_seconds),
     minAttestations: Number(config[net].min_attestations),
     twilioPhoneNumber: config[net].twilio_phone_number,

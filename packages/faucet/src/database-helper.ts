@@ -1,11 +1,10 @@
 /* tslint:disable max-classes-per-file */
+import { getPhoneHash, isE164Number } from '@celo/utils/lib/phoneNumbers'
 import { database } from 'firebase-admin'
 import { DataSnapshot } from 'firebase-functions/lib/providers/database'
-import Web3 from 'web3'
 import { CeloAdapter } from './celo-adapter'
 import { NetworkConfig } from './config'
 import { ExecutionResult, logExecutionResult } from './metrics'
-import { generateInviteCode, getPhoneHash, isE164Number, wait } from './utils'
 
 export type Address = string
 export interface AccountRecord {
@@ -30,6 +29,8 @@ enum MobileOS {
   android = 'android',
   ios = 'ios',
 }
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export interface RequestRecord {
   beneficiary: Address
@@ -87,19 +88,8 @@ export async function processRequest(snap: DataSnapshot, pool: AccountPool, conf
 
 function buildHandleFaucet(request: RequestRecord, snap: DataSnapshot, config: NetworkConfig) {
   return async (account: AccountRecord) => {
-    const celo = new CeloAdapter(
-      new Web3(config.nodeUrl),
-      account.pk,
-      config.stableTokenAddress,
-      config.escrowAddress,
-      config.goldTokenAddress
-    )
-    const goldTx = await celo.transferGold(request.beneficiary, config.faucetGoldAmount)
-    const goldTxHash = await goldTx.getHash()
-    console.info(`req(${snap.key}): Gold Transaction Sent. txhash:${goldTxHash}`)
-    await snap.ref.update({ goldTxHash })
-    await goldTx.waitReceipt()
-
+    const celo = new CeloAdapter(config.nodeUrl, account.pk)
+    await sendGold(celo, request.beneficiary, config.faucetGoldAmount, snap)
     await sendDollars(celo, request.beneficiary, config.faucetDollarAmount, snap)
   }
 }
@@ -112,21 +102,11 @@ function buildHandleInvite(request: RequestRecord, snap: DataSnapshot, config: N
     if (!isE164Number(request.beneficiary)) {
       throw new Error('Must send to valid E164 Number.')
     }
-    const celo = new CeloAdapter(
-      new Web3(config.nodeUrl),
-      account.pk,
-      config.stableTokenAddress,
-      config.escrowAddress,
-      config.goldTokenAddress
-    )
-    const { address: tempAddress, inviteCode } = generateInviteCode()
+    const celo = new CeloAdapter(config.nodeUrl, account.pk)
 
-    const goldTx = await celo.transferGold(tempAddress, config.inviteGoldAmount)
-    const goldTxHash = await goldTx.getHash()
-    console.info(`req(${snap.key}): Gold Transaction Sent. txhash:${goldTxHash}`)
-    await snap.ref.update({ goldTxHash })
-    await goldTx.waitReceipt()
+    const { address: tempAddress, inviteCode } = celo.generateInviteCode()
 
+    await sendGold(celo, tempAddress, config.inviteGoldAmount, snap)
     const dollarTxHash = await sendDollars(celo, tempAddress, config.inviteDollarAmount, snap)
 
     const phoneHash = getPhoneHash(request.beneficiary)
@@ -162,6 +142,14 @@ async function sendDollars(
   await snap.ref.update({ dollarTxHash })
   await dollarTx.waitReceipt()
   return dollarTxHash
+}
+async function sendGold(celo: CeloAdapter, address: Address, amount: string, snap: DataSnapshot) {
+  const goldTx = await celo.transferGold(address, amount)
+  const goldTxHash = await goldTx.getHash()
+  console.info(`req(${snap.key}): Gold Transaction Sent. txhash:${goldTxHash}`)
+  await snap.ref.update({ goldTxHash })
+  await goldTx.waitReceipt()
+  return goldTxHash
 }
 
 function messageText(inviteCode: string, request: RequestRecord) {
