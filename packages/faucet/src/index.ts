@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
+import { AccountPool } from './account-pool'
 import { getNetworkConfig } from './config'
-import { AccountPool, processRequest } from './database-helper'
+import { processRequest } from './request-processor'
 
 const PROCESSOR_RUNTIME_OPTS: functions.RuntimeOptions = {
   // When changing this, check that actionTimeoutMS is less than this number

@@ -10,6 +10,11 @@ export class CeloAdapter {
     this.kit.defaultAccount = this.kit.web3.eth.accounts.privateKeyToAccount(privateKey).address
   }
 
+  async transferReserveGold(to: string, amount: string) {
+    const reserve = await this.kit.contracts.getReserve()
+    return reserve.transferGold(to, amount).send()
+  }
+
   async transferGold(to: string, amount: string) {
     const goldToken = await this.kit.contracts.getGoldToken()
     return goldToken.transfer(to, amount).send()

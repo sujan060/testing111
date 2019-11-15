@@ -1,9 +1,10 @@
 import * as admin from 'firebase-admin'
 import * as rlp from 'rlp'
+import { AccountPool } from './account-pool'
 import { CeloAdapter } from './celo-adapter'
-import * as fbHelper from './database-helper'
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const SECOND = 1000
 
 const serviceAccount = require('./serviceAccountKey.json')
 admin.initializeApp({
@@ -47,7 +48,7 @@ async function populatePool(pool: fbHelper.AccountPool) {
   })
 }
 // @ts-ignore
-function fakeAction(pool: fbHelper.AccountPool) {
+function fakeAction(pool: AccountPool) {
   return pool.doWithAccount(async (account) => {
     console.log('GOT Accounts', account)
     await wait(5000)
@@ -96,7 +97,7 @@ function convertToCeloRawTx(rawTransaction: string) {
 
 async function main() {
   // @ts-ignore
-  const pool = new fbHelper.AccountPool('integration', {
+  const pool = new SECOND.AccountPool('integration', {
     retryWaitMS: 1000,
     maxRetries: 2,
   })
