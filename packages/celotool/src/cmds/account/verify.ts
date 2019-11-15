@@ -5,7 +5,6 @@ import {
   ActionableAttestation,
   AttestationsWrapper,
 } from '@celo/contractkit/lib/wrappers/Attestations'
-import { concurrentMap } from '@celo/utils/lib/async'
 import { base64ToHex } from '@celo/utils/lib/attestations'
 import prompts from 'prompts'
 import { switchToClusterFromEnv } from 'src/lib/cluster'
@@ -55,13 +54,12 @@ async function verifyCmd(argv: VerifyArgv) {
   const attestations = await kit.contracts.getAttestations()
   const accounts = await kit.contracts.getAccounts()
   await printCurrentCompletedAttestations(attestations, argv.phone, account)
+
   let attestationsToComplete = await attestations.getActionableAttestations(argv.phone, account)
 
   // Request more attestations
   if (argv.num > attestationsToComplete.length) {
-    console.info(
-      `Requesting ${argv.num - attestationsToComplete.length} attestations from the smart contract`
-    )
+    console.info(`Requesting ${argv.num - attestationsToComplete.length} attestations`)
     await requestMoreAttestations(
       attestations,
       argv.phone,
@@ -80,9 +78,9 @@ async function verifyCmd(argv: VerifyArgv) {
   }
 
   attestationsToComplete = await attestations.getActionableAttestations(argv.phone, account)
-  // Find attestations we can verify
-  console.info(`Requesting ${attestationsToComplete.length} attestations from issuers`)
-  await requestAttestationsFromIssuers(attestationsToComplete, attestations, argv.phone, account)
+  // Find attestations we can reveal/verify
+  console.info(`Revealing ${attestationsToComplete.length} attestations`)
+  await revealAttestations(attestationsToComplete, attestations, argv.phone)
 
   await promptForCodeAndVerify(attestations, argv.phone, account)
 }
@@ -117,28 +115,18 @@ async function requestMoreAttestations(
   await attestations.selectIssuers(phoneNumber).then((txo) => txo.sendAndWaitForReceipt())
 }
 
-async function requestAttestationsFromIssuers(
+async function revealAttestations(
   attestationsToReveal: ActionableAttestation[],
   attestations: AttestationsWrapper,
-  phoneNumber: string,
-  account: string
+  phoneNumber: string
 ) {
-  return concurrentMap(5, attestationsToReveal, async (attestation) => {
-    try {
-      const response = await attestations.revealPhoneNumberToIssuer(
-        phoneNumber,
-        account,
-        attestation.issuer,
-        attestation.attestationServiceURL
-      )
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${await response.text()}`)
-      }
-    } catch (error) {
-      console.error(`Error requesting attestations from issuer ${attestation.issuer}`)
-      console.error(error)
-    }
-  })
+  return Promise.all(
+    attestationsToReveal.map(async (attestation) =>
+      attestations
+        .reveal(phoneNumber, attestation.issuer)
+        .then((txo) => txo.sendAndWaitForReceipt())
+    )
+  )
 }
 
 async function verifyCode(

@@ -11,10 +11,9 @@ import {
 } from '@celo/protocol/lib/test-utils'
 import { attestToIdentifier } from '@celo/utils'
 import { privateKeyToAddress } from '@celo/utils/lib/address'
-import { parseSolidityStringArray } from '@celo/utils/lib/parsing'
 import { getPhoneHash } from '@celo/utils/lib/phoneNumbers'
 import BigNumber from 'bignumber.js'
-import { range, uniq } from 'lodash'
+import { uniq } from 'lodash'
 import {
   AccountsContract,
   AccountsInstance,
@@ -341,7 +340,7 @@ contract('Attestations', (accounts: string[]) => {
         await attestations.request(phoneHash, attestationsRequested, mockStableToken.address)
       })
 
-      describe('when the issuers have not yet been selected', () => {
+      describe('when the issuers have not yet been revealed', () => {
         it('should revert requesting more attestations', async () => {
           await assertRevert(attestations.request(phoneHash, 1, mockStableToken.address))
         })
@@ -354,7 +353,7 @@ contract('Attestations', (accounts: string[]) => {
         })
       })
 
-      describe('when the issuers have been selected', async () => {
+      describe('when the issuers have been revealed', async () => {
         beforeEach(async () => {
           const requestBlockNumber = await web3.eth.getBlockNumber()
           await random.addTestRandomness(requestBlockNumber + selectIssuersWaitBlocks, '0x1')
@@ -415,40 +414,6 @@ contract('Attestations', (accounts: string[]) => {
           )
         })
 
-        it('should return the attestations in getCompletableAttestations', async () => {
-          await Promise.all(
-            accounts.map((account) =>
-              accountsInstance.setMetadataURL(`https://test.com/${account}`, { from: account })
-            )
-          )
-          await attestations.selectIssuers(phoneHash)
-          const [
-            attestationBlockNumbers,
-            attestationIssuers,
-            stringLengths,
-            stringData,
-          ] = await attestations.getCompletableAttestations(phoneHash, caller)
-
-          const urls = parseSolidityStringArray(
-            stringLengths.map((x) => x.toNumber()),
-            (stringData as unknown) as string
-          )
-
-          assert.lengthOf(attestationBlockNumbers, attestationsRequested)
-          await Promise.all(
-            range(0, attestationsRequested).map(async (i) => {
-              const [status, requestBlock] = await attestations.getAttestationState(
-                phoneHash,
-                caller,
-                attestationIssuers[i]!
-              )
-              assert.equal(status.toNumber(), 1)
-              assertEqualBN(requestBlock, attestationBlockNumbers[i])
-              assert.equal(`https://test.com/${attestationIssuers[i]}`, urls[i])
-            })
-          )
-        })
-
         it('should delete the unselected request', async () => {
           await attestations.selectIssuers(phoneHash)
           const [
@@ -476,22 +441,6 @@ contract('Attestations', (accounts: string[]) => {
             })
           })
         })
-
-        describe('after attestationExpiryBlocks', () => {
-          beforeEach(async () => {
-            await attestations.selectIssuers(phoneHash)
-            await advanceBlockNum(attestationExpiryBlocks, web3)
-          })
-
-          it('should no longer list the attestations in getCompletableAttestations', async () => {
-            const [
-              attestationBlockNumbers,
-              _attestationIssuers,
-            ] = await attestations.getCompletableAttestations(phoneHash, caller)
-
-            assert.lengthOf(attestationBlockNumbers, 0)
-          })
-        })
       })
 
       it('should revert when selecting too soon', async () => {
@@ -502,9 +451,42 @@ contract('Attestations', (accounts: string[]) => {
     })
 
     describe('without requesting attestations before', () => {
-      it('should revert when selecting issuers', async () => {
+      it('should revert when revealing issuers', async () => {
         await assertRevert(attestations.selectIssuers(phoneHash))
       })
+    })
+  })
+
+  describe('#reveal()', () => {
+    let issuer: string
+
+    beforeEach(async () => {
+      await requestAttestations()
+      issuer = (await attestations.getAttestationIssuers(phoneHash, caller))[0]
+    })
+
+    it('should allow a reveal', async () => {
+      // @ts-ignore
+      await attestations.reveal(phoneHash, phoneHash, issuer, false)
+    })
+
+    it('should revert if users reveal a non-existent attestation request', async () => {
+      // @ts-ignore
+      await assertRevert(attestations.reveal(phoneHash, phoneHash, await getNonIssuer(), false))
+    })
+
+    it('should revert if a user reveals a request that has been completed', async () => {
+      const [v, r, s] = await getVerificationCodeSignature(caller, issuer)
+      await attestations.complete(phoneHash, v, r, s)
+
+      // @ts-ignore
+      await assertRevert(attestations.reveal(phoneHash, phoneHash, issuer, false))
+    })
+
+    it('should revert if the request as expired', async () => {
+      await advanceBlockNum(attestationExpiryBlocks, web3)
+      // @ts-ignore
+      await assertRevert(attestations.reveal(phoneHash, phoneHash, issuer, false))
     })
   })
 
@@ -574,15 +556,6 @@ contract('Attestations', (accounts: string[]) => {
         issuer
       )
       assert.equal(pendingWithdrawals.toString(), attestationFee.toString())
-    })
-
-    it('should no longer list the attestation in getCompletableAttestationStats', async () => {
-      await attestations.complete(phoneHash, v, r, s)
-      const [
-        _attestationBlockNumbers,
-        attestationIssuers,
-      ] = await attestations.getCompletableAttestations(phoneHash, caller)
-      assert.equal(attestationIssuers.indexOf(issuer), -1)
     })
 
     it('should emit the AttestationCompleted event', async () => {

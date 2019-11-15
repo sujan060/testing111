@@ -61,9 +61,8 @@ describe('attestations tests', () => {
 
       const stats = await Attestations.getAttestationStat(phoneNumber, validatorAddress)
       assert.equal(stats.total, 2)
-
-      const issuers = await Attestations.getAttestationIssuers(phoneNumber, validatorAddress)
-      assert.lengthOf(issuers, 2)
+      const actionable = await Attestations.getActionableAttestations(phoneNumber, validatorAddress)
+      assert.lengthOf(actionable, 2)
     })
   })
 })

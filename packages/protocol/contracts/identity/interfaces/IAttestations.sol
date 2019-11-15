@@ -6,6 +6,7 @@ interface IAttestations {
   function setAttestationRequestFee(address, uint256) external;
   function request(bytes32, uint256, address) external;
   function selectIssuers(bytes32) external;
+  function reveal(bytes32, bytes calldata, address, bool) external;
   function complete(bytes32, uint8, bytes32, bytes32) external;
   function revoke(bytes32, uint256) external;
   function withdraw(address) external;
@@ -23,8 +24,5 @@ interface IAttestations {
     external
     view
     returns (uint8, uint32, address);
-  function getCompletableAttestations(bytes32, address)
-    external
-    view
-    returns (uint32[] memory, address[] memory, uint256[] memory, bytes memory);
+
 }
