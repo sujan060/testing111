@@ -69,32 +69,48 @@ export default class PhoneNumberInput extends React.Component<Props, State> {
     }
   }
 
+  async getPhoneNumberFromNativePicker() {
+    // linter doesn't allow following code without splitting this code in two lines
+    const number = await SmsRetriever.requestPhoneNumber()
+    return number
+  }
+
   async triggerPhoneNumberRequestAndroid() {
     try {
-      const phone = await SmsRetriever.requestPhoneNumber()
-      const phoneNumber = parsePhoneNumber(phone, '')
-
-      if (!phoneNumber) {
+      let phone
+      try {
+        phone = await this.getPhoneNumberFromNativePicker()
+      } catch (error) {
+        console.info(
+          `${TAG}/triggerPhoneNumberRequestAndroid`,
+          'Could not request phone. This might be thrown if the user dismissed the modal',
+          error
+        )
         return
       }
 
+      const phoneNumber = parsePhoneNumber(phone, '')
+      if (!phoneNumber) {
+        return
+      }
       this.setState({ phoneNumber: phoneNumber.displayNumber.toString() })
 
-      if (phoneNumber.countryCode) {
-        // TODO known issue, the country code is not enough to
-        // get a country, e.g. +1 could be USA or Canada
-        const displayName = this.state.countries.getCountryByPhoneCountryCode(
-          '+' + phoneNumber.countryCode.toString()
-        ).displayName
+      const regionCode = phoneNumber.regionCode
 
+      if (regionCode) {
+        const displayName = this.state.countries.getCountryByCode(regionCode).displayName
         this.onChangeCountryQuery(displayName)
       }
     } catch (error) {
-      console.error(`${TAG}/triggerPhoneNumberRequestAndroid`, 'Could not request phone', error)
+      console.info(`${TAG}/triggerPhoneNumberRequestAndroid`, 'Could not request phone', error)
     }
   }
 
   async triggerPhoneNumberRequest() {
+    if (this.state.phoneNumber || this.state.countryQuery) {
+      return
+    }
+
     try {
       if (Platform.OS === 'android') {
         await this.triggerPhoneNumberRequestAndroid()
@@ -102,7 +118,7 @@ export default class PhoneNumberInput extends React.Component<Props, State> {
         console.info(`${TAG}/triggerPhoneNumberRequest`, 'Not implemented in this platform')
       }
     } catch (error) {
-      console.error(`${TAG}/triggerPhoneNumberRequest`, 'Could not request phone', error)
+      console.info(`${TAG}/triggerPhoneNumberRequest`, 'Could not request phone', error)
     }
   }
 
