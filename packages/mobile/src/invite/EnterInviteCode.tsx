@@ -80,8 +80,9 @@ export class EnterInviteCode extends React.Component<Props, State> {
 
   async componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange)
-    await this.checkIfValidCodeInClipboard()
-    await this.checkForReferrerCode()
+    this.checkIfValidCodeInClipboard().catch()
+    this.checkForReferrerCode().catch()
+    setTimeout(this.checkIfValidCodeInClipboard, 1000)
   }
 
   componentWillUnmount() {
@@ -104,9 +105,7 @@ export class EnterInviteCode extends React.Component<Props, State> {
   }
 
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      await this.checkIfValidCodeInClipboard()
-    }
+    this.checkIfValidCodeInClipboard().catch()
     this.setState({ appState: nextAppState })
   }
 
