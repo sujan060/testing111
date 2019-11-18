@@ -2,9 +2,9 @@ import BigNumber from 'bignumber.js'
 import { values } from 'lodash'
 import sleep from 'sleep-promise'
 import Web3 from 'web3'
+import { TransactionReceipt } from 'web3-core'
+import { ContractSendMethod } from 'web3-eth-contract'
 import Contract from 'web3/eth/contract'
-import { TransactionObject } from 'web3/eth/types'
-import { TransactionReceipt } from 'web3/types'
 import * as ContractList from '../contracts/index'
 import { GasPriceMinimum as GasPriceMinimumType } from '../types/GasPriceMinimum'
 import { GoldToken } from '../types/GoldToken'
@@ -37,7 +37,7 @@ export function selectContractByAddress(contracts: Contract[], address: string) 
 export async function sendTransaction(
   tag: string,
   name: string,
-  tx: TransactionObject<any>,
+  tx: ContractSendMethod,
   txParams: any = {},
   onTransactionHash?: Function,
   onReceipt?: Function,
@@ -134,7 +134,7 @@ export function awaitConfirmation(txPromises: TxPromises) {
 
 // Couldn't figure out how to make it generic
 export type SendTransaction<T> = (
-  tx: TransactionObject<any>,
+  tx: ContractSendMethod,
   account: string,
   txId?: string
 ) => Promise<T>
@@ -245,8 +245,8 @@ const currentNonce = new Map<string, number>()
  * @param logger An object whose log level functions can be passed a function to pass
  *               a transaction ID
  */
-export async function sendTransactionAsync<T>(
-  tx: TransactionObject<T>,
+export async function sendTransactionAsync(
+  tx: ContractSendMethod,
   account: string,
   gasCurrencyContract: StableToken | GoldToken,
   logger: TxLogger = emptyTxLogger,
@@ -357,9 +357,9 @@ export async function sendTransactionAsync<T>(
  * @param logger An object whose log level functions can be passed a function to pass
  *               a transaction ID
  */
-export async function sendTransactionAsyncWithWeb3Signing<T>(
+export async function sendTransactionAsyncWithWeb3Signing(
   web3: Web3,
-  tx: TransactionObject<T>,
+  tx: ContractSendMethod,
   account: string,
   gasCurrencyContract: StableToken | GoldToken,
   logger: TxLogger = emptyTxLogger,
@@ -498,9 +498,11 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
       const signedTxn = await web3.eth.signTransaction(celoTx)
       recievedTxHash = web3.utils.sha3(signedTxn.raw)
       Logger.info(tag, `Locally calculated recievedTxHash is ${recievedTxHash}`)
-      logger(TransactionHashReceived(recievedTxHash))
-      if (resolvers.transactionHash) {
-        resolvers.transactionHash(recievedTxHash)
+      if (recievedTxHash !== null) {
+        logger(TransactionHashReceived(recievedTxHash))
+        if (resolvers.transactionHash) {
+          resolvers.transactionHash(recievedTxHash)
+        }
       }
     }
     // This code is required for forno setup.

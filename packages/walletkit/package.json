@@ -31,6 +31,8 @@
     "lodash": "^4.17.14",
     "sleep-promise": "^8.0.1",
     "web3": "1.2.4",
+    "web3-core": "^1.2.4",
+    "web3-eth-contract": "^1.2.4",
     "web3-utils": "1.2.4"
   },
   "devDependencies": {
@@ -38,7 +40,6 @@
     "@types/bip32": "^1.0.1",
     "@types/bip39": "^2.4.2",
     "@types/lodash": "^4.14.136",
-    "@types/web3": "^1.0.18",
     "bip32": "^1.0.2",
     "bip39": "^2.5.0",
     "chalk": "^2.4.2",

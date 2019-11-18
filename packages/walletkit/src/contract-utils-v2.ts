@@ -1,8 +1,9 @@
 import { CURRENCY_ENUM as Tokens } from '@celo/utils'
 import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
+import { TransactionReceipt } from 'web3-core'
+import { ContractSendMethod } from 'web3-eth-contract'
 import { TransactionObject } from 'web3/eth/types'
-import { TransactionReceipt } from 'web3/types'
 import { Exchange } from '../types/Exchange'
 import { GasPriceMinimum as GasPriceMinimumType } from '../types/GasPriceMinimum'
 import { GoldToken as GoldTokenType } from '../types/GoldToken'
@@ -113,7 +114,7 @@ export default class ContractUtils {
     }
 
     const stableTokenContract = await getStableTokenContract(web3)
-    const tx: TransactionObject<boolean> = await stableTokenContract.methods.transfer(
+    const tx: ContractSendMethod = await stableTokenContract.methods.transfer(
       toAccountNumber,
       amount.toString()
     )

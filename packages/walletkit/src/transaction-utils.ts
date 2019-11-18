@@ -7,12 +7,12 @@ import {
 } from '@0x/subproviders'
 import { BigNumber } from 'bignumber.js'
 import Web3 from 'web3'
-import { Tx } from 'web3/eth/types'
+import { TransactionConfig } from 'web3-core'
 import { Logger } from './logger'
 import { getAccountAddressFromPrivateKey } from './new-web3-utils'
 import { signTransaction } from './signing-utils'
 
-export interface CeloTransaction extends Tx {
+export interface CeloTransaction extends TransactionConfig {
   gasCurrency?: string
   gasFeeRecipient?: string
 }
