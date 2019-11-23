@@ -326,7 +326,7 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
   }
 
   if (validating) {
-    gethArgs.push('--mine', '--minerthreads=10', `--nodekeyhex=${privateKey}`)
+    gethArgs.push('--mine', '--minerthreads=10')
   }
 
   if (privateKey) {
@@ -467,11 +467,13 @@ export function getContext(gethConfig: GethTestConfig) {
     let validatorIndex = 0
     for (const instance of gethConfig.instances) {
       if (instance.validating) {
-        // Automatically connect validator nodes to eachother.
-        const otherValidators = validatorEnodes.filter(
-          (__: string, i: number) => i !== validatorIndex
-        )
-        instance.peers = (instance.peers || []).concat(otherValidators)
+        if (false) {
+          // Automatically connect validator nodes to eachother.
+          const otherValidators = validatorEnodes.filter(
+            (__: string, i: number) => i !== validatorIndex
+          )
+          instance.peers = (instance.peers || []).concat(otherValidators)
+        }
         instance.privateKey = instance.privateKey || validatorPrivateKeys[validatorIndex]
         validatorIndex++
       }
