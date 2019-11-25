@@ -63,8 +63,11 @@ const ADDRESS_SID = 'ADfc7d865c6bb0489ff21f29fa0b0531fa'
 
 export const handler = async function autoVerify(argv: AutoVerifyArgv) {
   try {
+    console.info('start')
     const kit = newKit(argv.celoProvider)
     const mnemonic = fetchEnv(envVar.MNEMONIC)
+
+    console.info('generate keys')
     const validator0Key = ensure0x(generatePrivateKey(mnemonic, AccountType.VALIDATOR, 0))
     const validator0Address = privateKeyToAddress(validator0Key)
     const clientKey = ensure0x(generatePrivateKey(mnemonic, AccountType.ATTESTATION, 0))
@@ -72,6 +75,7 @@ export const handler = async function autoVerify(argv: AutoVerifyArgv) {
     kit.addAccount(validator0Key)
     kit.addAccount(clientKey)
 
+    console.log('fund client')
     await fundClient(kit, validator0Address, clientAddress, argv.attestationMax)
 
     const twilioClient = twilio(
@@ -79,6 +83,7 @@ export const handler = async function autoVerify(argv: AutoVerifyArgv) {
       fetchEnv(envVar.TWILIO_ACCOUNT_AUTH_TOKEN)
     )
 
+    console.info('get contracts')
     const attestations = await kit.contracts.getAttestations()
     const stableToken = await kit.contracts.getStableToken()
     const gasPriceMinimum = await kit.contracts.getGasPriceMinimum()
