@@ -161,13 +161,18 @@ export CELO_VALIDATOR_BLS_PUBLIC_KEY=<YOUR-VALIDATOR-BLS-PUBLIC-KEY>
 export CELO_VALIDATOR_BLS_SIGNATURE=<YOUR-VALIDATOR-BLS-SIGNATURE>
 ```
 
-### Deploy the Validator and Proxy nodes
+### Deploy the Proxy node
 
-We initialize the Docker containers for the Validator and the Proxy, building from an image for the network and initializing Celo with the genesis block found inside the Docker image:
+On your Proxy node, you will first need to pull the docker image.
+
+```bash
+docker pull $CELO_IMAGE
+```
+
+Once that is complete, you will then need to initalize the Docker container by building and initializing Celo with the genesis block found inside the Docker image:
 
 ```bash
 docker run -v $PWD/proxy:/root/.celo $CELO_IMAGE init /celo/genesis.json
-docker run -v $PWD/validator:/root/.celo $CELO_IMAGE init /celo/genesis.json
 ```
 
 {% hint style="danger" %}
@@ -188,14 +193,35 @@ At this point we are ready to start up the Proxy:
 docker run --name celo-proxy -d --restart always -p 8555:8545 -p 8556:8546 -p 30313:30303 -p 30313:30303/udp -p 30503:30503 -p 30503:30503/udp -v $PWD/proxy:/root/.celo $CELO_IMAGE --verbosity 3 --networkid $NETWORK_ID --syncmode full --rpc --rpcaddr 0.0.0.0 --rpcapi eth,net,web3,debug,admin,personal,istanbul --etherbase=$CELO_PROXY_ADDRESS --proxy.proxy --proxy.proxiedvalidatoraddress $CELO_VALIDATOR_ADDRESS --proxy.internalendpoint :30503
 ```
 
-#### Running the Validator
+#### Retrieving the Proxy information
 
-Now that we have the Proxy up and running, we need to obtain its enode and IP address, so that we can connect the Validator to the proxy. You can do that running the following commands:
+On the proxy node, you will need to retrieve the Proxy enode URL.  The validator will need this information to be able to connect to the Proxy.
 
 ```bash
-export PROXY_ENODE=$(docker exec celo-proxy geth --exec "admin.nodeInfo['enode'].split('//')[1].split('@')[0]" attach | tr -d '"')
-export PROXY_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' celo-proxy)
+echo $(docker exec celo-proxy geth --exec "admin.nodeInfo['enode'].split('//')[1].split('@')[0]" attach | tr -d '"')
 ```
+
+The output of the command is the proxy enode URL.  Save this value somewhere, as it will be needed later.
+
+### Deploy the Validator node
+
+On your Proxy node, you will first need to pull the docker image.
+
+```bash
+docker pull $CELO_IMAGE
+```
+
+Once that is complete, you will then need to initalize the Docker container by building and initializing Celo with the genesis block found inside the Docker image:
+
+```bash
+docker run -v $PWD/validator:/root/.celo $CELO_IMAGE init /celo/genesis.json
+```
+
+{% hint style="danger" %}
+**Warning**: There is a known issue `(Fatal: Failed to read passphrase: liner: function not supported in this terminal” rather than just failing)` running geth inside Docker that happens eventually. So if that command fails, please try again, and if it continues to fail after several attempts, check this page [this page](https://forum.celo.org/t/setting-up-a-validator-faq/90).
+{% endhint %}
+
+#### Running the Validator
 
 Now we can start up the Validator node. In the below command remember to replace the **VALIDATOR_ADDRESS_PASSWORD** for the password you used when you created the `CELO_VALIDATOR_ADDRESS`:
 
