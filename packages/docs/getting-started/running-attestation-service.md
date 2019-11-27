@@ -18,8 +18,8 @@ The service needs the following environment variables:
 | Variable                   | Explanation                                                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | DATABASE_URL               | The URL under which your database is accessible, currently supported are `postgres://`, `mysql://` and `sqlite://` |  |
-| CELO_PROVIDER              | The URL under which a celo blockchain node is reachable and the attestation signer is unlocked                     |  |
-| ACCOUNT_ADDRESS            | The address of the validator account                                                                               |  |
+| CELO_PROVIDER              | The URL under which a Celo blockchain node is reachable and the attestation signer is unlocked                     |  |
+| ACCOUNT_ADDRESS            | The address of the Validator account                                                                               |  |
 | ATTESTATION_SIGNER_ADDRESS | The address of the attestation signer that was authorized by the validator account                                 |  |
 | APP_SIGNATURE              | The hash with which clients can auto-read SMS messages on android                                                  |  |
 | SMS_PROVIDERS              | A comma-separated list of providers you want to configure, we currently support `nexmo` & `twilio`                 |  |
