@@ -108,7 +108,8 @@ const validatorBalance = fetchEnvOrFallback(
   envVar.VALIDATOR_GENESIS_BALANCE,
   '10011000000000000000000'
 ) // 10,011 CG
-const faucetBalance = fetchEnvOrFallback(envVar.FAUCET_GENESIS_BALANCE, '10011000000000000000000') // 10,000 CG
+const faucetBalance = fetchEnvOrFallback(envVar.FAUCET_GENESIS_BALANCE, '10011000000000000000000') // 10,011 CG
+const oracleBalance = fetchEnvOrFallback(envVar.ORACLE_GENESIS_BALANCE, '100000000000000000000') // 100 CG
 
 export const getPrivateKeysFor = (accountType: AccountType, mnemonic: string, n: number) =>
   range(0, n).map((i) => generatePrivateKey(mnemonic, accountType, i))
@@ -136,6 +137,45 @@ export const getAddressFromEnv = (accountType: AccountType, n: number) => {
   return privateKeyToAddress(privateKey)
 }
 
+const getFaucetedAccountsFor = (
+  accountType: AccountType,
+  mnemonic: string,
+  n: number,
+  balance: string
+) => {
+  return getStrippedAddressesFor(accountType, mnemonic, n).map((address) => ({
+    address,
+    balance,
+  }))
+}
+
+export const getFaucetedAccounts = (mnemonic: string) => {
+  const numFaucetAccounts = parseInt(fetchEnvOrFallback(envVar.FAUCET_GENESIS_ACCOUNTS, '0'), 10)
+  const faucetAccounts = getFaucetedAccountsFor(
+    AccountType.FAUCET,
+    mnemonic,
+    numFaucetAccounts,
+    faucetBalance
+  )
+
+  const numLoadTestAccounts = parseInt(fetchEnvOrFallback(envVar.LOAD_TEST_CLIENTS, '0'), 10)
+  const loadTestAccounts = getFaucetedAccountsFor(
+    AccountType.LOAD_TESTING_ACCOUNT,
+    mnemonic,
+    numLoadTestAccounts,
+    faucetBalance
+  )
+
+  const oracleAccounts = getFaucetedAccountsFor(
+    AccountType.PRICE_ORACLE,
+    mnemonic,
+    1,
+    oracleBalance
+  )
+
+  return [...faucetAccounts, ...loadTestAccounts, ...oracleAccounts]
+}
+
 export const generateGenesisFromEnv = (enablePetersburg: boolean = true) => {
   const mnemonic = fetchEnv(envVar.MNEMONIC)
   const validatorEnv = fetchEnv(envVar.VALIDATORS)
@@ -158,41 +198,7 @@ export const generateGenesisFromEnv = (enablePetersburg: boolean = true) => {
   const lookbackwindow = parseInt(fetchEnvOrFallback(envVar.LOOKBACK, '12'), 10)
   const chainId = parseInt(fetchEnv(envVar.NETWORK_ID), 10)
 
-  // Allocate faucet accounts
-  const numFaucetAccounts = parseInt(fetchEnvOrFallback(envVar.FAUCET_GENESIS_ACCOUNTS, '0'), 10)
-  const initialAccounts = getStrippedAddressesFor(
-    AccountType.FAUCET,
-    mnemonic,
-    numFaucetAccounts
-  ).map((addr) => {
-    return {
-      address: addr,
-      balance: fetchEnvOrFallback(envVar.FAUCET_GENESIS_BALANCE, faucetBalance),
-    }
-  })
-
-  // Allocate load test accounts
-  const loadTestClients = parseInt(fetchEnvOrFallback(envVar.LOAD_TEST_CLIENTS, '0'), 10)
-  initialAccounts.concat(
-    getStrippedAddressesFor(AccountType.LOAD_TESTING_ACCOUNT, mnemonic, loadTestClients).map(
-      (addr) => {
-        return {
-          address: addr,
-          balance: fetchEnvOrFallback(envVar.LOAD_TEST_GENESIS_BALANCE, '1000000000000000000000'), // 1,000 CG
-        }
-      }
-    )
-  )
-
-  // Allocate oracle account(s)
-  initialAccounts.concat(
-    getStrippedAddressesFor(AccountType.PRICE_ORACLE, mnemonic, 1).map((addr) => {
-      return {
-        address: addr,
-        balance: fetchEnvOrFallback(envVar.ORACLE_GENESIS_BALANCE, '100000000000000000000'), // 100 CG
-      }
-    })
-  )
+  const initialAccounts = getFaucetedAccounts(mnemonic)
 
   return generateGenesis({
     validators,
