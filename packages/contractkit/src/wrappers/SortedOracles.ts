@@ -105,6 +105,21 @@ export class SortedOraclesWrapper extends BaseWrapper<SortedOracles> {
     valueToBigNumber
   )
 
+  // removeExpiredReports = proxySend(this.kit, this.contract.methods.removeExpiredReports)
+
+  async removeExpiredReports(
+    token: CeloToken,
+    numReports: number,
+    from: Address
+  ): Promise<CeloTransactionObject<void>> {
+    const tokenAddress = await this.kit.registry.addressFor(token)
+    return toTransactionObject(
+      this.kit,
+      this.contract.methods.removeExpiredReports(tokenAddress, numReports),
+      { from }
+    )
+  }
+
   /**
    * Updates an oracle value and the median.
    * @param token The address of the token for which the Celo Gold exchange rate is being reported.
