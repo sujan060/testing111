@@ -11,7 +11,11 @@ It's a self-soverign wallet that enables anyone to onboard onto the Celo network
 
 The app uses [React Native][react native] and a geth [light node][light node].
 
-## Setup
+## Running the App
+
+1.  If you haven't already, run `yarn && yarn build` from the monorepo root to install dependencies and then follow the intructions for the specifc platform.
+
+## Android Setup
 
 You need to install Java 8, the Android SDK, Yarn, and Node 8 to run the app.
 
@@ -25,17 +29,13 @@ This makes Gradle faster:
 export GRADLE_OPTS='-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx4096m -XX:+HeapDumpOnOutOfMemoryError"'
 ```
 
-## Running the App
-
-1.  If you haven't already, run `yarn` from the monorepo root to install dependencies.
-
-2.  Attach your device or start an emulated one.
+1.  Attach your device or start an emulated one.
 
     You can verify if your device is properly connecting to ADB with `adb devices`.
     More information about running the app on Android devices can be found on the
     [React Native docs][rn running on device].
 
-3.  Compile the project and start the bundler with
+2.  Compile the project and start the bundler with
 
     ```bash
     yarn run dev
@@ -45,6 +45,29 @@ export GRADLE_OPTS='-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gr
     terminal with a js server.
 
     **Note:** We've seen some issues running the metro bundler from iTerm
+
+## iOS Setup
+
+1.  Install Ruby, you can see how [here](https://www.ruby-lang.org/en/documentation/installation/).
+2.  Download Xcode 10.3 from the [Apple website](https://developer.apple.com/download/more/).
+3.  Pick the right xcode version to to use (in case you have more than one)
+    `$ sudo xcode-select -s /Applications/Xcode10.3.app/Contents/Developer`
+4.  Cd to the iOS folder and install the deps
+
+```
+$ cd packages/mobile/ios
+$ bundle install
+$ bundle exec pod install --repo-update
+```
+
+5.  Open Xcode
+    `$ open celo.xcworkspace`
+6.  Start the app
+
+```
+cd ..
+$ yarn dev:ios
+```
 
 ### Debugging
 
