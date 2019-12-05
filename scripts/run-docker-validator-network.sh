@@ -18,7 +18,7 @@ export DATABASE_URL=${9:-"sqlite://db/attestation.db"}
 export VALIDATOR_NAME=johndoe_$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
 export VALIDATOR_GROUP_NAME=tijuana_$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
 
-export CELOCLI="npx celocli"
+export CELOCLI="celocli"
 export NEXMO_KEY="xx"
 export NEXMO_SECRET="xx"
 export NEXMO_BLACKLIST=""
