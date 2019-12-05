@@ -4890,7 +4890,7 @@
   dependencies:
     bignumber.js "7.2.1"
 
-"@types/ethereumjs-util@^5.2.0":
+"@types/ethereumjs-util@5.2.0", "@types/ethereumjs-util@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@types/ethereumjs-util/-/ethereumjs-util-5.2.0.tgz#f49fe8114789ec0871721392c09318c3eb56671b"
   integrity sha512-qwQgQqXXTRv2h2AlJef+tMEszLFkCB9dWnrJYIdAwqjubERXEc/geB+S3apRw0yQyTVnsBf8r6BhlrE8vx+3WQ==
@@ -4989,7 +4989,7 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/google-libphonenumber@^7.4.17":
+"@types/google-libphonenumber@7.4.17", "@types/google-libphonenumber@^7.4.17":
   version "7.4.17"
   resolved "https://registry.yarnpkg.com/@types/google-libphonenumber/-/google-libphonenumber-7.4.17.tgz#26974213353cb459e403a5740812115a596cf170"
   integrity sha512-NdqFHXBGxwiGjJn7dTAjcCckgxE+LbE3jik6/SNiC9ZfG4BxHJM1X6m8w+/ZpSGRN5s0+4dIL+MaD/KSXywp1g==

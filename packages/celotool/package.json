@@ -32,6 +32,8 @@
     "yargs": "14.0.0"
   },
   "devDependencies": {
+    "@types/ethereumjs-util": "5.2.0",
+    "@types/google-libphonenumber": "7.4.17",
     "@types/dotenv": "^4.0.3",
     "@types/node-fetch": "^2.1.2",
     "@types/prompts": "^1.1.1",
