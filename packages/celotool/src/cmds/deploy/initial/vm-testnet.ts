@@ -22,7 +22,7 @@ export const builder = (argv: yargs.Argv) => {
 
 export const handler = async (argv: VmTestnetArgv) => {
   // deploy VM testnet with Terraform
-  await deploy(argv.celoEnv, !argv.skipSecretGeneration)
+  await deploy(argv.celoEnv, true, !argv.skipSecretGeneration)
 
   // set up Kubernetes cluster that will have prometheus to stackdriver statefulset
   const createdCluster = await createClusterIfNotExists()

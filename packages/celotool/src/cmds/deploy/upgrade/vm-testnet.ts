@@ -35,7 +35,9 @@ export const handler = async (argv: VmTestnetArgv) => {
     onDeployFailed = () => untaintTestnet(argv.celoEnv)
     await taintTestnet(argv.celoEnv)
   }
-  await deploy(argv.celoEnv, !argv.skipSecretGeneration, onDeployFailed)
+  // TODO change this to argv.reset later
+  const newGenesis = false
+  await deploy(argv.celoEnv, newGenesis, !argv.skipSecretGeneration, onDeployFailed)
 
   // upgrade prom to sd statefulset
   await upgradeHelmChart(argv.celoEnv)

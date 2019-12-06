@@ -44,6 +44,7 @@ export function planTerraformModule(
     modulePath,
     modulePath,
     `-out=${planPath}`,
+    '-target module.validator.module.proxy.random_id.full_node -target module.validator.module.proxy.google_compute_instance.full_node',
     getVarOptions(vars),
     destroy ? '-destroy' : ''
   )

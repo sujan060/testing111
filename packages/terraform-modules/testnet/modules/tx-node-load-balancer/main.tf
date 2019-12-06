@@ -200,6 +200,7 @@ resource "google_compute_instance" "external_ssl" {
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring.write",
       "https://www.googleapis.com/auth/ndev.clouddns.readwrite"
     ]
   }

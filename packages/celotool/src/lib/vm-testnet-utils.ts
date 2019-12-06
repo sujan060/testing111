@@ -20,6 +20,7 @@ import {
   untaintTerraformModuleResource,
 } from './terraform'
 import {
+  getGenesisBlockFromGoogleStorage,
   uploadEnvFileToGoogleStorage,
   uploadFileToGoogleStorage,
   uploadGenesisBlockToGoogleStorage,
@@ -81,26 +82,27 @@ const testnetNetworkEnvVars: TerraformVars = {
 
 // Resources that are tainted when upgrade-resetting
 const testnetResourcesToReset = [
-  // bootnode
-  'module.bootnode.google_compute_instance.bootnode',
-  // validators
-  'module.validator.google_compute_instance.validator.*',
-  'module.validator.google_compute_disk.validator.*',
+  // // bootnode
+  // 'module.bootnode.google_compute_instance.bootnode',
+  // // validators
+  // 'module.validator.google_compute_instance.validator.*',
+  // 'module.validator.google_compute_disk.validator.*',
   // validator proxies
   'module.validator.module.proxy.random_id.full_node.*',
   'module.validator.module.proxy.google_compute_instance.full_node.*',
-  // tx-nodes
-  'module.tx_node.random_id.full_node.*',
-  'module.tx_node.google_compute_instance.full_node.*',
-  // tx-node load balancer instance group
-  'module.tx_node_lb.random_id.external',
-  'module.tx_node_lb.google_compute_instance_group.external',
-  'module.tx_node_lb.random_id.internal',
-  'module.tx_node_lb.google_compute_instance_group.internal',
+  // // tx-nodes
+  // 'module.tx_node.random_id.full_node.*',
+  // 'module.tx_node.google_compute_instance.full_node.*',
+  // // tx-node load balancer instance group
+  // 'module.tx_node_lb.random_id.external',
+  // 'module.tx_node_lb.google_compute_instance_group.external',
+  // 'module.tx_node_lb.random_id.internal',
+  // 'module.tx_node_lb.google_compute_instance_group.internal',
 ]
 
 export async function deploy(
   celoEnv: string,
+  newGenesis: boolean,
   generateSecrets: boolean = true,
   onConfirmFailed?: () => Promise<void>
 ) {
@@ -112,7 +114,7 @@ export async function deploy(
     await deployModule(celoEnv, testnetNetworkTerraformModule, networkVars, onConfirmFailed)
   }
 
-  const testnetVars: TerraformVars = getTestnetVars(celoEnv)
+  const testnetVars: TerraformVars = await getTestnetVars(celoEnv, newGenesis)
   await deployModule(celoEnv, testnetTerraformModule, testnetVars, onConfirmFailed, async () => {
     if (generateSecrets) {
       console.info('Generating and uploading secrets env files to Google Storage...')
@@ -120,7 +122,9 @@ export async function deploy(
     }
   })
 
-  await uploadGenesisBlockToGoogleStorage(celoEnv)
+  if (newGenesis) {
+    await uploadGenesisBlockToGoogleStorage(celoEnv)
+  }
   await uploadStaticNodesToGoogleStorage(celoEnv)
   await uploadEnvFileToGoogleStorage(celoEnv)
 }
@@ -161,7 +165,7 @@ async function deployModule(
 }
 
 export async function destroy(celoEnv: string) {
-  const testnetVars: TerraformVars = getTestnetVars(celoEnv)
+  const testnetVars: TerraformVars = await getTestnetVars(celoEnv, false)
 
   await destroyModule(celoEnv, testnetTerraformModule, testnetVars)
 
@@ -201,7 +205,7 @@ async function destroyModule(celoEnv: string, terraformModule: string, vars: Ter
 // force the recreation of various resources upon the next deployment
 export async function taintTestnet(celoEnv: string) {
   console.info('Tainting testnet...')
-  const vars: TerraformVars = getTestnetVars(celoEnv)
+  const vars: TerraformVars = await getTestnetVars(celoEnv, false)
   const backendConfigVars: TerraformVars = getTerraformBackendConfigVars(
     celoEnv,
     testnetTerraformModule
@@ -216,7 +220,7 @@ export async function taintTestnet(celoEnv: string) {
 
 export async function untaintTestnet(celoEnv: string) {
   console.info('Untainting testnet...')
-  const vars: TerraformVars = getTestnetVars(celoEnv)
+  const vars: TerraformVars = await getTestnetVars(celoEnv, false)
   const backendConfigVars: TerraformVars = getTerraformBackendConfigVars(
     celoEnv,
     testnetTerraformModule
@@ -230,7 +234,7 @@ export async function untaintTestnet(celoEnv: string) {
 }
 
 export async function getTestnetOutputs(celoEnv: string) {
-  const vars: TerraformVars = getTestnetVars(celoEnv)
+  const vars: TerraformVars = await getTestnetVars(celoEnv, false)
   const backendConfigVars: TerraformVars = getTerraformBackendConfigVars(
     celoEnv,
     testnetTerraformModule
@@ -261,8 +265,15 @@ function getTerraformBackendConfigVars(celoEnv: string, terraformModule: string)
   }
 }
 
-function getTestnetVars(celoEnv: string) {
-  const genesisBuffer = Buffer.from(generateGenesisFromEnv())
+async function getTestnetVars(celoEnv: string, newGenesis: boolean = true) {
+  let genesis: string
+  if (newGenesis) {
+    genesis = generateGenesisFromEnv()
+  } else {
+    genesis = JSON.stringify(await getGenesisBlockFromGoogleStorage(celoEnv))
+  }
+
+  const genesisBuffer = Buffer.from(genesis)
   const domainName = fetchEnv(envVar.CLUSTER_DOMAIN_NAME)
   return {
     ...getEnvVarValues(testnetEnvVars),

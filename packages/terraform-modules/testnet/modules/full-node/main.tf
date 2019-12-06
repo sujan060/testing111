@@ -23,7 +23,7 @@ resource "google_compute_address" "full_node_internal" {
 
 resource "google_compute_instance" "full_node" {
   name         = "${local.name_prefix}-${count.index}-${random_id.full_node[count.index].hex}"
-  machine_type = "n1-standard-1"
+  machine_type = "n1-standard-2"
 
   count = var.node_count
 
@@ -74,7 +74,8 @@ resource "google_compute_instance" "full_node" {
     email = var.gcloud_vm_service_account_email
     scopes = [
       "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write"
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring.write"
     ]
   }
 
