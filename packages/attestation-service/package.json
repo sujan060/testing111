@@ -55,6 +55,8 @@
     "yargs": "13.3.0"
   },
   "devDependencies": {
+    "@types/ethereumjs-util": "5.2.0",
+    "@types/google-libphonenumber": "7.4.17",
     "@types/bunyan": "1.8.4",
     "@types/dotenv": "4.0.3",
     "@types/debug": "^4.1.5",

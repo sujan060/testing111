@@ -7,8 +7,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@celo/verification-pool-api": "^1.0.0",
-    "@types/ethereumjs-util": "5.2.0",
-    "@types/google-libphonenumber": "7.4.17",
     "@celo/utils": "^0.1.0",
     "@celo/walletkit": "^0.0.14",
     "@celo/contractkit": "0.2.5-dev",
