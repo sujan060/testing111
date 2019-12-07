@@ -13,6 +13,11 @@ fi
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 bash install-logging-agent.sh
 
+# ---- Set Up Monitoring ----
+
+curl -sSO https://dl.google.com/cloudagents/install-monitoring-agent.sh
+sudo bash install-monitoring-agent.sh
+
 # ---- Set Up Persistent Disk ----
 
 # gives a path similar to `/dev/sdb`

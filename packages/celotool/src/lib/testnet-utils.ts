@@ -5,7 +5,7 @@ import * as fs from 'fs'
 import fetch from 'node-fetch'
 import sleep from 'sleep-promise'
 import { getGenesisGoogleStorageUrl } from './endpoints'
-import { getEnvFile } from './env-utils'
+import { envVar, fetchEnv, getEnvFile } from './env-utils'
 import { ensureAuthenticatedGcloudAccount } from './gcloud_utils'
 import { generateGenesisFromEnv } from './generate_utils'
 import { getEnodesWithExternalIPAddresses } from './geth'
@@ -155,4 +155,9 @@ export async function uploadFileToGoogleStorage(
         role: storage.acl.READER_ROLE,
       })
   }
+}
+
+export function validatorIsProxied(validatorIndex: number) {
+  const proxyCount = parseInt(fetchEnv(envVar.PROXIED_VALIDATORS), 10)
+  return validatorIndex >= 0 && validatorIndex < proxyCount
 }

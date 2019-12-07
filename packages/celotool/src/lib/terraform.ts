@@ -30,7 +30,8 @@ export async function initTerraformModule(
 export function planTerraformModule(
   moduleName: string,
   vars: TerraformVars,
-  destroy: boolean = false
+  destroy: boolean = false,
+  targets: string[] = []
 ) {
   const planPath = getPlanPath(moduleName)
   // Terraform requires an out directory to exist
@@ -38,15 +39,18 @@ export function planTerraformModule(
   if (!fs.existsSync(planDir)) {
     fs.mkdirSync(planDir)
   }
+
+  const targetFlags = targets.map((target) => `-target ${target}`)
+
   const modulePath = getModulePath(moduleName)
   return buildAndExecTerraformCmd(
     'plan',
     modulePath,
     modulePath,
     `-out=${planPath}`,
-    '-target module.validator.module.proxy.random_id.full_node -target module.validator.module.proxy.google_compute_instance.full_node -target module.validator.google_compute_instance.validator',
     getVarOptions(vars),
-    destroy ? '-destroy' : ''
+    destroy ? '-destroy' : '',
+    ...targetFlags
   )
 }
 

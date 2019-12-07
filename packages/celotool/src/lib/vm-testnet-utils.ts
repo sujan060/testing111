@@ -25,6 +25,7 @@ import {
   uploadFileToGoogleStorage,
   uploadGenesisBlockToGoogleStorage,
   uploadStaticNodesToGoogleStorage,
+  validatorIsProxied,
 } from './testnet-utils'
 
 // Keys = gcloud project name
@@ -111,16 +112,23 @@ export async function deploy(
     console.info('First deploying the testnet VPC network')
 
     const networkVars: TerraformVars = getTestnetNetworkVars(celoEnv)
-    await deployModule(celoEnv, testnetNetworkTerraformModule, networkVars, onConfirmFailed)
+    await deployModule(celoEnv, testnetNetworkTerraformModule, networkVars, [], onConfirmFailed)
   }
 
   const testnetVars: TerraformVars = await getTestnetVars(celoEnv, newGenesis)
-  await deployModule(celoEnv, testnetTerraformModule, testnetVars, onConfirmFailed, async () => {
-    if (generateSecrets) {
-      console.info('Generating and uploading secrets env files to Google Storage...')
-      await generateAndUploadSecrets(celoEnv)
+  await deployModule(
+    celoEnv,
+    testnetTerraformModule,
+    testnetVars,
+    [],
+    onConfirmFailed,
+    async () => {
+      if (generateSecrets) {
+        console.info('Generating and uploading secrets env files to Google Storage...')
+        await generateAndUploadSecrets(celoEnv)
+      }
     }
-  })
+  )
 
   if (newGenesis) {
     await uploadGenesisBlockToGoogleStorage(celoEnv)
@@ -133,6 +141,7 @@ async function deployModule(
   celoEnv: string,
   terraformModule: string,
   vars: TerraformVars,
+  targets: string[] = [],
   onConfirmFailed?: () => Promise<void>,
   onConfirmSuccess?: () => Promise<void>
 ) {
@@ -150,7 +159,7 @@ async function deployModule(
   await initTerraformModule(terraformModule, vars, backendConfigVars)
 
   console.info('Planning...')
-  await planTerraformModule(terraformModule, vars)
+  await planTerraformModule(terraformModule, vars, false, targets)
 
   // await showTerraformModulePlan(terraformModule)
 
@@ -212,10 +221,7 @@ export async function taintTestnet(celoEnv: string) {
   )
   await initTerraformModule(testnetTerraformModule, vars, backendConfigVars)
 
-  for (const resource of testnetResourcesToReset) {
-    console.info(`Tainting ${resource}`)
-    await taintTerraformModuleResource(testnetTerraformModule, resource)
-  }
+  await taintResources(testnetResourcesToReset)
 }
 
 export async function untaintTestnet(celoEnv: string) {
@@ -231,6 +237,36 @@ export async function untaintTestnet(celoEnv: string) {
     console.info(`Untainting ${resource}`)
     await untaintTerraformModuleResource(testnetTerraformModule, resource)
   }
+}
+
+export async function taintResources(resources: string[]) {
+  for (const resource of resources) {
+    console.info(`Tainting ${resource}`)
+    await taintTerraformModuleResource(testnetTerraformModule, resource)
+  }
+}
+
+export async function upgradeValidator(celoEnv: string, index: number) {
+  // we only want to target resources relevant to our specific validator
+  const targetedResources = [`module.validator.google_compute_instance.validator[${index}]`]
+
+  // if the validator is proxied, we also want to upgrade the proxy
+  if (validatorIsProxied(index)) {
+    console.info('This validator is proxied, first tainting its proxy')
+
+    const proxyRandomIdResource = `module.validator.module.proxy.random_id.full_node[${index}]`
+    const proxyInstanceResource = `module.validator.module.proxy.google_compute_instance.full_node[${index}]`
+
+    await taintResources([proxyRandomIdResource, proxyInstanceResource])
+
+    // also add the proxy resources as targets
+    targetedResources.push(proxyRandomIdResource)
+    targetedResources.push(proxyInstanceResource)
+  }
+
+  console.info('Deploying...')
+  const testnetVars: TerraformVars = await getTestnetVars(celoEnv, false)
+  await deployModule(celoEnv, testnetTerraformModule, testnetVars, targetedResources)
 }
 
 export async function getTestnetOutputs(celoEnv: string) {
