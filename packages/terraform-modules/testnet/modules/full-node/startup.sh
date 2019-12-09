@@ -115,7 +115,6 @@ docker run \
       --consoleoutput=stdout \
       --verbosity=${geth_verbosity} \
       --ethstats=${node_name}@${ethstats_host} \
-      --nat=extip:${ip_address} \
       --metrics \
       $IN_MEMORY_DISCOVERY_TABLE_FLAG \
       $ADDITIONAL_GETH_FLAGS"
