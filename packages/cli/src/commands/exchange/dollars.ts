@@ -1,4 +1,5 @@
 import { flags } from '@oclif/command'
+import BigNumber from 'bignumber.js'
 import { BaseCommand } from '../../base'
 import { displaySendTx } from '../../utils/cli'
 import { Flags } from '../../utils/command'
@@ -12,11 +13,11 @@ export default class ExchangeDollars extends BaseCommand {
       required: true,
       description: 'The address with Celo Dollars to exchange',
     }),
-    value: Flags.wei({
+    value: Flags.address({
       required: true,
       description: 'The value of Celo Dollars to exchange for Celo Gold',
     }),
-    for: Flags.wei({
+    for: Flags.address({
       required: true,
       description: 'The minimum value of Celo Gold to receive in return',
     }),
@@ -31,8 +32,8 @@ export default class ExchangeDollars extends BaseCommand {
 
   async run() {
     const res = this.parse(ExchangeDollars)
-    const sellAmount = res.flags.value
-    const minBuyAmount = res.flags.for
+    const sellAmount = new BigNumber(res.flags.value)
+    const minBuyAmount = new BigNumber(res.flags.for)
 
     this.kit.defaultAccount = res.flags.from
     const stableToken = await this.kit.contracts.getStableToken()
