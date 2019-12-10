@@ -14,6 +14,7 @@ import {
   privateKeyToPublicKey,
   Validator,
 } from '../lib/generate_utils'
+import { getEnodeAddress } from '../lib/geth'
 import { ensure0x } from '../lib/utils'
 
 export interface GethInstanceConfig {
@@ -27,7 +28,7 @@ export interface GethInstanceConfig {
   lightserv?: boolean
   privateKey?: string
   etherbase?: string
-  peers?: string[]
+  peers?: number[]
   proxies?: string[2][]
   pid?: number
   isProxied?: boolean
@@ -641,7 +642,6 @@ export function getContext(gethConfig: GethTestConfig) {
         return startGeth(gethBinaryPath, instance)
       })
     )
-    await connectValidatorPeers(gethConfig)
   }
 
   const after = () => killGeth()
