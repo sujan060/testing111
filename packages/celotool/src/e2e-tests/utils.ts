@@ -281,20 +281,6 @@ export async function addProxyPeer(gethBinaryPath: string, instance: GethInstanc
   }
 }
 
-async function isPortOpen(host: string, port: number) {
-  return (await execCmd('nc', ['-z', host, port.toString()], { silent: true })) === 0
-}
-
-async function waitForPortOpen(host: string, port: number, seconds: number) {
-  const deadline = Date.now() + seconds * 1000
-  do {
-    if (await isPortOpen(host, port)) {
-      return true
-    }
-  } while (Date.now() < deadline)
-  return false
-}
-
 export function sleep(seconds: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, seconds * 1000))
 }
