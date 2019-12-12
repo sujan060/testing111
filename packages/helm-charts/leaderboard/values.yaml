@@ -5,11 +5,11 @@ leaderboard:
   schedule: "*/5 * * * *"
   image:
     repository: us.gcr.io/celo-testnet/celo-monorepo
-    tag: leaderboard-2708d6459b6efe2ab3ec04084d9c3819e202699f
+    tag: leaderboard-a3ebba7e51f45b293a40b59017a7fe6dcca14801
   database: blockscout
   web3: https://baklava-forno.celo-testnet.org/
-  sheet: 
+  sheet:
   db:
     username:
     password:
-    connection_name: 
+    connection_name:
