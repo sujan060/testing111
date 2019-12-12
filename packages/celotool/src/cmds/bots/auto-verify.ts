@@ -184,6 +184,7 @@ export const handler = async function autoVerify(argv: AutoVerifyArgv) {
     }
 
     logger.info({ ...stat }, 'Completed attestations for phone number')
+    kit.stop()
     process.exit(0)
   } catch (error) {
     logger.error({ err: error })

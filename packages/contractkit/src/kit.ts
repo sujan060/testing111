@@ -176,6 +176,13 @@ export class ContractKit {
     return this.web3.eth.isSyncing()
   }
 
+  stop() {
+    if (this.web3.currentProvider.hasOwnProperty('stop')) {
+      // @ts-ignore
+      this.web3.currentProvider.stop()
+    }
+  }
+
   /**
    * Send a transaction to celo-blockchain.
    *

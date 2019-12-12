@@ -124,6 +124,8 @@ export const handler = async (argv: FaucetArgv) => {
         await execCmd(`open ${blockscoutUrl}/address/${address}`)
       }
     }
+
+    kit.stop()
   }
 
   try {

@@ -47,6 +47,8 @@ export const handler = async (argv: LookupArgv) => {
         } completed attestations out of ${attestationsStats.total} total`
       )
     })
+
+    kit.stop()
   }
   try {
     await portForwardAnd(argv.celoEnv, cb)

@@ -67,9 +67,12 @@ export async function registerMetadata(testnet: string, privateKey: string, inde
   kit.defaultAccount = address
 
   const accounts = await kit.contracts.getAccounts()
-  return accounts
+  await accounts
     .setMetadataURL(metadataURLForCLabsValidator(testnet, address))
     .sendAndWaitForReceipt()
+
+  kit.stop()
+  return
 }
 
 export const handler = async (argv: InitialArgv) => {
