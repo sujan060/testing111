@@ -376,6 +376,7 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
 
   if (isProxied && instance.proxies) {
     gethArgs.push(`--proxy.proxyenodeurlpair=${instance.proxies[0]!};${instance.proxies[1]!}`)
+    gethArgs.push('--proxy.override-announced-ip-check')
   }
 
   if (privateKey) {
