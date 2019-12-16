@@ -390,7 +390,7 @@ export class SendAmount extends React.Component<Props, State> {
             />
           </View>
           <AmountInput
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             title={localCurrencyCode ? localCurrencyCode : CURRENCIES[CURRENCY_ENUM.DOLLAR].symbol}
             placeholder={t('amount')}
             labelStyle={style.amountLabel as TextStyle}
