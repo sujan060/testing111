@@ -12632,10 +12632,10 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.4.tgz#014ee8f8f669c5c58023da64b8179c083a28c46c"
   integrity sha512-ZIzRpLJrOj7jjP2miAtgqIfmzbxa4ZOr5jJc601zklsfEx9oTzmmj2nVpIPRpNlRTIh8lc1kyViIY7BWSGNmKw==
 
-detox@^14.5.0:
-  version "14.5.0"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-14.5.0.tgz#cc96b41a2b76a029ef26be861fb04f69fe70c965"
-  integrity sha512-6LH/Aw/0pnf5llCY5rZICxVK1uoAmV+OZzGPQogpE3ZqxPkViFkg/SHsQqOn1M1Iswia7SzfSgu2KfKMNFXvRA==
+detox@^15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-15.0.0.tgz#1b4a4133d2de1a9ac6918c061306cc348090b580"
+  integrity sha512-mnF+3FoTP0ruqmYSJOEWQ5mmDYp3igD/CytBnhOupYHzTrzgIKl7F5+qnIg6SXIA+ANqgfQvy6bAiXI/26CSrQ==
   dependencies:
     "@babel/core" "^7.4.5"
     bunyan "^1.8.12"

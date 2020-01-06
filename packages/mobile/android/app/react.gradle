@@ -141,7 +141,7 @@ afterEvaluate {
                     def hermesFlags;
                     def hbcTempFile = file("${jsBundleFile}.hbc")
                     exec {
-                        if (!targetName.toLowerCase().contains("debug")) {
+                        if (!(targetName.toLowerCase().contains("debug") || targetName.toLowerCase().contains("test"))) {
                             // Can't use ?: since that will also substitute valid empty lists
                             hermesFlags = config.hermesFlagsRelease
                             if (hermesFlags == null) hermesFlags = ["-O", "-output-source-map"]
@@ -291,7 +291,7 @@ afterEvaluate {
                     }
                 } else {
                     // For JSC, delete all the libhermes* files
-                    include "**/libhermes*.so"
+                    // include "**/libhermes*.so"
                 }
             }.visit { details ->
                 def targetVariant = ".*/transforms/[^/]*/${targetPath}/.*"

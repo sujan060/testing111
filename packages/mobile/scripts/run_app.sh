@@ -45,13 +45,8 @@ export $(grep -v '^#' $ENV_FILENAME | xargs)
 
 if [ -z "$NETWORK" ]; then
   echo "No network set."
-  read -p "Use $DEFAULT_TESTNET network set in .env file (y/n)? "
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    NETWORK=$DEFAULT_TESTNET
-  else 
-    echo "No network chosen. Exiting."
-    exit 1
-  fi
+  echo "Using $DEFAULT_TESTNET network set in .env file"
+  NETWORK=$DEFAULT_TESTNET
 fi
 
 # Set DEFAULT_TESTNET in .env file

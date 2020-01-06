@@ -8,12 +8,12 @@ reference:
   android_config: &android_config
     working_directory: *workspace
     macos:
-      xcode: "10.2.1"
+      xcode: '10.2.1'
     shell: /bin/bash --login -eo pipefail
     environment:
       TERM: dumb
-      _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true"
+      _JAVA_OPTIONS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap'
+      GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true'
 
 defaults: &defaults
   working_directory: ~/app
@@ -21,15 +21,15 @@ defaults: &defaults
     - image: celohq/node10-gcloud
   environment:
     # To avoid ENOMEM problem when running node
-    NODE_OPTIONS: "--max-old-space-size=4096"
+    NODE_OPTIONS: '--max-old-space-size=4096'
 
 android-defaults: &android-defaults
   <<: *defaults
   docker:
     - image: circleci/android:api-28-node
   environment:
-    _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true"
+    _JAVA_OPTIONS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap'
+    GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true'
 
 e2e-defaults: &e2e-defaults
   <<: *defaults
@@ -40,8 +40,8 @@ e2e-defaults: &e2e-defaults
 
 general:
   artifacts:
-    - "mobile/coverage"
-    - "protocol/coverage"
+    - 'mobile/coverage'
+    - 'protocol/coverage'
 
 jobs:
   install_dependencies:
@@ -60,7 +60,7 @@ jobs:
       - save_cache:
           key: source-v1-{{ .Branch }}-{{ .Revision }}
           paths:
-            - ".git"
+            - '.git'
 
       - run:
           name: Verify setup for incremental testing
@@ -223,19 +223,15 @@ jobs:
       - run:
           name: Make sure there's only one adb # This is probably a brew bug
           command: cp /usr/local/share/android-sdk/platform-tools/adb /usr/local/bin/adb
-      - run:
-          name: Start emulator
-          command: cd ~/src/packages/mobile && bash ./scripts/start_emulator.sh
-          background: true
-      - run:
-          name: Start metro
-          command: cd ~/src/packages/mobile && yarn start
-          background: true
       - run: cp node_modules/.bin/jest packages/mobile/node_modules/.bin/ # for some reason jest is just not there
       # TODO - run: lock device
       - run:
           name: Build end-to-end test
           command: cd ~/src/packages/mobile && yarn test:build-e2e
+      - run:
+          name: Start emulator
+          command: cd ~/src/packages/mobile && bash ./scripts/start_emulator.sh
+          background: true
       - run:
           name: Sleep until Device connects
           command: cd ~/src/packages/mobile && bash ./scripts/wait_for_emulator_to_connect.sh
@@ -246,7 +242,7 @@ jobs:
           background: true
       - run:
           name: Run yarn dev
-          command: cd ~/src/packages/mobile && ENVFILE=".env.test" yarn dev
+          command: cd ~/src/packages/mobile && ENVFILE=".env.test" yarn dev:android
       - run:
           name: Restart adb
           command: adb kill-server && adb start-server
@@ -716,7 +712,7 @@ workflows:
       - schedule:
           # 7 PM in UTC = noon in PDT.
           # Best for test to fail during SF afternoon, so that, someone can fix it during the day time.
-          cron: "0 19 * * *"
+          cron: '0 19 * * *'
           filters:
             branches:
               only:
@@ -732,7 +728,7 @@ workflows:
       - schedule:
           # 1 PM in UTC = 6 AM in PDT.
           # Best for this slow test (~3 hours) to run during SF early morning.
-          cron: "0 13 * * *"
+          cron: '0 13 * * *'
           filters:
             branches:
               only:
