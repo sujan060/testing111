@@ -2674,10 +2674,10 @@
     source-map-support "0.5.12"
     yargs "13.2.4"
 
-"@celo/react-native-fast-crypto@^1.8.2":
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/@celo/react-native-fast-crypto/-/react-native-fast-crypto-1.8.2.tgz#7563e73a47c9ce22407e0ceb4d6406078872795f"
-  integrity sha512-yb8TNnfVU6dWEWc2x8oNyF4mIzerXcS/Gv6ETRi5lM8bz1RyJUrX87mxTPhDJp0vdwtX0bnXRBjycgpPEPSPAA==
+"@celo/react-native-fast-crypto@^1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@celo/react-native-fast-crypto/-/react-native-fast-crypto-1.8.3.tgz#fb9bca7bc1784716297fb282e34002652afd56bc"
+  integrity sha512-gfu7NEc0gW++Ynao5PFvQxv/qXtu9MNXpfS7iXAbcmF64i0AaMNJX6du6Mu2LxwaILKyzMoiHH6OvJ1GvsLUYQ==
   dependencies:
     buffer "^5.0.8"
     rfc4648 "^1.0.0"
