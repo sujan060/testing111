@@ -39,9 +39,11 @@ export enum envVar {
   ETHSTATS_DOCKER_IMAGE_TAG = 'ETHSTATS_DOCKER_IMAGE_TAG',
   ETHSTATS_TRUSTED_ADDRESSES = 'ETHSTATS_TRUSTED_ADDRESSES',
   ETHSTATS_BANNED_ADDRESSES = 'ETHSTATS_BANNED_ADDRESSES',
+  ETHSTATS_RESERVED_ADDRESSES = 'ETHSTATS_RESERVED_ADDRESSES',
   FAUCET_GENESIS_ACCOUNTS = 'FAUCET_GENESIS_ACCOUNTS',
   FAUCET_GENESIS_BALANCE = 'FAUCET_GENESIS_BALANCE',
   ORACLE_GENESIS_BALANCE = 'ORACLE_GENESIS_BALANCE',
+  GENESIS_ACCOUNTS = 'GENESIS_ACCOUNTS',
   GETH_ACCOUNT_SECRET = 'GETH_ACCOUNT_SECRET',
   GETH_BOOTNODE_DOCKER_IMAGE_REPOSITORY = 'GETH_BOOTNODE_DOCKER_IMAGE_REPOSITORY',
   GETH_BOOTNODE_DOCKER_IMAGE_TAG = 'GETH_BOOTNODE_DOCKER_IMAGE_TAG',
@@ -175,9 +177,7 @@ function celoEnvMiddleware(argv: CeloEnvArgv) {
 export async function doCheckOrPromptIfStagingOrProduction() {
   if (process.env.CELOTOOL_CONFIRMED !== 'true' && isProduction()) {
     await confirmAction(
-      `You are about to apply a possibly irreversible action on a production env: ${
-        process.env.CELOTOOL_CELOENV
-      }. Are you sure?`
+      `You are about to apply a possibly irreversible action on a production env: ${process.env.CELOTOOL_CELOENV}. Are you sure?`
     )
     process.env.CELOTOOL_CONFIRMED = 'true'
   }
@@ -221,6 +221,13 @@ export function addCeloEnvMiddleware(argv: yargs.Argv) {
 
 export function isVmBased() {
   return fetchEnv(envVar.VM_BASED) === 'true'
+}
+
+export function failIfNotVmBased() {
+  if (!isVmBased()) {
+    console.error('The celo env is not intended for a VM-based testnet, aborting')
+    process.exit(1)
+  }
 }
 
 export function failIfVmBased() {
