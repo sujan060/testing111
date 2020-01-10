@@ -262,6 +262,10 @@ module.exports = async (_deployer: any, networkName: string) => {
   })
 
   for (const [idx, group] of groups.entries()) {
+    if (idx <= 1) {
+      console.info(`Idx is ${idx}, skipping`)
+    }
+
     console.info(
       `  Registering validator group: ${group.name} with: ${group.lockedGold} CG locked...`
     )
@@ -318,7 +322,9 @@ module.exports = async (_deployer: any, networkName: string) => {
     }
 
     // Determine the lesser and greater group addresses after voting.
-    const sortedGroups = groups.slice(0, idx + 1)
+    let sortedGroups = groups.slice(0, idx + 1)
+    // delete the group at index 1
+    sortedGroups.splice(1, 1)
     sortedGroups.sort((a, b) => a.voteAmount.comparedTo(b.voteAmount))
     const groupSortedIndex = sortedGroups.indexOf(group)
     const lesser =
