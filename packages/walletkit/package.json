@@ -43,7 +43,7 @@
     "bip32": "^1.0.2",
     "bip39": "^2.5.0",
     "chalk": "^2.4.2",
-    "typechain": "git+https://github.com/celo-org/TypeChain.git#832e628"
+    "typechain": "^1.0.3"
   },
   "files": [
     "index.ts",
