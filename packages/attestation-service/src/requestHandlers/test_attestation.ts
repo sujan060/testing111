@@ -1,7 +1,8 @@
 import { AttestationServiceTestRequest } from '@celo/utils/lib/io'
-import { verifySignature } from '@celo/utils/lib/signatureUtils'
+import { parseSignature } from '@celo/utils/lib/signatureUtils'
 import express from 'express'
 import { getAccountAddress } from '../env'
+import { rootLogger } from '../logger'
 import { ErrorMessages, respondWithError } from '../request'
 import { smsProviderFor } from '../sms'
 export { AttestationServiceTestRequestType } from '@celo/utils/lib/io'
@@ -11,11 +12,19 @@ export async function handleTestAttestationRequest(
   res: express.Response,
   testRequest: AttestationServiceTestRequest
 ) {
-  const isValid = verifySignature(
-    testRequest.phoneNumber + testRequest.message,
-    testRequest.signature,
-    getAccountAddress()
-  )
+  let isValid = false
+
+  try {
+    rootLogger.info({ testRequest, accountAddress: getAccountAddress() })
+    parseSignature(
+      testRequest.phoneNumber + testRequest.message,
+      testRequest.signature,
+      getAccountAddress()
+    )
+    isValid = true
+  } catch (error) {
+    rootLogger.error({ err: error })
+  }
 
   if (!isValid) {
     respondWithError(res, 422, ErrorMessages.INVALID_SIGNATURE)
