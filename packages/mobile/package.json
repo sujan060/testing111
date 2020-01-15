@@ -40,7 +40,7 @@
     ]
   },
   "dependencies": {
-    "@celo/client": "0.0.224",
+    "@celo/client": "0.0.247",
     "@celo/contractkit": "0.2.8-dev",
     "@celo/react-components": "1.0.0",
     "@celo/react-native-fast-crypto": "^1.8.2",
@@ -134,6 +134,7 @@
     "svgs": "^4.1.0",
     "tslib": "^1.9.1",
     "utf8": "^3.0.0",
+    "victory-native": "^34.0.0",
     "vm-browserify": "^1.0.1",
     "web3": "1.2.4"
   },

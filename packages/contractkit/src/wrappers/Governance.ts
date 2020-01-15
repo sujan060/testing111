@@ -54,6 +54,16 @@ export type ProposalParams = Parameters<Governance['methods']['propose']>
 export type ProposalTransaction = Pick<Transaction, 'to' | 'input' | 'value'>
 export type Proposal = ProposalTransaction[]
 
+export const proposalToParams = (proposal: Proposal): ProposalParams => {
+  const data = proposal.map((tx) => stringToBuffer(tx.input))
+  return [
+    proposal.map((tx) => tx.value),
+    proposal.map((tx) => tx.to),
+    bufferToBytes(Buffer.concat(data)),
+    data.map((inp) => inp.length),
+  ]
+}
+
 export interface ProposalRecord {
   stage: ProposalStage
   metadata: ProposalMetadata
@@ -80,8 +90,13 @@ export interface Votes {
   [VoteValue.Abstain]: BigNumber
 }
 
+export type HotfixParams = Parameters<Governance['methods']['executeHotfix']>
+export const hotfixToParams = (proposal: Proposal, salt: Buffer): HotfixParams => {
+  const p = proposalToParams(proposal)
+  return [p[0], p[1], p[2], p[3], bufferToString(salt)]
+}
+
 export interface HotfixRecord {
-  hash: Buffer
   approved: boolean
   executed: boolean
   preparedEpoch: BigNumber
@@ -183,16 +198,6 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
     })
   )
 
-  static toParams = (proposal: Proposal): ProposalParams => {
-    const data = proposal.map((tx) => stringToBuffer(tx.input))
-    return [
-      proposal.map((tx) => tx.value),
-      proposal.map((tx) => tx.to),
-      bufferToBytes(Buffer.concat(data)),
-      data.map((inp) => inp.length),
-    ]
-  }
-
   /**
    * Returns whether a given proposal is approved.
    * @param proposalID Governance proposal UUID
@@ -259,7 +264,7 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
    * Submits a new governance proposal.
    * @param proposal Governance proposal
    */
-  propose = proxySend(this.kit, this.contract.methods.propose, GovernanceWrapper.toParams)
+  propose = proxySend(this.kit, this.contract.methods.propose, proposalToParams)
 
   /**
    * Returns whether a governance proposal exists with the given ID.
@@ -381,7 +386,7 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
     }
   }
 
-  private sortedQueue(queue: UpvoteRecord[]) {
+  sortedQueue(queue: UpvoteRecord[]) {
     return queue.sort((a, b) => a.upvotes.comparedTo(b.upvotes))
   }
 
@@ -506,7 +511,6 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
   async getHotfixRecord(hash: Buffer): Promise<HotfixRecord> {
     const res = await this.contract.methods.getHotfixRecord(bufferToString(hash)).call()
     return {
-      hash,
       approved: res[0],
       executed: res[1],
       preparedEpoch: valueToBigNumber(res[2]),
@@ -528,6 +532,15 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
    * @param hash keccak256 hash of hotfix's associated abi encoded transactions
    */
   isHotfixPassing = proxyCall(this.contract.methods.isHotfixPassing, tupleParser(bufferToString))
+
+  /**
+   * Returns the number of validators required to reach a Byzantine quorum
+   */
+  byzantineQuorumValidators = proxyCall(
+    this.contract.methods.byzantineQuorumValidatorsInCurrentSet,
+    undefined,
+    valueToBigNumber
+  )
 
   /**
    * Returns the number of validators that whitelisted the hotfix
@@ -572,11 +585,8 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
   /**
    * Executes a given sequence of transactions if the corresponding hash is prepared and approved.
    * @param hotfix Governance hotfix proposal
+   * @param salt Secret which guarantees uniqueness of hash
    * @notice keccak256 hash of abi encoded transactions computed on-chain
    */
-  executeHotfix = proxySend(
-    this.kit,
-    this.contract.methods.executeHotfix,
-    GovernanceWrapper.toParams
-  )
+  executeHotfix = proxySend(this.kit, this.contract.methods.executeHotfix, hotfixToParams)
 }
