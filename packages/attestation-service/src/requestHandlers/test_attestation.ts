@@ -15,7 +15,11 @@ export async function handleTestAttestationRequest(
   let isValid = false
 
   try {
-    rootLogger.info({ testRequest, accountAddress: getAccountAddress() })
+    rootLogger.info({ signature: testRequest.signature })
+    rootLogger.info({
+      testRequest,
+      accountAddress: getAccountAddress(),
+    })
     parseSignature(
       testRequest.phoneNumber + testRequest.message,
       testRequest.signature,
