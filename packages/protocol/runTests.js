@@ -20,6 +20,7 @@ const migrationOverrides = {
 
 async function startGanache() {
   const server = ganache.server({
+    total_accounts: 1000,
     default_balance_ether: network.defaultBalance,
     network_id: network.network_id,
     mnemonic: network.mnemonic,

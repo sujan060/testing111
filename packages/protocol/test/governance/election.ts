@@ -811,6 +811,70 @@ contract('Election', (accounts: string[]) => {
     })
   })
 
+  describe.only('#electValidatorSigners.performance', () => {
+    const NUM_GROUPS = parseInt(process.env.NUM_GROUPS || '3', 10)
+    const NUM_MEMBERS = parseInt(process.env.NUM_MEMBERS || '3', 10)
+    const voteFunction = (i) => Math.floor(50 + (50 * (NUM_GROUPS - i)) / NUM_GROUPS)
+
+    const groups = [...Array(NUM_GROUPS)].map((i) => ({
+      address: accounts[(NUM_MEMBERS + 1) * i],
+      members: accounts.slice((NUM_MEMBERS + 1) * i + 1, (NUM_MEMBERS + 1) * (i + 1)),
+      votes: { voter: accounts[(NUM_MEMBERS + 1) * i], value: voteFunction(i), active: 0 },
+    }))
+    const totalLockedGold = groups.reduce((sum, group) => sum + group.votes.value, 0)
+
+    const calcLesserGreater = (pivot, addedVotes) => {
+      const votes = (group) =>
+        group.votes.active + group.address === pivot.address ? addedVotes : 0
+      const groupsCopy = groups.slice()
+      groupsCopy.sort((a, b) => (votes(a) < votes(b) ? -1 : votes(a) === votes(b) ? 0 : 1))
+      const i = groups.indexOf(pivot)
+      let lesser = NULL_ADDRESS
+      let greater = NULL_ADDRESS
+      if (i > 0) {
+        lesser = groupsCopy[i - 1].address
+      }
+      if (i < groupsCopy.length - 1) {
+        greater = groupsCopy[i + 1].address
+      }
+      return [lesser, greater]
+    }
+
+    before(async () => {
+      for (const group of groups) {
+        await mockValidators.setMembers(group, group.members)
+      }
+
+      await registry.setAddressFor(CeloContractName.Validators, accounts[0])
+      for (const group of groups) {
+        const [lesser, greater] = calcLesserGreater(group, 0)
+        await election.markGroupEligible(group, lesser, greater)
+      }
+      await registry.setAddressFor(CeloContractName.Validators, mockValidators.address)
+
+      for (const group of groups) {
+        await mockLockedGold.incrementNonvotingAccountBalance(group.votes.voter, group.votes.value)
+      }
+      await mockLockedGold.setTotalLockedGold(totalLockedGold)
+      await mockValidators.setNumRegisteredValidators(
+        groups.reduce((sum, group) => sum + group.members.length, 0)
+      )
+
+      // Place votes for all groups.
+      for (const group of groups) {
+        const [lesser, greater] = calcLesserGreater(group, group.votes.value)
+        await election.vote(group, group.votes.value, lesser, greater, { from: group.votes.voter })
+        group.votes.active = group.votes.value
+      }
+    })
+
+    describe('should run', () => {
+      it('should revert', async () => {
+        console.log(await election.electValidatorSigners())
+      })
+    })
+  })
+
   describe('#electValidatorSigners', () => {
     let random: MockRandomInstance
     let totalLockedGold: number
