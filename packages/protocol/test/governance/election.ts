@@ -814,21 +814,29 @@ contract('Election', (accounts: string[]) => {
   describe.only('#electValidatorSigners.performance', () => {
     const NUM_GROUPS = parseInt(process.env.NUM_GROUPS || '3', 10)
     const NUM_MEMBERS = parseInt(process.env.NUM_MEMBERS || '3', 10)
-    const voteFunction = (i) => Math.floor(50 + (50 * (NUM_GROUPS - i)) / NUM_GROUPS)
+    //const voteFunction = () => 50
 
-    const groups = [...Array(NUM_GROUPS)].map((i) => ({
+    if ((NUM_MEMBERS + 1) * NUM_GROUPS > accounts.length) {
+      throw new Error('not enough accounts')
+    }
+
+    const groups = [...Array(NUM_GROUPS).keys()].map((i) => ({
       address: accounts[(NUM_MEMBERS + 1) * i],
       members: accounts.slice((NUM_MEMBERS + 1) * i + 1, (NUM_MEMBERS + 1) * (i + 1)),
-      votes: { voter: accounts[(NUM_MEMBERS + 1) * i], value: voteFunction(i), active: 0 },
+      votes: { voter: accounts[(NUM_MEMBERS + 1) * i], value: 50, active: 0 },
     }))
     const totalLockedGold = groups.reduce((sum, group) => sum + group.votes.value, 0)
 
+    /*
     const calcLesserGreater = (pivot, addedVotes) => {
       const votes = (group) =>
         group.votes.active + group.address === pivot.address ? addedVotes : 0
       const groupsCopy = groups.slice()
       groupsCopy.sort((a, b) => (votes(a) < votes(b) ? -1 : votes(a) === votes(b) ? 0 : 1))
       const i = groups.indexOf(pivot)
+      if (i < 0) {
+        throw new Error("cannot find pivot")
+      }
       let lesser = NULL_ADDRESS
       let greater = NULL_ADDRESS
       if (i > 0) {
@@ -839,6 +847,7 @@ contract('Election', (accounts: string[]) => {
       }
       return [lesser, greater]
     }
+    */
 
     beforeEach(async () => {
       for (const group of groups) {
@@ -846,9 +855,10 @@ contract('Election', (accounts: string[]) => {
       }
 
       await registry.setAddressFor(CeloContractName.Validators, accounts[0])
+      let prev = NULL_ADDRESS
       for (const group of groups) {
-        const [lesser, greater] = calcLesserGreater(group, 0)
-        await election.markGroupEligible(group.address, lesser, greater)
+        await election.markGroupEligible(group.address, NULL_ADDRESS, prev)
+        prev = group.address
       }
       await registry.setAddressFor(CeloContractName.Validators, mockValidators.address)
 
@@ -861,17 +871,30 @@ contract('Election', (accounts: string[]) => {
       )
 
       // Place votes for all groups.
-      for (const group of groups) {
-        const [lesser, greater] = calcLesserGreater(group, group.votes.value)
-        await election.vote(group.address, group.votes.value, lesser, greater, {
-          from: group.votes.voter,
-        })
+      prev = NULL_ADDRESS
+      for (const [i, group] of groups.entries()) {
+        if (i === 0) {
+          await election.vote(
+            group.address,
+            group.votes.value,
+            groups[groups.length - 1].address,
+            NULL_ADDRESS,
+            {
+              from: group.votes.voter,
+            }
+          )
+        } else {
+          await election.vote(group.address, group.votes.value, NULL_ADDRESS, prev, {
+            from: group.votes.voter,
+          })
+        }
         group.votes.active = group.votes.value
+        prev = group.address
       }
     })
 
-    describe('should run', () => {
-      it('should revert', async () => {
+    describe('performance', () => {
+      it('should run', async () => {
         console.log(await election.electValidatorSigners())
       })
     })
