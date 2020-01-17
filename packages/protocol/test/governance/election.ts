@@ -842,13 +842,13 @@ contract('Election', (accounts: string[]) => {
 
     before(async () => {
       for (const group of groups) {
-        await mockValidators.setMembers(group, group.members)
+        await mockValidators.setMembers(group.address, group.members)
       }
 
       await registry.setAddressFor(CeloContractName.Validators, accounts[0])
       for (const group of groups) {
         const [lesser, greater] = calcLesserGreater(group, 0)
-        await election.markGroupEligible(group, lesser, greater)
+        await election.markGroupEligible(group.address, lesser, greater)
       }
       await registry.setAddressFor(CeloContractName.Validators, mockValidators.address)
 
@@ -863,7 +863,9 @@ contract('Election', (accounts: string[]) => {
       // Place votes for all groups.
       for (const group of groups) {
         const [lesser, greater] = calcLesserGreater(group, group.votes.value)
-        await election.vote(group, group.votes.value, lesser, greater, { from: group.votes.voter })
+        await election.vote(group.address, group.votes.value, lesser, greater, {
+          from: group.votes.voter,
+        })
         group.votes.active = group.votes.value
       }
     })
