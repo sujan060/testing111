@@ -840,7 +840,7 @@ contract('Election', (accounts: string[]) => {
       return [lesser, greater]
     }
 
-    before(async () => {
+    beforeEach(async () => {
       for (const group of groups) {
         await mockValidators.setMembers(group.address, group.members)
       }
