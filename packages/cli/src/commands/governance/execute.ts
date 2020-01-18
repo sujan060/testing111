@@ -24,7 +24,6 @@ export default class Execute extends BaseCommand {
     await newCheckBuilder(this, account)
       .proposalExists(id)
       .proposalInStage(id, 'Execution')
-      .proposalIsPassing(id)
       .runChecks()
 
     const governance = await this.kit.contracts.getGovernance()

@@ -4,6 +4,7 @@ import { GovernanceWrapper, ProposalStage } from '@celo/contractkit/lib/wrappers
 import { LockedGoldWrapper } from '@celo/contractkit/lib/wrappers/LockedGold'
 import { ValidatorsWrapper } from '@celo/contractkit/lib/wrappers/Validators'
 import { verifySignature } from '@celo/utils/lib/signatureUtils'
+import { eqAddress } from '@celo/utils/src/address'
 import BigNumber from 'bignumber.js'
 import chalk from 'chalk'
 import { BaseCommand } from '../base'
@@ -11,7 +12,7 @@ import { BaseCommand } from '../base'
 export interface CommandCheck {
   name: string
   errorMessage?: string
-  run(): Promise<boolean> | boolean
+  run()
 }
 
 export function check(
@@ -28,7 +29,7 @@ export function check(
 
 const negate = (x: Promise<boolean>) => x.then((y) => !y)
 
-type Resolve<A> = A extends Promise<infer T> ? T : A
+type Resolve = A extends Promise<infer T> ? T : A
 
 export function newCheckBuilder(cmd: BaseCommand, signer?: Address) {
   return new CheckBuilder(cmd, signer)
@@ -94,7 +95,7 @@ class CheckBuilder {
   isApprover = (account: Address) =>
     this.addCheck(
       `${account} is approver address`,
-      this.withGovernance(async (g) => (await g.getApprover()) === account)
+      this.withGovernance(async (g) => eqAddress(await g.getApprover(), account))
     )
 
   proposalExists = (proposalID: string) =>

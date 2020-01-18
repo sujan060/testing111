@@ -1,10 +1,11 @@
+import { CeloContract } from '@celo/contractkit/src'
+import { ProposalBuilder } from '@celo/contractkit/src/governance/proposals'
 import { flags } from '@oclif/command'
 import { BigNumber } from 'bignumber.js'
 import { BaseCommand } from '../../base'
 import { newCheckBuilder } from '../../utils/checks'
 import { displaySendTx } from '../../utils/cli'
 import { Flags } from '../../utils/command'
-import { buildProposalFromJsonFile } from '../../utils/governance'
 
 export default class Propose extends BaseCommand {
   static description = 'Submit a governance proposal'
@@ -21,8 +22,17 @@ export default class Propose extends BaseCommand {
   ]
 
   async run() {
+    const builder = new ProposalBuilder(this.kit)
+    const electionProxyAddress = await this.kit.registry.addressFor(CeloContract.Election)
+    // baklavastaging update election contract
+    builder.addProxyRepointingTx(electionProxyAddress, '0x788b0f6066d7ae3489c164c3c147d48fbd26ea86')
+
+    // baklava updated election contract
+    builder.addProxyRepointingTx(electionProxyAddress, '0x352700b62d731d6d268a7168bc5cdb0b499b4bbc')
+
+    const proposal = builder.build()
+
     const res = this.parse(Propose)
-    const proposal = await buildProposalFromJsonFile(this.kit, res.flags.jsonTransactions)
     const account = res.flags.from
     const deposit = new BigNumber(res.flags.deposit)
     this.kit.defaultAccount = account

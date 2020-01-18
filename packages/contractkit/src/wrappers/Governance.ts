@@ -239,10 +239,12 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
 
     let upvotes = ZERO_BN
     let votes = { [VoteValue.Yes]: ZERO_BN, [VoteValue.No]: ZERO_BN, [VoteValue.Abstain]: ZERO_BN }
+    console.info(stage)
     if (stage === ProposalStage.Queued) {
       upvotes = await this.getUpvotes(proposalID)
-    } else if (stage >= ProposalStage.Referendum && stage < ProposalStage.Expiration) {
+    } else if (stage === ProposalStage.Referendum) {
       votes = await this.getVotes(proposalID)
+      console.info(votes)
     }
 
     return {
@@ -463,7 +465,7 @@ export class GovernanceWrapper extends BaseWrapper<Governance> {
    * @notice Only the `approver` address will succeed in sending this transaction
    */
   async approve(proposalID: BigNumber.Value) {
-    const proposalIndex = await this.getDequeueIndex(proposalID)
+    const proposalIndex = 0
     return toTransactionObject(
       this.kit,
       this.contract.methods.approve(valueToString(proposalID), proposalIndex)

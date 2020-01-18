@@ -26,7 +26,6 @@ export default class Approve extends BaseCommand {
       .isApprover(account)
       .proposalExists(id)
       .addCheck(`${id} not already approved`, async () => !(await governance.isApproved(id)))
-      .proposalInStage(id, 'Approval')
       .runChecks()
 
     await displaySendTx('approveTx', await governance.approve(id))
