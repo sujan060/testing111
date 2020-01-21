@@ -319,7 +319,9 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     '--networkid',
     NetworkId.toString(),
     '--verbosity',
-    '5',
+    '3',
+    '--vmodule',
+    'consensus/istanbul/*=5',
     '--consoleoutput=stdout', // Send all logs to stdout
     '--consoleformat=term',
     '--nat',
