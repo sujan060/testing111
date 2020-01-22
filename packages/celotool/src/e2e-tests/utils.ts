@@ -24,7 +24,10 @@ export interface GethInstanceConfig {
   wsport?: number
   lightserv?: boolean
   privateKey?: string
+  // Etherbase is deprecated, use --validator and --txFeeRecipient instead
+  validator?: string
   etherbase?: string
+  txFeeRecipient?: string
   peers?: number[]
   pid?: number
 }
@@ -266,7 +269,9 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
   const { syncmode, port, rpcport, wsport, validating } = instance
   const privateKey = instance.privateKey || ''
   const lightserv = instance.lightserv || false
-  const etherbase = instance.etherbase || ''
+  // Etherbase is deprecated, use --validator and --txFeeRecipient instead
+  const txFeeRecipient = instance.txFeeRecipient || instance.etherbase || ''
+  const validator = instance.validator || ''
   const gethArgs = [
     '--datadir',
     datadir,
@@ -306,8 +311,12 @@ export async function startGeth(gethBinaryPath: string, instance: GethInstanceCo
     )
   }
 
-  if (etherbase) {
-    gethArgs.push('--etherbase', etherbase)
+  if (txFeeRecipient) {
+    gethArgs.push('--tx-fee-recipient', txFeeRecipient)
+  }
+
+  if (validator) {
+    gethArgs.push('--validator', validator)
   }
 
   if (lightserv) {
