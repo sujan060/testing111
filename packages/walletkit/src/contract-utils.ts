@@ -289,7 +289,7 @@ export async function sendTransactionAsync<T>(
     logger(Started)
     const txParams: any = {
       from: account,
-      feeCurrency: feeCurrencyContract._address,
+      feeCurrency: feeCurrencyContract.options.address,
       gasPrice: '0',
     }
 
@@ -301,7 +301,7 @@ export async function sendTransactionAsync<T>(
     tx.send({
       from: account,
       // @ts-ignore
-      feeCurrency: feeCurrencyContract._address,
+      feeCurrency: feeCurrencyContract.options.address,
       gas: estimatedGas,
       // Hack to prevent web3 from adding the suggested gold gas price, allowing geth to add
       // the suggested price in the selected feeCurrency.
@@ -404,7 +404,7 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
     logger(Started)
     const txParams: any = {
       from: account,
-      feeCurrency: feeCurrencyContract._address,
+      feeCurrency: feeCurrencyContract.options.address,
       gasPrice: '0',
     }
 
@@ -415,7 +415,7 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
     // Ideally, we should fill these fields in CeloProvider but as of now,
     // we don't have access to web3 inside it, so, in the short-term
     // fill the fields here.
-    let feeCurrency = feeCurrencyContract._address
+    let feeCurrency = feeCurrencyContract.options.address
     const gatewayFeeRecipient = await web3.eth.getCoinbase()
     const gatewayFee = '0x' + defaultGatewayFee.toString(16)
     Logger.debug(tag, `Gateway fee is ${gatewayFee} paid to ${gatewayFeeRecipient}`)

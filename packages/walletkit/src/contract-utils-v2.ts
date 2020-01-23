@@ -172,9 +172,9 @@ export default class ContractUtils {
   static async getAddressForCurrencyContract(web3: Web3, currency: Tokens): Promise<string> {
     switch (currency) {
       case Tokens.DOLLAR:
-        return (await getStableTokenContract(web3))._address
+        return (await getStableTokenContract(web3)).options.address
       case Tokens.GOLD:
-        return (await getGoldTokenContract(web3))._address
+        return (await getGoldTokenContract(web3)).options.address
     }
   }
 }

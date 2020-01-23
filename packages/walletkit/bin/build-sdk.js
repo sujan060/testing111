@@ -66,8 +66,9 @@ export default async function getInstance(web3: Web3, account: string | null = n
     artifact.abi,
     null,
     2
-  )}, "${proxyAddress}") as unknown as ${contractName}Type
-  contract.options.from = account || (await web3.eth.getAccounts())[0]
+  )}, "${proxyAddress}", {
+    from: account || (await web3.eth.getAccounts())[0]
+  }) as unknown as ${contractName}Type
   return contract
 }
 `
@@ -125,7 +126,7 @@ function buildSdk() {
       'contracts/*.json'
     )
     execCmd(
-      `yarn run --cwd="${modulePath}" typechain --target="web3-1.0.0" --outDir=types "${contractArtifactsPattern}"`
+      `yarn run --cwd="${modulePath}" typechain --target="web3-v1" --outDir=types "${contractArtifactsPattern}"`
     )
 
     // Necessary to copy types to the lib folder so the contracts have the same path to them.
