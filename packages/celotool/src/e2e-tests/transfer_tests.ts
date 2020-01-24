@@ -168,7 +168,14 @@ describe('Transfer tests', function(this: any) {
   const gethConfig: GethTestConfig = {
     migrateTo: 18,
     instances: [
-      { name: 'validator', validating: true, syncmode: 'full', port: 30303, rpcport: 8545 },
+      {
+        name: 'validator',
+        validating: true,
+        syncmode: 'full',
+        port: 30303,
+        rpcport: 8545,
+        validator: validatorAddress,
+      },
     ],
   }
   const hooks = getHooks(gethConfig)
@@ -194,9 +201,9 @@ describe('Transfer tests', function(this: any) {
       lightserv: true,
       port: 30305,
       rpcport: 8547,
-      // We need to set an etherbase here so that the full node will accept transactions from
+      // We need to set a txFeeRecipient here so that the full node will accept transactions from
       // light clients.
-      etherbase: FeeRecipientAddress,
+      txFeeRecipient: FeeRecipientAddress,
       peers: [8545],
     }
     await initAndStartGeth(hooks.gethBinaryPath, fullInstance)

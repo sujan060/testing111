@@ -12,10 +12,6 @@ import {
 describe('sync tests', function(this: any) {
   this.timeout(0)
 
-  const validatorAddress = '0x47e172f6cfb6c7d01c1574fa3e2be7cc73269d95'
-
-  // Arbitrary addresses.
-  const FeeRecipientAddress = '0x4f5f8a3f45d179553e7b95119ce296010f50f6f1'
   const gethConfig = {
     migrate: true,
     instances: [
@@ -40,8 +36,6 @@ describe('sync tests', function(this: any) {
       port: 30311,
       rpcport: 8553,
       peers: [8545],
-      validator: validatorAddress,
-      txFeeReceipient: FeeRecipientAddress,
     }
     await initAndStartGeth(hooks.gethBinaryPath, fullInstance)
     const web3 = new Web3('http://localhost:8553')
@@ -110,13 +104,5 @@ describe('sync tests', function(this: any) {
       }
       assert.fail('Reset validator did not propose any new blocks')
     })
-  })
-
-  describe('when the validator and txFeeRecipient flags are set', () => {
-    let web3: any
-    // Produce blocks
-    // Verify txFeeRecipient
-    // Verify block signing
-    it('should sign consensus messages under validator address', async function(this: any) {})
   })
 })
