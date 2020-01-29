@@ -3,19 +3,19 @@ import ContactCircle from '@celo/react-components/components/ContactCircle'
 import fontStyles from '@celo/react-components/styles/fonts'
 import BigNumber from 'bignumber.js'
 import * as React from 'react'
-import { WithNamespaces, withNamespaces } from 'react-i18next'
+import { WithTranslation } from 'react-i18next'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { PaymentRequestStatus } from 'src/account/types'
 import CeloAnalytics from 'src/analytics/CeloAnalytics'
 import { CustomEventNames } from 'src/analytics/constants'
+import { TokenTransactionType } from 'src/apollo/types'
 import { updatePaymentRequestStatus } from 'src/firebase/actions'
 import { CURRENCIES, CURRENCY_ENUM } from 'src/geth/consts'
-import { Namespaces } from 'src/i18n'
+import { Namespaces, withTranslation } from 'src/i18n'
 import { unknownUserIcon } from 'src/images/Images'
 import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
 import { getRecipientThumbnail, Recipient } from 'src/recipients/recipient'
-import { TransactionTypes } from 'src/transactions/reducer'
 import { getCentAwareMoneyDisplay } from 'src/utils/formatting'
 import Logger from 'src/utils/Logger'
 
@@ -27,7 +27,7 @@ interface OwnProps {
   updatePaymentRequestStatus: typeof updatePaymentRequestStatus
 }
 
-type Props = OwnProps & WithNamespaces
+type Props = OwnProps & WithTranslation
 
 const AVATAR_SIZE = 40
 
@@ -40,7 +40,7 @@ export class IncomingPaymentRequestListItem extends React.Component<Props> {
         recipient,
         amount: new BigNumber(amount),
         recipientAddress: recipient.address,
-        type: TransactionTypes.PAY_REQUEST,
+        type: TokenTransactionType.PayRequest,
       },
       onConfirm: this.onPaymentSuccess,
       onCancel: this.onPaymentDecline,
@@ -52,6 +52,7 @@ export class IncomingPaymentRequestListItem extends React.Component<Props> {
     this.props.updatePaymentRequestStatus(id.toString(), PaymentRequestStatus.COMPLETED)
     Logger.showMessage(this.props.t('requestPaid'))
     CeloAnalytics.track(CustomEventNames.incoming_request_payment_pay)
+    navigate(Screens.WalletHome)
   }
 
   onPaymentDecline = () => {
@@ -116,4 +117,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default withNamespaces(Namespaces.paymentRequestFlow)(IncomingPaymentRequestListItem)
+export default withTranslation(Namespaces.paymentRequestFlow)(IncomingPaymentRequestListItem)

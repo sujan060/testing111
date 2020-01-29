@@ -5,7 +5,7 @@ import { fontStyles } from '@celo/react-components/styles/fonts'
 import { componentStyles } from '@celo/react-components/styles/styles'
 import BigNumber from 'bignumber.js'
 import * as React from 'react'
-import { withNamespaces, WithNamespaces } from 'react-i18next'
+import { WithTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { NavigationInjectedProps } from 'react-navigation'
@@ -14,10 +14,10 @@ import CeloAnalytics from 'src/analytics/CeloAnalytics'
 import { CustomEventNames } from 'src/analytics/constants'
 import componentWithAnalytics from 'src/analytics/wrapper'
 import FeeIcon from 'src/components/FeeIcon'
-import { exchangeTokens, fetchExchangeRate } from 'src/exchange/actions'
+import { exchangeTokens, fetchExchangeRate, fetchTobinTax } from 'src/exchange/actions'
 import { ExchangeRatePair } from 'src/exchange/reducer'
 import { CURRENCY_ENUM } from 'src/geth/consts'
-import { Namespaces } from 'src/i18n'
+import { Namespaces, withTranslation } from 'src/i18n'
 import { exchangeHeader } from 'src/navigator/Headers'
 import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
@@ -29,12 +29,14 @@ import { getMoneyDisplayValue } from 'src/utils/formatting'
 
 interface StateProps {
   exchangeRatePair: ExchangeRatePair | null
+  tobinTax: string
   fee: string
   appConnected: boolean
 }
 
 interface DispatchProps {
   fetchExchangeRate: typeof fetchExchangeRate
+  fetchTobinTax: typeof fetchTobinTax
   exchangeTokens: typeof exchangeTokens
 }
 
@@ -55,10 +57,11 @@ interface State {
   inputAmount: BigNumber
 }
 
-type Props = StateProps & WithNamespaces & DispatchProps & NavigationInjectedProps
+type Props = StateProps & WithTranslation & DispatchProps & NavigationInjectedProps
 
 const mapStateToProps = (state: RootState): StateProps => ({
   exchangeRatePair: state.exchange.exchangeRatePair,
+  tobinTax: getMoneyDisplayValue(state.exchange.tobinTax || 0),
   fee: getMoneyDisplayValue(0),
   appConnected: isAppConnected(state),
 })
@@ -112,7 +115,7 @@ export class ExchangeReview extends React.Component<Props, State> {
       const exchangeRate = getRateForMakerToken(this.props.exchangeRatePair, makerToken, inputToken)
       makerAmount = getTakerAmount(inputAmount, exchangeRate)
     }
-    this.props.fetchExchangeRate(makerToken, makerAmount)
+    return { makerToken, makerAmount }
   }
 
   getMakerAmount() {
@@ -129,7 +132,9 @@ export class ExchangeReview extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getExchangePropertiesFromNavProps()
+    const { makerToken, makerAmount } = this.getExchangePropertiesFromNavProps()
+    this.props.fetchTobinTax(makerAmount, makerToken)
+    this.props.fetchExchangeRate(makerToken, makerAmount)
   }
 
   getInputAmountInToken(token: CURRENCY_ENUM) {
@@ -146,7 +151,7 @@ export class ExchangeReview extends React.Component<Props, State> {
   }
 
   render() {
-    const { exchangeRatePair, fee, t, appConnected } = this.props
+    const { exchangeRatePair, fee, t, appConnected, tobinTax } = this.props
 
     const exchangeRate = getRateForMakerToken(
       exchangeRatePair,
@@ -187,7 +192,7 @@ export class ExchangeReview extends React.Component<Props, State> {
                   <Text style={styles.exchangeBodyText}>{t('exchangeFee')}</Text>
                   <FeeIcon tintColor={colors.lightGray} isExchange={true} />
                 </View>
-                <Text style={styles.exchangeBodyText}>{fee}</Text>
+                <Text style={styles.exchangeBodyText}>{tobinTax}</Text>
               </View>
               <View style={styles.feeRowContainer}>
                 <View style={styles.feeTextWithIconContainer}>
@@ -270,8 +275,9 @@ const styles = StyleSheet.create({
 })
 
 export default componentWithAnalytics(
-  connect<StateProps, DispatchProps, {}, RootState>(
-    mapStateToProps,
-    { exchangeTokens, fetchExchangeRate }
-  )(withNamespaces(Namespaces.exchangeFlow9)(ExchangeReview))
+  connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, {
+    exchangeTokens,
+    fetchExchangeRate,
+    fetchTobinTax,
+  })(withTranslation(Namespaces.exchangeFlow9)(ExchangeReview))
 )

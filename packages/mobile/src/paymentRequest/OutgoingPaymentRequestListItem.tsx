@@ -1,16 +1,15 @@
 import BaseNotification from '@celo/react-components/components/BaseNotification'
 import ContactCircle from '@celo/react-components/components/ContactCircle'
-import colors from '@celo/react-components/styles/colors'
 import fontStyles from '@celo/react-components/styles/fonts'
 import * as React from 'react'
-import { WithNamespaces, withNamespaces } from 'react-i18next'
+import { WithTranslation } from 'react-i18next'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { PaymentRequestStatus } from 'src/account/types'
 import CeloAnalytics from 'src/analytics/CeloAnalytics'
 import { CustomEventNames } from 'src/analytics/constants'
 import { updatePaymentRequestNotified, updatePaymentRequestStatus } from 'src/firebase/actions'
 import { CURRENCIES, CURRENCY_ENUM } from 'src/geth/consts'
-import { Namespaces } from 'src/i18n'
+import { Namespaces, withTranslation } from 'src/i18n'
 import { unknownUserIcon } from 'src/images/Images'
 import { getRecipientThumbnail, Recipient } from 'src/recipients/recipient'
 import { getCentAwareMoneyDisplay } from 'src/utils/formatting'
@@ -27,7 +26,7 @@ interface OwnProps {
 
 const AVATAR_SIZE = 40
 
-type Props = OwnProps & WithNamespaces
+type Props = OwnProps & WithTranslation
 
 export class OutgoingPaymentRequestListItem extends React.Component<Props> {
   onRemind = () => {
@@ -86,9 +85,6 @@ export class OutgoingPaymentRequestListItem extends React.Component<Props> {
 }
 
 const styles = StyleSheet.create({
-  phoneNumber: {
-    color: colors.dark,
-  },
   container: {
     marginBottom: 16,
   },
@@ -100,4 +96,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default withNamespaces(Namespaces.paymentRequestFlow)(OutgoingPaymentRequestListItem)
+export default withTranslation(Namespaces.paymentRequestFlow)(OutgoingPaymentRequestListItem)
