@@ -1,14 +1,14 @@
-import 'web3/eth/types'
+import 'web3-eth'
 
-declare module 'web3/eth/types' {
-  export interface Tx {
-    feeCurrency?: string
-    gatewayFeeRecipient?: string
-    gatewayFee?: string
+declare module 'web3-eth' {
+  export interface Transaction {
+    feeCurrency: string | null
+    gatewayFeeRecipient: string
+    gatewayFee: string
   }
 
-  export interface Transaction {
-    feeCurrency?: string
+  export interface TransactionConfig {
+    feeCurrency?: string | null
     gatewayFeeRecipient?: string
     gatewayFee?: string
   }

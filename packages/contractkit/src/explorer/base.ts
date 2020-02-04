@@ -1,13 +1,13 @@
 import { Address } from '@celo/utils/lib/address'
 import { concurrentMap } from '@celo/utils/lib/async'
-import { ABIDefinition } from 'web3/eth/abi'
+import { AbiItem } from 'web3-utils'
 import { AllContracts } from '../base'
 import { ContractKit } from '../kit'
 
 export interface ContractDetails {
   name: string
   address: Address
-  jsonInterface: ABIDefinition[]
+  jsonInterface: AbiItem[]
 }
 
 export async function obtainKitContractDetails(kit: ContractKit) {

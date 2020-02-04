@@ -1,7 +1,8 @@
 import { BigNumber } from 'bignumber.js'
 import debugFactory from 'debug'
 import Web3 from 'web3'
-import { TransactionObject, Tx } from 'web3/eth/types'
+import { TransactionConfig } from 'web3-eth'
+import { TransactionObject } from 'web3/eth/types'
 import { AddressRegistry } from './address-registry'
 import { Address, CeloContract, CeloToken } from './base'
 import { WrapperCache } from './contract-cache'
@@ -52,8 +53,7 @@ export interface NetworkConfig {
 
 export interface KitOptions {
   gasInflationFactor: number
-  feeCurrency: Address | null
-  from?: Address
+  txOptions: TransactionConfig
 }
 
 interface AccountBalance {
@@ -74,8 +74,10 @@ export class ContractKit {
   private config: KitOptions
   constructor(readonly web3: Web3) {
     this.config = {
-      feeCurrency: null,
       gasInflationFactor: 1.3,
+      txOptions: {
+        feeCurrency: null,
+      },
     }
 
     this.registry = new AddressRegistry(this)
@@ -145,7 +147,7 @@ export class ContractKit {
    * @param token cUsd or cGold
    */
   async setFeeCurrency(token: CeloToken): Promise<void> {
-    this.config.feeCurrency =
+    this.config.txOptions.feeCurrency =
       token === CeloContract.GoldToken ? null : await this.registry.addressFor(token)
   }
 
@@ -157,7 +159,7 @@ export class ContractKit {
    * Set default account for generated transactions (eg. tx.from )
    */
   set defaultAccount(address: Address) {
-    this.config.from = address
+    this.config.txOptions.from = address
     this.web3.eth.defaultAccount = address
   }
 
@@ -165,7 +167,7 @@ export class ContractKit {
    * Default account for generated transactions (eg. tx.from)
    */
   get defaultAccount(): Address {
-    return this.web3.eth.defaultAccount
+    return this.web3.eth.defaultAccount!
   }
 
   set gasInflationFactor(factor: number) {
@@ -184,21 +186,17 @@ export class ContractKit {
    *
    * @param address ERC20 address
    */
-  set defaultFeeCurrency(address: Address | null) {
-    this.config.feeCurrency = address
+  set defaultFeeCurrency(address: Address) {
+    this.config.txOptions.feeCurrency = address
   }
 
   get defaultFeeCurrency() {
-    return this.config.feeCurrency
+    return this.config.txOptions.feeCurrency!
   }
 
-  isListening(): Promise<boolean> {
-    return this.web3.eth.net.isListening()
-  }
+  isListening = () => this.web3.eth.net.isListening()
 
-  isSyncing(): Promise<boolean> {
-    return this.web3.eth.isSyncing()
-  }
+  isSyncing = () => this.web3.eth.isSyncing()
 
   /**
    * Send a transaction to celo-blockchain.
@@ -208,23 +206,18 @@ export class ContractKit {
    *  - estimatesGas before sending
    *  - returns a `TransactionResult` instead of `PromiEvent`
    */
-  async sendTransaction(tx: Tx): Promise<TransactionResult> {
+  async sendTransaction(tx: TransactionConfig): Promise<TransactionResult> {
     tx = this.fillTxDefaults(tx)
 
     let gas = tx.gas
     if (gas == null) {
-      gas = Math.round(
-        (await this.web3.eth.estimateGas({ ...tx })) * this.config.gasInflationFactor
-      )
+      gas = Math.round((await this.web3.eth.estimateGas(tx)) * this.config.gasInflationFactor)
       debug('estimatedGas: %s', gas)
     }
 
-    return toTxResult(
-      this.web3.eth.sendTransaction({
-        ...tx,
-        gas,
-      })
-    )
+    tx.gas = gas
+
+    return toTxResult(this.web3.eth.sendTransaction(tx))
   }
 
   async sendTransactionObject(
@@ -247,19 +240,11 @@ export class ContractKit {
     )
   }
 
-  private fillTxDefaults(tx?: Tx): Tx {
-    const defaultTx: Tx = {
-      from: this.config.from,
+  private fillTxDefaults(tx: TransactionConfig): TransactionConfig {
+    return {
       // gasPrice:0 means the node will compute gasPrice on it's own
       gasPrice: '0',
-    }
-
-    if (this.config.feeCurrency) {
-      defaultTx.feeCurrency = this.config.feeCurrency
-    }
-
-    return {
-      ...defaultTx,
+      ...this.config.txOptions,
       ...tx,
     }
   }

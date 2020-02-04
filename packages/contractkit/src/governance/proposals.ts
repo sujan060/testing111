@@ -1,6 +1,6 @@
 import { concurrentMap } from '@celo/utils/lib/async'
 import { keccak256 } from 'ethereumjs-util'
-import Contract from 'web3/eth/contract'
+import { Contract } from 'web3-eth-contract'
 import { Transaction, TransactionObject } from 'web3/eth/types'
 import { CeloContract } from '../base'
 import { obtainKitContractDetails } from '../explorer/base'

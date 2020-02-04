@@ -1,7 +1,7 @@
 import debugFactory from 'debug'
 import Web3 from 'web3'
-import { DecodedParamsObject } from 'web3-eth-abi'
-import { ABIDefinition } from 'web3/eth/abi'
+import { AbiCoder } from 'web3-eth-abi'
+import { AbiItem } from 'web3-utils'
 import { CeloProvider } from '../providers/celo-provider'
 
 const debug = debugFactory('kit:web3:utils')
@@ -21,9 +21,10 @@ export function addLocalAccount(web3: Web3, privateKey: string): Web3 {
   return web3
 }
 
-export const getAbiTypes = (abi: ABIDefinition[], methodName: string) =>
+export const getAbiTypes = (abi: AbiItem[], methodName: string) =>
   abi.find((entry) => entry.name! === methodName)!.inputs!.map((input) => input.type)
 
+export type DecodedParamsObject = ReturnType<AbiCoder['decodeParameters']>
 export const parseDecodedParams = (params: DecodedParamsObject) => {
   const args = new Array(params.__length__)
   delete params.__length__
