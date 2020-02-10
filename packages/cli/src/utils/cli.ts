@@ -24,6 +24,8 @@ export async function displaySendTx<A>(
   const txReceipt = await txResult.waitReceipt()
   cli.action.stop()
 
+  console.log(displayEventName)
+  console.log(txReceipt.events)
   if (displayEventName && txReceipt.events) {
     Object.entries(txReceipt.events)
       .filter(([eventName]) => eventName === displayEventName)

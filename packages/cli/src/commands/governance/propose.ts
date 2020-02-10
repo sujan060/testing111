@@ -1,14 +1,11 @@
-import {
-  ProposalBuilder,
-  proposalToJSON,
-  ProposalTransactionJSON,
-} from '@celo/contractkit/lib/governance/proposals'
+import { ProposalBuilder } from '@celo/contractkit/lib/governance/proposals'
+import { CeloContract } from '@celo/contractkit/src'
+import { getImplementationOfProxy } from '@celo/contractkit/src/governance/proxy'
 import { flags } from '@oclif/command'
 import { BigNumber } from 'bignumber.js'
-import { readFileSync } from 'fs'
 import { BaseCommand } from '../../base'
 import { newCheckBuilder } from '../../utils/checks'
-import { displaySendTx, printValueMapRecursive } from '../../utils/cli'
+import { displaySendTx } from '../../utils/cli'
 import { Flags } from '../../utils/command'
 
 export default class Propose extends BaseCommand {
@@ -16,7 +13,7 @@ export default class Propose extends BaseCommand {
 
   static flags = {
     ...BaseCommand.flags,
-    jsonTransactions: flags.string({ required: true, description: 'Path to json transactions' }),
+    // jsonTransactions: flags.string({ required: true, description: 'Path to json transactions' }),
     deposit: flags.string({ required: true, description: 'Amount of Gold to attach to proposal' }),
     from: Flags.address({ required: true, description: "Proposer's address" }),
     descriptionURL: flags.string({
@@ -40,22 +37,30 @@ export default class Propose extends BaseCommand {
       .exceedsProposalMinDeposit(deposit)
       .runChecks()
 
+    const desiredAddress = '0xe166e1AD88a7fDd93Ef33044F8DA28F7f8068F86'
+
     const builder = new ProposalBuilder(this.kit)
 
     // BUILD FROM JSON
-    const jsonString = readFileSync(res.flags.jsonTransactions).toString()
-    const jsonTransactions: ProposalTransactionJSON[] = JSON.parse(jsonString)
-    jsonTransactions.forEach((tx) => builder.addJsonTx(tx))
+    // const jsonString = readFileSync(res.flags.jsonTransactions).toString()
+    // const jsonTransactions: ProposalTransactionJSON[] = JSON.parse(jsonString)
+    // jsonTransactions.forEach((tx) => builder.addJsonTx(tx))
 
     // BUILD FROM CONTRACTKIT FUNCTIONS
     // const params = await this.kit.contracts.getBlockchainParameters()
     // builder.addTx(params.setMinimumClientVersion(1, 8, 24), { to: params.address })
     // builder.addWeb3Tx()
-    // builder.addProxyRepointingTx
+    const currentAddress = await getImplementationOfProxy(
+      this.kit.web3,
+      await this.kit.registry.addressFor(CeloContract.Attestations)
+    )
+
+    builder.addProxyRepointingTx(currentAddress, desiredAddress)
 
     const proposal = await builder.build()
+    console.log(proposal)
 
-    printValueMapRecursive(proposalToJSON(this.kit, proposal))
+    // printValueMapRecursive(proposalToJSON(this.kit, proposal))
 
     const governance = await this.kit.contracts.getGovernance()
     await displaySendTx(

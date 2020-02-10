@@ -19,6 +19,8 @@ export default class List extends BaseCommand {
 
     const governance = await this.kit.contracts.getGovernance()
     const queue = await governance.getQueue()
+    console.log(await governance.getQueue())
+    console.log(await governance.getDequeue(true))
     const expiredQueueMap = await concurrentMap(5, queue, (upvoteRecord) =>
       governance.isQueuedProposalExpired(upvoteRecord.proposalID)
     )

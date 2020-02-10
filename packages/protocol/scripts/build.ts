@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 const ROOT_DIR = path.normalize(path.join(__dirname, '../'))
-const BUILD_DIR = path.join(ROOT_DIR, 'build')
+const BUILD_DIR = path.join(ROOT_DIR, 'build/baklavastaging')
 const CONTRACTKIT_GEN_DIR = path.normalize(path.join(ROOT_DIR, '../contractkit/src/generated'))
 
 export const ProxyContracts = [
