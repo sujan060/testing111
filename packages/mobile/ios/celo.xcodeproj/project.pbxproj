@@ -801,7 +801,7 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = celo/celo.entitlements;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = HDPUB8C3KG;
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -816,7 +816,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.pilot;
 				PRODUCT_NAME = celo;
 				SWIFT_OBJC_BRIDGING_HEADER = "celo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -834,7 +834,7 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = celo/celo.entitlements;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = HDPUB8C3KG;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = celo/Info.plist;
@@ -848,7 +848,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = org.celo.mobile.pilot;
 				PRODUCT_NAME = celo;
 				SWIFT_OBJC_BRIDGING_HEADER = "celo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

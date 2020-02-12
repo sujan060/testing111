@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Celo</string>
+	<string>Celo (pilot)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>16</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -50,10 +50,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Celo Wallet needs camera access to scan QR codes.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Celo Wallet needs access to save your QR code to your photos.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Celo Wallet can import your contacts so you can transact with them.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Celo Wallet needs access to save your QR code to your photos.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Hind-Bold.ttf</string>
