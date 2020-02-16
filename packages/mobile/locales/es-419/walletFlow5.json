@@ -5,8 +5,7 @@
   "SMSError": "Error al enviar SMS",
   "notifications": "Notificaciones",
   "getBackupKey": "Obtener clave de respaldo",
-  "setBackupKey":
-    "Configure tu clave de respaldo para mejorar la seguridad y habilitar la recuperación de la cuenta",
+  "setBackupKey": "Configure tu clave de respaldo para mejorar la seguridad y habilitar la recuperación de la cuenta",
   "activity": "Actividad",
   "wallet": "Monedero",
   "send": "Envío",
@@ -17,8 +16,7 @@
   "review": "Revisión",
   "thanksForVerifying": "Gracias por completar la verificación",
   "earnCeloRewards": "Gana Recompensas Celo por verificar a otros",
-  "earnCeloGold":
-    "Gane Celo Oro al permitir que la red envíe mensajes de verificación desde tu teléfono",
+  "earnCeloGold": "Gane Celo Oro al permitir que la red envíe mensajes de verificación desde tu teléfono",
   "startEarning": "Comenzar a ganar",
   "learnMore": "Saber más",
   "goldIsWhereYouSave": "Convierta sus {{CeloDollars}} en Celo Oro",
@@ -35,8 +33,7 @@
   "verificationFee": "Tasa de Verificación",
   "networkFee": "Tasa de Red",
   "networkFeeExplanation": {
-    "0":
-      "Cada semana, se utiliza una tarifa muy pequeña (menos del 0.01%) del saldo de Celo Dollar de cada usuario para mantener estable el valor del Celo Dollar. Para obtener más información sobre las tarifas de Celo, visite ",
+    "0": "Cada semana, se utiliza una tarifa muy pequeña (menos del 0.01%) del saldo de Celo Dollar de cada usuario para mantener estable el valor del Celo Dollar. Para obtener más información sobre las tarifas de Celo, visite ",
     "1": "las Preguntas frecuentes."
   },
   "confirmingPayment": "Confirmando…",
@@ -54,12 +51,10 @@
   "balanceNeedUpdating": "Saldo necesita actualizarse",
   "refreshBalances": "Actualizar saldos",
   "escrowedPaymentReminder": "Reacuerda al receptor aceptar el pago",
-  "escrowedPaymentReminderSms":
-    "¡Un recordatorio amistoso de que aún no ha canjeado sus dólares de celo!",
+  "escrowedPaymentReminderSms": "¡Un recordatorio amistoso de que aún no ha canjeado sus dólares de celo!",
   "testnetAlert": {
     "0": "{{testnet}}",
-    "1":
-      "Un recordatorio amistoso de que está utilizando la compilación de red {{testnet}} - los saldos aquí no son reales."
+    "1": "Un recordatorio amistoso de que está utilizando la compilación de red {{testnet}} - los saldos aquí no son reales."
   },
   "dismiss": "Ocultar",
   "localCurrencyEqual": "Igual a <2>{{localValue}} {{localCurrencyCode}}</2>",
@@ -73,6 +68,8 @@
   "feedItemFaucetTitle": "Celo",
   "feedItemFaucetInfo": "{{faucet}} Faucet",
   "feedItemFaucetInfo_missingTestnet": "Faucet",
+  "feedItemMoonpayExchangeTitle": "El Cambio Moonpay",
+  "feedItemMoonpayExchangeInfo": "Comprado Celo Dollars",
   "feedItemInviteSentTitle": "Celo",
   "feedItemInviteSentInfo": "Invitado {{nameOrNumber}}",
   "feedItemInviteSentInfo_missingInviteeDetails": "$t(inviteFlow11:inviteSent)",

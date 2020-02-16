@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as React from 'react'
 import { FlatList } from 'react-native'
 import { connect } from 'react-redux'
-import { TransactionFeedFragment } from 'src/apollo/types'
+import { TokenTransactionType, TransactionFeedFragment } from 'src/apollo/types'
 import { AddressToE164NumberType } from 'src/identity/reducer'
 import { Invitees } from 'src/invite/actions'
 import { NumberToRecipient } from 'src/recipients/recipient'
@@ -93,7 +93,7 @@ export class TransactionFeed extends React.PureComponent<Props> {
   }
 
   render() {
-    const { kind, loading, error, data, commentKey } = this.props
+    const { kind, loading, error, commentKey } = this.props
 
     if (error) {
       Logger.error(TAG, 'Failure while loading transaction feed', error)
@@ -101,6 +101,29 @@ export class TransactionFeed extends React.PureComponent<Props> {
     }
 
     const commentKeyBuffer = commentKey ? Buffer.from(commentKey, 'hex') : null
+    const data: FeedItem[] = [
+      {
+        __typename: 'TokenTransfer',
+        type: TokenTransactionType.NetworkFee,
+        status: TransactionStatus.Complete,
+        timestamp: 1542306118,
+        hash: '0x00000000000000000000',
+        address: '0x2A68A15846Eb62154824A2F47cf49a2EBb306F72',
+        comment: '',
+        amount: {
+          __typename: 'MoneyAmount',
+          value: '30',
+          currencyCode: 'cUSD',
+          localAmount: {
+            __typename: 'LocalMoneyAmount',
+            value: '20',
+            currencyCode: 'cUSD',
+            exchangeRate: '5',
+          },
+        },
+      },
+      //
+    ]
 
     if (data && data.length > 0) {
       return (

@@ -69,6 +69,11 @@ export function getTransferFeedParams(
       })
       break
     }
+    case TokenTransactionType.MoonpayCashIn: {
+      title = t('feedItemMoonpayExchangeTitle')
+      info = t('feedItemMoonpayExchangeInfo')
+      break
+    }
 
     case TokenTransactionType.InviteReceived: {
       title = t('feedItemInviteReceivedTitle')

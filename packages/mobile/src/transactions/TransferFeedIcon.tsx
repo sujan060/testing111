@@ -3,7 +3,7 @@ import RewardIcon from '@celo/react-components/icons/RewardIcon'
 import * as React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { TokenTransactionType } from 'src/apollo/types'
-import { coinsIcon, unknownUserIcon } from 'src/images/Images'
+import { coinsIcon, moonpayIcon, unknownUserIcon } from 'src/images/Images'
 import { getRecipientThumbnail, Recipient } from 'src/recipients/recipient'
 
 const AVATAR_SIZE = 40
@@ -31,6 +31,9 @@ export default function TransferFeedIcon(props: Props) {
           <RewardIcon height={38} />
         </View>
       )
+    }
+    case TokenTransactionType.MoonpayCashIn: {
+      return <Image source={moonpayIcon} style={styles.image} />
     }
     case TokenTransactionType.Received: // fallthrough
     case TokenTransactionType.Sent: // fallthrough

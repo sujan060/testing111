@@ -14,7 +14,7 @@ import CurrencyDisplay, { DisplayType } from 'src/components/CurrencyDisplay'
 import { FAQ_LINK } from 'src/config'
 import { CURRENCIES, CURRENCY_ENUM } from 'src/geth/consts'
 import { Namespaces, withTranslation } from 'src/i18n'
-import { faucetIcon } from 'src/images/Images'
+import { faucetIcon, moonpayIcon } from 'src/images/Images'
 import { Recipient } from 'src/recipients/recipient'
 import { getMoneyDisplayValue, getNetworkFeeDisplayValue } from 'src/utils/formatting'
 import { navigateToURI } from 'src/utils/linking'
@@ -47,6 +47,8 @@ const renderTopSection = (props: Props) => {
     type === TokenTransactionType.Faucet
   ) {
     return <Image source={faucetIcon} style={style.icon} />
+  } else if (type === TokenTransactionType.MoonpayCashIn) {
+    return <Image source={moonpayIcon} style={style.icon} />
   } else {
     return (
       <Avatar
@@ -77,6 +79,8 @@ const renderAmountSection = (props: Props) => {
           useColors={false}
         />
       )
+    case TokenTransactionType.MoonpayCashIn:
+      return <CurrencyDisplay type={DisplayType.Big} amount={amount} useColors={false} />
     default:
       return <CurrencyDisplay type={DisplayType.Big} amount={amount} useColors={false} />
   }
@@ -101,7 +105,10 @@ const renderBottomSection = (props: Props) => {
         {t('receiveFlow8:receivedAmountFromCelo.1')}
       </Text>
     )
-  } else if (type === TokenTransactionType.NetworkFee) {
+  } else if (
+    type === TokenTransactionType.NetworkFee ||
+    type === TokenTransactionType.MoonpayCashIn
+  ) {
     return (
       <View>
         <Text style={style.pSmall}>
