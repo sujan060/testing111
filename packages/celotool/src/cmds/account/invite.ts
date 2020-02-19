@@ -43,19 +43,13 @@ export const handler = async (argv: InviteArgv) => {
     console.log(`Using account: ${account}`)
     kit.defaultAccount = account
 
-    // TODO(asa): This number was made up
-    const attestationGasAmount = new BigNumber(10000000)
-    // TODO: this default gas price might not be accurate
-    const gasPrice = 100000000000
-
     const temporaryWalletAccount = await kit.web3.eth.accounts.create()
     const temporaryAddress = temporaryWalletAccount.address
     // Buffer.from doesn't expect a 0x for hex input
     const privateKeyHex = temporaryWalletAccount.privateKey.substring(2)
     const inviteCode = Buffer.from(privateKeyHex, 'hex').toString('base64')
 
-    const [goldToken, stableToken, attestations, escrow] = await Promise.all([
-      kit.contracts.getGoldToken(),
+    const [stableToken, attestations, escrow] = await Promise.all([
       kit.contracts.getStableToken(),
       kit.contracts.getAttestations(),
       kit.contracts.getEscrow(),
@@ -63,9 +57,8 @@ export const handler = async (argv: InviteArgv) => {
     const attestationFee = new BigNumber(
       await attestations.attestationRequestFees(stableToken.address)
     )
-    const goldAmount = attestationGasAmount.times(gasPrice).toString()
-    const stableTokenInviteAmount = attestationFee.times(10).toString()
-    const stableTokenEscrowAmount = (await convertToContractDecimals(5, stableToken)).toString()
+    const stableTokenInviteAmount = attestationFee.times(5).toString()
+    const stableTokenEscrowAmount = (await convertToContractDecimals(1, stableToken)).toString()
 
     const phoneHash: string = kit.web3.utils.soliditySha3({
       type: 'string',
@@ -76,11 +69,9 @@ export const handler = async (argv: InviteArgv) => {
     const expirySeconds = 60 * 60 * 24 * 5 // 5 days
 
     console.log(
-      `Transferring ${goldAmount} Gold, ${stableTokenInviteAmount} StableToken, and escrowing ${stableTokenEscrowAmount} StableToken`
+      `Transferring ${stableTokenInviteAmount} StableToken, and escrowing ${stableTokenEscrowAmount} StableToken`
     )
     await Promise.all([
-      // TODO: remove if no one is paying for gas with gold
-      goldToken.transfer(temporaryAddress, goldAmount).sendAndWaitForReceipt(),
       stableToken.transfer(temporaryAddress, stableTokenInviteAmount).sendAndWaitForReceipt(),
       escrow
         .transfer(
@@ -95,7 +86,7 @@ export const handler = async (argv: InviteArgv) => {
     ])
     console.log(`Temp address: ${temporaryAddress}`)
     console.log(`Invite code: ${inviteCode}`)
-    const messageText = `Hi! I would like to invite you to join the Celo payments network. Your invite code is: ${inviteCode}`
+    const messageText = `Hi! I would like to invite you to join the Celo payments network. Your invite code is: ${inviteCode}. https://play.google.com/apps/internaltest/4697994537105701479 https://testflight.apple.com/join/3jMe7zf8`
     console.log('Sending SMS...')
     const twilioConfig = require('twilio-config')
     const twilioClient = twilio(twilioConfig.sid, twilioConfig.authToken)
