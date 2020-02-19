@@ -25,7 +25,7 @@ export const builder = (yargs: Argv) => {
   })
 }
 
-const phoneNumbers = ['+14143310667', '+14158283142']
+const phoneNumbers = ['+15106950279']
 
 export const handler = async (argv: InviteArgv) => {
   await switchToClusterFromEnv()
