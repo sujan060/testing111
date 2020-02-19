@@ -11,6 +11,8 @@ steps:
     "--destination=gcr.io/$PROJECT_ID/celo-monorepo:celotool-$COMMIT_SHA"
   ]
   waitFor: ['-']
+  options:
+    machineType: 'N1_HIGHCPU_8'
 
 - id: "docker:transaction-metrics-exporter"
   name: gcr.io/kaniko-project/executor:v0.16.0
@@ -40,6 +42,8 @@ steps:
     "--destination=us.gcr.io/$PROJECT_ID/celo-monorepo:attestation-service-$COMMIT_SHA"
   ]
   waitFor: ['-']
+  options:
+    machineType: 'N1_HIGHCPU_8'
 
 - id: "docker:leaderboard"
   name: gcr.io/kaniko-project/executor:v0.16.0
@@ -49,5 +53,7 @@ steps:
     "--destination=gcr.io/$PROJECT_ID/celo-monorepo:leaderboard-$COMMIT_SHA"
   ]
   waitFor: ['-']
+  options:
+    machineType: 'N1_HIGHCPU_8'
 
 timeout: 3000s
