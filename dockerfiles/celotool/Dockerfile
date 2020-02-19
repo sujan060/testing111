@@ -35,7 +35,7 @@ COPY packages/protocol packages/protocol/
 COPY packages/verification-pool-api packages/verification-pool-api/
 COPY packages/celotool packages/celotool/
 
-RUN yarn build
+RUN yarn run lerna run build --concurrency 1
 
 ENV PATH="/celo-monorepo/packages/celotool/bin:${PATH}"
 

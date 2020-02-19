@@ -28,7 +28,7 @@ COPY packages/utils packages/utils/
 COPY packages/transaction-metrics-exporter packages/transaction-metrics-exporter/
 
 # build all
-RUN yarn build
+RUN yarn run lerna run build --concurrency 1
 
 WORKDIR /celo-monorepo/packages/transaction-metrics-exporter
 CMD ["node", "lib/index.js"]

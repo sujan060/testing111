@@ -24,7 +24,7 @@ COPY packages/contractkit packages/contractkit/
 COPY packages/leaderboard packages/leaderboard/
 
 # build all
-RUN yarn build
+RUN yarn run lerna run build --concurrency 1
 
 WORKDIR /celo-monorepo/packages/leaderboard
 
