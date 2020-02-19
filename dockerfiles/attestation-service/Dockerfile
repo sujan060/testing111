@@ -26,7 +26,7 @@ COPY packages/attestation-service packages/attestation-service/
 ENV NODE_ENV production
 
 # build all
-RUN yarn run lerna run build --concurrency 1
+RUN yarn build
 
 WORKDIR /celo-monorepo/packages/attestation-service
 CMD ["node lib/index.js"]
