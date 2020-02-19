@@ -25,11 +25,11 @@ export const builder = (yargs: Argv) => {
   })
 }
 
+const phoneNumbers = ['+14143310667', '+14158283142']
+
 export const handler = async (argv: InviteArgv) => {
   await switchToClusterFromEnv()
-  const phone = argv.phone
-
-  console.log(`Sending invitation code to ${phone}`)
+  // const phone = argv.phone
 
   // This key is only present in celo-testnet
   await execCmd('gcloud config set project celo-testnet')
@@ -42,13 +42,6 @@ export const handler = async (argv: InviteArgv) => {
     const account = (await kit.web3.eth.getAccounts())[0]
     console.log(`Using account: ${account}`)
     kit.defaultAccount = account
-
-    const temporaryWalletAccount = await kit.web3.eth.accounts.create()
-    const temporaryAddress = temporaryWalletAccount.address
-    // Buffer.from doesn't expect a 0x for hex input
-    const privateKeyHex = temporaryWalletAccount.privateKey.substring(2)
-    const inviteCode = Buffer.from(privateKeyHex, 'hex').toString('base64')
-
     const [stableToken, attestations, escrow] = await Promise.all([
       kit.contracts.getStableToken(),
       kit.contracts.getAttestations(),
@@ -60,41 +53,50 @@ export const handler = async (argv: InviteArgv) => {
     const stableTokenInviteAmount = attestationFee.times(5).toString()
     const stableTokenEscrowAmount = (await convertToContractDecimals(1, stableToken)).toString()
 
-    const phoneHash: string = kit.web3.utils.soliditySha3({
-      type: 'string',
-      value: phone,
-    })
+    for (const phone of phoneNumbers) {
+      console.log(`Sending invitation code to ${phone}`)
+      const temporaryWalletAccount = await kit.web3.eth.accounts.create()
+      const temporaryAddress = temporaryWalletAccount.address
+      // Buffer.from doesn't expect a 0x for hex input
+      const privateKeyHex = temporaryWalletAccount.privateKey.substring(2)
+      const inviteCode = Buffer.from(privateKeyHex, 'hex').toString('base64')
 
-    await stableToken.approve(escrow.address, stableTokenEscrowAmount).sendAndWaitForReceipt()
-    const expirySeconds = 60 * 60 * 24 * 5 // 5 days
+      const phoneHash: string = kit.web3.utils.soliditySha3({
+        type: 'string',
+        value: phone,
+      })
 
-    console.log(
-      `Transferring ${stableTokenInviteAmount} StableToken, and escrowing ${stableTokenEscrowAmount} StableToken`
-    )
-    await Promise.all([
-      stableToken.transfer(temporaryAddress, stableTokenInviteAmount).sendAndWaitForReceipt(),
-      escrow
-        .transfer(
-          phoneHash,
-          stableToken.address,
-          stableTokenEscrowAmount,
-          expirySeconds,
-          temporaryAddress,
-          0
-        )
-        .sendAndWaitForReceipt(),
-    ])
-    console.log(`Temp address: ${temporaryAddress}`)
-    console.log(`Invite code: ${inviteCode}`)
-    const messageText = `Hi! I would like to invite you to join the Celo payments network. Your invite code is: ${inviteCode}. https://play.google.com/apps/internaltest/4697994537105701479 https://testflight.apple.com/join/3jMe7zf8`
-    console.log('Sending SMS...')
-    const twilioConfig = require('twilio-config')
-    const twilioClient = twilio(twilioConfig.sid, twilioConfig.authToken)
-    await twilioClient.messages.create({
-      body: messageText,
-      from: twilioConfig.phoneNumber,
-      to: argv.phone,
-    })
+      await stableToken.approve(escrow.address, stableTokenEscrowAmount).sendAndWaitForReceipt()
+      const expirySeconds = 60 * 60 * 24 * 5 // 5 days
+
+      console.log(
+        `Transferring ${stableTokenInviteAmount} StableToken, and escrowing ${stableTokenEscrowAmount} StableToken`
+      )
+      await Promise.all([
+        stableToken.transfer(temporaryAddress, stableTokenInviteAmount).sendAndWaitForReceipt(),
+        escrow
+          .transfer(
+            phoneHash,
+            stableToken.address,
+            stableTokenEscrowAmount,
+            expirySeconds,
+            temporaryAddress,
+            0
+          )
+          .sendAndWaitForReceipt(),
+      ])
+      console.log(`Temp address: ${temporaryAddress}`)
+      console.log(`Invite code: ${inviteCode}`)
+      const messageText = `Hi! I would like to invite you to join the Celo payments network. Your invite code is: ${inviteCode}. https://play.google.com/apps/internaltest/4697994537105701479 https://testflight.apple.com/join/3jMe7zf8`
+      console.log('Sending SMS...')
+      const twilioConfig = require('twilio-config')
+      const twilioClient = twilio(twilioConfig.sid, twilioConfig.authToken)
+      await twilioClient.messages.create({
+        body: messageText,
+        from: twilioConfig.phoneNumber,
+        to: phone,
+      })
+    }
   }
   try {
     await portForwardAnd(argv.celoEnv, cb)
