@@ -86,6 +86,9 @@ export const navigateToPaymentTransferReview = (
 ) => {
   let headerText = ''
   switch (type) {
+    case TokenTransactionType.Earn:
+      headerText = 'cEarn payment'
+      break
     case TokenTransactionType.Sent:
       headerText = i18n.t('sendFlow7:sentPayment')
       break

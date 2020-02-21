@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions'
+import { transferDollars } from './sendTokens'
 const crypto = require('crypto')
 
 const admin = require('firebase-admin')
@@ -8,28 +9,77 @@ const REQUESTS_DB_NAME = 'celo-org-mobile-earn-pilot'
 const REQUESTS_DB_URL = 'https://celo-org-mobile-earn-pilot.firebaseio.com'
 const PILOT_PARTICIPANTS_DB_URL = 'https://celo-org-mobile-pilot.firebaseio.com'
 
-const FIGURE_EIGHT_KEY = functions.config().envs.secret_key
+const FIGURE_EIGHT_KEY = functions.config().envs
+  ? functions.config().envs.secret_key
+  : 'placeholder_for_local_dev'
 
 exports.handleFigureEightConfirmation = functions.database
   .instance(REQUESTS_DB_NAME)
-  .ref('requests/{uid}')
+  .ref('confirmations/{uid}')
   .onWrite((change) => {
     const message = change.after.val()
 
     // Whenever a confirmation is written
-    const { confirmed, userId, adjAmount, jobTitle, conversionId } = message.payload
+    const { confirmed, userId, adjAmount, jobTitle, conversionId } = message
     const signature = message.signature
+    console.info(`Confirmed: ${confirmed}`)
+    if (typeof message.updated !== 'undefined') {
+      // Already updated
+      console.info('Already processed request, returning')
+      return null
+    }
 
     if (!confirmed) {
-      // First request, will retrigger once confirmed
+      // No response needed until request is confirmed
+      console.info('Unconfirmed request, no update needed')
       return null
     }
 
     if (!validSignature(signature, JSON.stringify(message.payload))) {
-      console.log('Invalid sig')
+      console.error('Invalid sig')
       return change.after.ref.update({
         valid: false,
       })
+    }
+
+    const uid = sanitizeId(userId)
+
+    console.info(`Updating confirmed payment to userId ${uid}`)
+    const participantsDb = admin
+      .app()
+      .database(PILOT_PARTICIPANTS_DB_URL)
+      .ref('earnPilot/participants')
+    const msgRoot = participantsDb.child(uid)
+    msgRoot.child('earned').transaction((earned: number) => {
+      return (earned || 0) + adjAmount
+    })
+    console.info(`Incremented balance by ${adjAmount}`)
+    msgRoot.child(`conversions/${conversionId}`).set({ jobTitle, adjAmount })
+    console.info(`Added conversion record (id: ${conversionId}) for job ${jobTitle}`)
+    return change.after.ref.update({
+      valid: true,
+      updated: true,
+    })
+  })
+
+exports.transferEarnedBalance = functions.database
+  .instance(REQUESTS_DB_NAME)
+  .ref('requests/{uid}')
+  .onWrite(async (change) => {
+    const message = change.after.val()
+
+    const { timestamp, userId, amountEarned, account, processed, txId } = message
+
+    if (processed) {
+      console.info(`Already handled request for ${userId}, returning`)
+      return
+    }
+    console.info(`Cashing out user ${userId}. Request time: ${timestamp}`)
+    const transferSuccess = await transferDollars(amountEarned, account)
+
+    if (!transferSuccess) {
+      console.error(`Unable to fulfill request ${txId}, returning unprocessed`)
+      return
     }
 
     const participantsDb = admin
@@ -37,13 +87,16 @@ exports.handleFigureEightConfirmation = functions.database
       .database(PILOT_PARTICIPANTS_DB_URL)
       .ref('earnPilot/participants')
     const msgRoot = participantsDb.child(userId)
-    msgRoot.transaction((earned: number) => {
-      return (earned || 0) + adjAmount
-    }) // TODO(anna) the earn and conversion updates are untested
-    msgRoot.child('conversions').push({ conversionId, jobTitle, adjAmount })
+    msgRoot.child('earned').set(0)
+    msgRoot.child('cashedOut').transaction((cashedOut: number) => {
+      return (cashedOut || 0) + amountEarned
+    })
+    msgRoot.child('cashOutTxs').push({ txId, timestamp, userId, amountEarned })
+
+    // TODO confirm userId and address and amount match in database
+
     return change.after.ref.update({
-      valid: true,
-      updated: true,
+      processed: true,
     })
   })
 
@@ -61,8 +114,7 @@ const validSignature = (signature: string, params: string) => {
 }
 
 const sanitizeId = (uid: string) => {
-  // TODO may need to make lowercase
-  return uid
+  return uid.toLowerCase()
 }
 
 enum PostType {
