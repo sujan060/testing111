@@ -8,8 +8,8 @@ import { StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { showError } from 'src/alert/actions'
 import componentWithAnalytics from 'src/analytics/wrapper'
-import { setFigureEightAccount } from 'src/app/actions'
 import { ErrorMessages } from 'src/app/ErrorMessages'
+import { setFigureEightAccount } from 'src/earn/actions'
 
 interface StateProps {
   figureEightUserId: string | null
@@ -27,7 +27,7 @@ interface DispatchProps {
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {
-    figureEightUserId: state.app.figureEightUserId,
+    figureEightUserId: state.earn.figureEightUserId,
   }
 }
 

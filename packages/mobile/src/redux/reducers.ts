@@ -3,6 +3,7 @@ import { PersistState } from 'redux-persist'
 import { reducer as account, State as AccountState } from 'src/account/reducer'
 import { reducer as alert, State as AlertState } from 'src/alert/reducer'
 import { appReducer as app, State as AppState } from 'src/app/reducers'
+import { earnReducer as earn, State as EarnState } from 'src/earn/reducer'
 import { escrowReducer as escrow, State as EscrowState } from 'src/escrow/reducer'
 import { reducer as exchange, State as ExchangeState } from 'src/exchange/reducer'
 import { reducer as fees, State as FeesState } from 'src/fees/reducer'
@@ -27,6 +28,7 @@ export default combineReducers({
   goldToken,
   stableToken,
   send,
+  earn,
   home,
   exchange,
   transactions,
@@ -48,6 +50,7 @@ export interface RootState {
   networkInfo: NetworkInfoState
   alert: AlertState
   send: SendState
+  earn: EarnState
   goldToken: GoldTokenState
   stableToken: StableTokenState
   home: HomeState

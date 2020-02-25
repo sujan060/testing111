@@ -9,8 +9,6 @@ export interface State {
   doingBackupFlow: boolean
   doingPinVerification: boolean
   analyticsEnabled: boolean
-  figureEightUserId: string | null
-  figureEightEarned: number | null
 }
 
 const initialState = {
@@ -21,8 +19,6 @@ const initialState = {
   doingBackupFlow: false,
   doingPinVerification: false,
   analyticsEnabled: true,
-  figureEightUserId: null,
-  figureEightEarned: null,
 }
 
 export const currentLanguageSelector = (state: RootState) => state.app.language
@@ -54,16 +50,6 @@ export const appReducer = (
       return {
         ...state,
         language: action.language,
-      }
-    case Actions.SET_FIGURE_EIGHT_ACCOUNT:
-      return {
-        ...state,
-        figureEightUserId: action.userId,
-      }
-    case Actions.SET_FIGURE_EIGHT_EARNED:
-      return {
-        ...state,
-        figureEightEarned: action.amount,
       }
     case Actions.RESET_APP_OPENED_STATE:
       return {
@@ -101,6 +87,3 @@ export const appReducer = (
       return state
   }
 }
-
-export const figureEightUserIdSelector = (state: RootState) => state.app.figureEightUserId
-export const figureEightEarnedSelector = (state: RootState) => state.app.figureEightEarned

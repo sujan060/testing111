@@ -1,6 +1,5 @@
 import colors from '@celo/react-components/styles/colors'
 import fontStyles from '@celo/react-components/styles/fonts'
-import variables from '@celo/react-components/styles/variables'
 import * as React from 'react'
 import { WithTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
@@ -17,7 +16,7 @@ type Props = WithTranslation
 function EarnDollarsOverview({ t }: Props) {
   const localCurrencyCode = useLocalCurrencyCode()
   const localCurrencySymbol = useLocalCurrencySymbol()
-  const dollarsEarned = useSelector((state) => state.app.figureEightEarned)
+  const dollarsEarned = useSelector((state) => state.earn.figureEightEarned)
   const localExchangeRate = useSelector(getLocalCurrencyExchangeRate)
   const localBalance = convertDollarsToLocalAmount(dollarsEarned, localExchangeRate)
   const localValue =

@@ -14,14 +14,13 @@ import {
   initiateFigureEightCashout,
   refreshFigureEightEarned,
   setFigureEightAccount,
-} from 'src/app/actions'
+} from 'src/earn/actions'
 import EarnDollarsOverview from 'src/earn/EarnDollarsOverview'
 import EarnLogin from 'src/earn/EarnLogin'
 import { Namespaces, withTranslation } from 'src/i18n'
 import { shinyDollar } from 'src/images/Images'
 import { headerWithBackButton } from 'src/navigator/Headers'
 import { navigateHome } from 'src/navigator/NavigationService'
-import { getMoneyDisplayValue } from 'src/utils/formatting'
 
 interface StateProps {
   figureEightEarned: number | null
@@ -42,8 +41,8 @@ interface DispatchProps {
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {
-    figureEightEarned: state.app.figureEightEarned,
-    figureEightUserId: state.app.figureEightUserId,
+    figureEightEarned: state.earn.figureEightEarned,
+    figureEightUserId: state.earn.figureEightUserId,
   }
 }
 

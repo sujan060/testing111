@@ -21,10 +21,6 @@ export enum Actions {
   NAVIGATE_PIN_PROTECTED = 'APP/NAVIGATE_PIN_PROTECTED',
   START_PIN_VERIFICATION = 'APP/START_PIN_VERIFICATION',
   FINISH_PIN_VERIFICATION = 'APP/FINISH_PIN_VERIFICATION',
-  SET_FIGURE_EIGHT_ACCOUNT = 'APP/SET_FIGURE_EIGHT_ACCOUNT',
-  REFRESH_FIGURE_EIGHT_EARNED = 'APP/REFRESH_FIGURE_EIGHT_EARNED',
-  SET_FIGURE_EIGHT_EARNED = 'APP/SET_FIGURE_EIGHT_EARNED',
-  INITIATE_FIGURE_EIGHT_CASHOUT = 'APP/INITIATE_FIGURE_EIGHT_CASHOUT',
 }
 
 interface SetLoggedIn {
@@ -40,24 +36,6 @@ interface SetNumberVerifiedAction {
 export interface SetLanguage {
   type: Actions.SET_LANGUAGE
   language: string
-}
-
-export interface SetFigureEightAccount {
-  type: Actions.SET_FIGURE_EIGHT_ACCOUNT
-  userId: string
-}
-
-export interface RefreshFigureEightEarned {
-  type: Actions.REFRESH_FIGURE_EIGHT_EARNED
-}
-
-export interface SetFigureEightEarned {
-  type: Actions.SET_FIGURE_EIGHT_EARNED
-  amount: number
-}
-
-export interface InitiateFigureEightCashout {
-  type: Actions.INITIATE_FIGURE_EIGHT_CASHOUT
 }
 
 export interface OpenDeepLink {
@@ -108,10 +86,6 @@ export type ActionTypes =
   | NavigatePinProtected
   | StartPinVerification
   | FinishPinVerification
-  | SetFigureEightAccount
-  | RefreshFigureEightEarned
-  | SetFigureEightEarned
-  | InitiateFigureEightCashout
 
 export const setLoggedIn = (loggedIn: boolean) => ({
   type: Actions.SET_LOGGED_IN,
@@ -138,23 +112,6 @@ export const setLanguage = (language: string, nextScreen?: Screens) => {
   }
 }
 
-export const setFigureEightAccount = (userId: string) => ({
-  type: Actions.SET_FIGURE_EIGHT_ACCOUNT,
-  userId,
-})
-
-export const setFigureEightEarned = (amount: number) => ({
-  type: Actions.SET_FIGURE_EIGHT_EARNED,
-  amount,
-})
-
-export const initiateFigureEightCashout = () => ({
-  type: Actions.INITIATE_FIGURE_EIGHT_CASHOUT,
-})
-
-export const refreshFigureEightEarned = () => ({
-  type: Actions.REFRESH_FIGURE_EIGHT_EARNED,
-})
 export const openDeepLink = (deepLink: string) => {
   return {
     type: Actions.OPEN_DEEP_LINK,
