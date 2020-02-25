@@ -15,6 +15,7 @@ import {
   refreshFigureEightEarned,
   setFigureEightAccount,
 } from 'src/app/actions'
+import EarnDollarsOverview from 'src/earn/EarnDollarsOverview'
 import EarnLogin from 'src/earn/EarnLogin'
 import { Namespaces, withTranslation } from 'src/i18n'
 import { shinyDollar } from 'src/images/Images'
@@ -98,10 +99,11 @@ export class Earn extends React.Component<Props, State> {
                   <Text style={fontStyles.bodyBold}>{`${this.props.figureEightUserId} `}</Text>
                   <TextButton onPress={this.onSubmitLogout}>{'(log out)'}</TextButton>
                 </View>
+                <EarnDollarsOverview />
                 <TextButton
                   style={fontStyles.body}
                   onPress={this.props.refreshFigureEightEarned}
-                >{`$${getMoneyDisplayValue(amountEarned)} available`}</TextButton>
+                >{`Refresh balance`}</TextButton>
                 {nonZeroBalance ? (
                   <>
                     <TextButton style={style.modalSkipText} onPress={this.onTransferToWallet}>
