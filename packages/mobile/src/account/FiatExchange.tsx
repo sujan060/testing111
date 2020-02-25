@@ -10,6 +10,10 @@ import i18n, { Namespaces, withTranslation } from 'src/i18n'
 import { LocalCurrencyCode } from 'src/localCurrency/consts'
 import { headerWithBackButton } from 'src/navigator/Headers'
 import { RootState } from 'src/redux/reducers'
+import { addStandbyTransaction } from 'src/transactions/actions'
+import { TokenTransactionType } from 'src/apollo/types'
+import { TransactionStatus } from 'src/transactions/reducer'
+import { CURRENCY_ENUM } from 'src/geth/consts'
 
 interface State {
   signedUrl: string
@@ -77,6 +81,22 @@ class FiatExchange extends React.Component<Props, State> {
   handleError = () => {
     showError(ErrorMessages.FIREBASE_FAILED)
   }
+
+  // TODO upon confirmation, add standbyTransaction
+  async addStandbyTransactionForCashIn() {
+    await addStandbyTransaction({
+      id: 'someID', // TODO anna get ID from moonpay
+      type: TokenTransactionType.MoonpayCashIn,
+      comment: '',
+      status: TransactionStatus.Pending,
+      value: '1', // TODO get amount amount.toString(),
+      symbol: CURRENCY_ENUM.DOLLAR,
+      timestamp: Math.floor(Date.now() / 1000),
+      address: '0x0', // recipientAddress,
+    })
+  }
+  // TODO use moonpay confirmation URL to add standby transactions
+  // then make sure ID will match with what we get from blockchain api
 
   render() {
     return this.state.signedUrl === '' ? (

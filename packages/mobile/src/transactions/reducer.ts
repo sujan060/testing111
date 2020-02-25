@@ -44,6 +44,7 @@ type TransferTransactionType =
   | TokenTransactionType.InviteSent
   | TokenTransactionType.InviteReceived
   | TokenTransactionType.NetworkFee
+  | TokenTransactionType.MoonpayCashIn
 
 export interface State {
   standbyTransactions: StandbyTransaction[]
