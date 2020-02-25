@@ -48,6 +48,20 @@ const mapStateToProps = (state: RootState): StateProps => {
 
 type Props = DispatchProps & WithTranslation & StateProps
 
+function EarnEducation() {
+  return (
+    <View>
+      <Image source={shinyDollar} resizeMode={'contain'} style={styles.image} />
+      <Text style={styles.h1} testID="VerificationEducationHeader">
+        {'Earn cUSD on your phone'}
+      </Text>
+      <Text style={styles.body}>
+        {'Complete online tasks and surveys to earn cUSD. Click the link below to get started!'}
+      </Text>
+    </View>
+  )
+}
+
 export class Earn extends React.Component<Props, State> {
   static navigationOptions = () => ({
     ...headerWithBackButton,
@@ -66,7 +80,7 @@ export class Earn extends React.Component<Props, State> {
   onPressWork = () => {
     Linking.openURL(
       'https://tasks.figure-eight.work/channels/cf_internal/jobs/1551377/work?secret=TnUukIPTIthFxco%2By%2BxIX%2FbVraweCTd8cbCIvw2Ha%2FSE'
-    ).catch((error) => {})
+    ).catch((error) => {}) // TODO(anna) handle error
   }
 
   onTransferToWallet = () => {
@@ -113,15 +127,7 @@ export class Earn extends React.Component<Props, State> {
                   <></>
                 )}
               </View>
-              <Image source={shinyDollar} resizeMode={'contain'} style={styles.image} />
-              <Text style={styles.h1} testID="VerificationEducationHeader">
-                {'Earn cUSD on your phone'}
-              </Text>
-              <Text style={styles.body}>
-                {
-                  'Complete online tasks and surveys to earn cUSD. Click the link below to get started!'
-                }
-              </Text>
+              <EarnEducation />
               <Button
                 text={nonZeroBalance ? 'Continue Working' : 'Start Working'}
                 onPress={this.onPressWork}
