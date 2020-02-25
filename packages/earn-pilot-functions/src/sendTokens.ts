@@ -20,26 +20,22 @@ export const transferDollars = async (amount: number, address: string) => {
     return false
   }
   const weiTransferAmount = contractKit.web3.utils.toWei(amount.toString(), 'ether')
-  console.log(`About to get stable token wrapper`)
   const stableTokenWrapper = await contractKit.contracts.getStableToken()
-  console.log(`Got stable token wrapper`)
-  const bankBalance = await stableTokenWrapper.balanceOf(bankAddress)
+  const bankBalance = await stableTokenWrapper.balanceOf(bankAddress) // In cUSD
   if (amount > bankBalance) {
     console.error(`Not enough funds in bank balance to fulfill request: ${amount} > ${bankBalance}`)
     return false
   }
-  console.log(
+  console.info(
     `Bank balance of ${bankBalance.toString()} is sufficient to fulfill ${weiTransferAmount}`
   )
 
   contractKit.addAccount(bankPrivateKey)
   const stableTokenContract = await contractKit._web3Contracts.getStableToken()
-  console.log(`Got web3 stableToken contract`)
   const txo = await stableTokenContract.methods.transfer(address, weiTransferAmount)
-  console.log(`Created transfer object`)
   const tx = await contractKit.sendTransactionObject(txo, { from: bankAddress })
-  console.log(`Sent tx object`)
+  console.info(`Sent tx object`)
   const hash = await tx.getHash()
-  console.log(`Transferred ${amount} dollars to ${address}. Hash: ${hash}`)
+  console.info(`Transferred ${amount} dollars to ${address}. Hash: ${hash}`)
   return true
 }

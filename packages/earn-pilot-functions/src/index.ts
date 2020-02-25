@@ -6,7 +6,7 @@ const admin = require('firebase-admin')
 admin.initializeApp(functions.config().firebase)
 
 const REQUESTS_DB_NAME = 'celo-org-mobile-earn-pilot'
-const REQUESTS_DB_URL = 'https://celo-org-mobile-earn-pilot.firebaseio.com'
+const REQUESTS_DB_URL = `https://${REQUESTS_DB_NAME}.firebaseio.com`
 const PILOT_PARTICIPANTS_DB_URL = 'https://celo-org-mobile-pilot.firebaseio.com'
 
 const FIGURE_EIGHT_KEY = functions.config().envs
@@ -17,11 +17,10 @@ exports.handleFigureEightConfirmation = functions.database
   .instance(REQUESTS_DB_NAME)
   .ref('confirmations/{uid}')
   .onWrite((change) => {
-    const message = change.after.val()
-
     // Whenever a confirmation is written
-    const { confirmed, userId, adjAmount, jobTitle, conversionId } = message
-    const signature = message.signature
+
+    const message = change.after.val()
+    const { signature, confirmed, userId, adjAmount, jobTitle, conversionId } = message
     console.info(`Confirmed: ${confirmed}`)
     if (typeof message.updated !== 'undefined') {
       // Already updated
@@ -44,7 +43,7 @@ exports.handleFigureEightConfirmation = functions.database
 
     const uid = sanitizeId(userId)
 
-    console.info(`Updating confirmed payment to userId ${uid}`)
+    console.info(`Updating confirmed payment for userId ${uid}`)
     const participantsDb = admin
       .app()
       .database(PILOT_PARTICIPANTS_DB_URL)
@@ -55,7 +54,7 @@ exports.handleFigureEightConfirmation = functions.database
     })
     console.info(`Incremented balance by ${adjAmount}`)
     msgRoot.child(`conversions/${conversionId}`).set({ jobTitle, adjAmount })
-    console.info(`Added conversion record (id: ${conversionId}) for job ${jobTitle}`)
+    console.info(`Added conversion record ${conversionId} for job ${jobTitle}`)
     return change.after.ref.update({
       valid: true,
       updated: true,

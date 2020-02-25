@@ -1,7 +1,6 @@
 import { RootState } from '@celo/mobile/src/redux/reducers'
 import Button, { BtnTypes } from '@celo/react-components/components/Button'
 import TextButton from '@celo/react-components/components/TextButton'
-import TextInput from '@celo/react-components/components/TextInput'
 import colors from '@celo/react-components/styles/colors'
 import fontStyles from '@celo/react-components/styles/fonts'
 import * as React from 'react'
@@ -16,7 +15,7 @@ import {
   refreshFigureEightEarned,
   setFigureEightAccount,
 } from 'src/app/actions'
-import { ErrorMessages } from 'src/app/ErrorMessages'
+import EarnLogin from 'src/earn/EarnLogin'
 import { Namespaces, withTranslation } from 'src/i18n'
 import { shinyDollar } from 'src/images/Images'
 import { headerWithBackButton } from 'src/navigator/Headers'
@@ -29,7 +28,8 @@ interface StateProps {
 }
 
 interface State {
-  userId: string | null
+  userId: string
+  password: string
 }
 
 interface DispatchProps {
@@ -54,16 +54,8 @@ export class Earn extends React.Component<Props, State> {
     headerTitle: 'cEarn',
   })
   state = {
-    userId: this.props.figureEightUserId,
-  }
-
-  onSubmitUserId = () => {
-    if (this.state.userId) {
-      this.props.setFigureEightAccount(this.state.userId)
-      this.props.refreshFigureEightEarned()
-    } else {
-      this.props.showError(ErrorMessages.INVALID_FIGURE_EIGHT_USER_ID)
-    }
+    userId: this.props.figureEightUserId || '',
+    password: '',
   }
 
   onSubmitLogout = () => {
@@ -74,17 +66,12 @@ export class Earn extends React.Component<Props, State> {
   onPressWork = () => {
     Linking.openURL(
       'https://tasks.figure-eight.work/channels/cf_internal/jobs/1551377/work?secret=TnUukIPTIthFxco%2By%2BxIX%2FbVraweCTd8cbCIvw2Ha%2FSE'
-    )
+    ).catch((error) => {})
   }
 
   onTransferToWallet = () => {
     this.props.initiateFigureEightCashout()
-    // TODO add notification
     navigateHome()
-  }
-
-  onChangeInput = (userId: string) => {
-    this.setState({ userId })
   }
 
   componentDidMount = () => {
@@ -125,39 +112,26 @@ export class Earn extends React.Component<Props, State> {
                   <></>
                 )}
               </View>
+              <Image source={shinyDollar} resizeMode={'contain'} style={styles.image} />
+              <Text style={styles.h1} testID="VerificationEducationHeader">
+                {'Earn cUSD on your phone'}
+              </Text>
+              <Text style={styles.body}>
+                {
+                  'Complete online tasks and surveys to earn cUSD. Click the link below to get started!'
+                }
+              </Text>
+              <Button
+                text={nonZeroBalance ? 'Continue Working' : 'Start Working'}
+                onPress={this.onPressWork}
+                standard={false}
+                type={BtnTypes.PRIMARY}
+              />
             </View>
           ) : (
             // Require log in before displaying work
-            <View>
-              <Text style={fontStyles.body}>Please enter your userId</Text>
-              <TextInput
-                onChangeText={this.onChangeInput}
-                value={this.state.userId}
-                style={style.inputField}
-              />
-              <TextButton onPress={this.onSubmitUserId}>{'Submit'}</TextButton>
-            </View>
+            <EarnLogin />
           )}
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Image source={shinyDollar} resizeMode={'contain'} style={styles.image} />
-            <Text style={styles.h1} testID="VerificationEducationHeader">
-              {'Earn cUSD on your phone'}
-            </Text>
-            <Text style={styles.body}>
-              {
-                'Complete online tasks and surveys to earn cUSD. Click the link below to get started!'
-              }
-            </Text>
-          </ScrollView>
-          <>
-            <Button
-              text={nonZeroBalance ? 'Continue Working' : 'Start Working'}
-              onPress={this.onPressWork}
-              standard={false}
-              type={BtnTypes.PRIMARY}
-              testID="VerificationEducationContinue"
-            />
-          </>
         </ScrollView>
       </SafeAreaView>
     )
@@ -180,13 +154,13 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
   },
   inputField: {
-    marginTop: 25,
+    // marginTop: 25,
     alignItems: 'center',
     borderColor: colors.inputBorder,
     borderRadius: 3,
     borderWidth: 1,
-    marginBottom: 6,
-    paddingLeft: 9,
+    marginVertical: 5,
+    paddingLeft: 10,
     color: colors.inactive,
     height: 50,
   },

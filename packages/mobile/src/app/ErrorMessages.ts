@@ -48,6 +48,7 @@ export enum ErrorMessages {
   FAILED_TO_SWITCH_SYNC_MODES = 'failedToSwitchSyncModes',
   SMS_ERROR = 'walletFlow5:SMSError',
   PAYMENT_REQUEST_UPDATE_FAILED = 'paymentRequestFlow:paymentRequestUpdateFailed',
-  INVALID_FIGURE_EIGHT_USER_ID = 'Invalid Earn User ID',
+  MISSING_CEARN_ID = 'Missing cEarn ID',
+  INVALID_CEARN_PASSWORD = 'Invalid cEarn password',
   FIGURE_EIGHT_ADDRESS_NOT_UP_TO_DATE = 'Figure Eight Address Out of Date',
 }
