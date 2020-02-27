@@ -1,5 +1,5 @@
+import { privateKeyToAddress } from '@celo/utils/src/address'
 import { deriveCEK } from '@celo/utils/src/commentEncryption'
-import { getAccountAddressFromPrivateKey } from '@celo/walletkit'
 import * as Sentry from '@sentry/react-native'
 import * as Crypto from 'crypto'
 import { generateMnemonic, mnemonicToSeedHex } from 'react-native-bip39'
@@ -147,7 +147,19 @@ export function* getOrCreateAccount() {
     Logger.debug(TAG + '@getOrCreateAccount', 'Creating a new account')
 
     const wordlist = getWordlist(yield select(currentLanguageSelector))
-    const mnemonic = yield call(generateMnemonic, MNEMONIC_BIT_LENGTH, null, wordlist)
+    let mnemonic: string = yield call(generateMnemonic, MNEMONIC_BIT_LENGTH, null, wordlist)
+
+    // Ensure no duplicates in mnemonic
+    const checkDuplicate = (someString: string) => {
+      return new Set(someString.split(' ')).size !== someString.split(' ').length
+    }
+    let duplicateInMnemonic = checkDuplicate(mnemonic)
+    while (duplicateInMnemonic) {
+      Logger.debug(TAG + '@getOrCreateAccount', 'Regenerating mnemonic to avoid duplicates')
+      mnemonic = yield call(generateMnemonic, MNEMONIC_BIT_LENGTH, null, wordlist)
+      duplicateInMnemonic = checkDuplicate(mnemonic)
+    }
+
     if (!mnemonic) {
       throw new Error('Failed to generate mnemonic')
     }
@@ -184,7 +196,7 @@ export function* assignAccountFromPrivateKey(privateKey: string) {
     // Save the account to a local file on the disk.
     // This is done for all sync modes, to allow users to switch into forno mode.
     // Note that if geth is running it saves the key using web3.personal.
-    const account = getAccountAddressFromPrivateKey(privateKey)
+    const account = privateKeyToAddress(privateKey)
     yield call(savePrivateKeyToLocalDisk, account, privateKey, pincode)
 
     const fornoMode = yield select(fornoSelector)
@@ -228,7 +240,7 @@ function getPrivateKeyFilePath(account: string): string {
 }
 
 function ensureAddressAndKeyMatch(address: string, privateKey: string) {
-  const generatedAddress = getAccountAddressFromPrivateKey(privateKey)
+  const generatedAddress = privateKeyToAddress(privateKey)
   if (!generatedAddress) {
     throw new Error(`Failed to generate address from private key`)
   }
