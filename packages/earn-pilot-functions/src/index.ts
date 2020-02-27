@@ -160,7 +160,7 @@ export const handlePost = functions.https.onRequest((request, response) => {
     const conversionId = requestsDb.push({
       userId,
       confirmed: false,
-      adjAmount: shillingsToDollars(adjusted_amount), // Use adju
+      adjAmount: shillingsToDollars(adjusted_amount), // Convert from shillings displayed in Fig8 UI to cUSD
       amount,
     }).key
     console.info(`Assigned conversion ID ${conversionId} to unconfirmed request`)

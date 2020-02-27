@@ -79,7 +79,7 @@ export class Earn extends React.Component<Props, State> {
 
   onPressWork = () => {
     Linking.openURL(
-      `https://tasks.figure-eight.work/channels/celo/tasks?uid=${this.state.userId}`
+      `https://tasks.figure-eight.work/channels/celo/tasks?uid=${this.props.figureEightUserId}`
     ).catch((error) => {}) // TODO(anna) handle error
   }
 
