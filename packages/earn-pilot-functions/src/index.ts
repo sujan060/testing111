@@ -22,7 +22,8 @@ exports.handleFigureEightConfirmation = functions.database
     const message = change.after.val()
     const { signature, confirmed, userId, adjAmount, jobTitle, conversionId } = message
     console.info(`Confirmed: ${confirmed}`)
-    if (typeof message.updated !== 'undefined') {
+    console.info(`Data: ${JSON.stringify(message)}`)
+    if (typeof message.updated !== 'undefined' && message.updated) {
       // Already updated
       console.info('Already processed request, returning')
       return null
@@ -30,7 +31,7 @@ exports.handleFigureEightConfirmation = functions.database
 
     if (!confirmed) {
       // No response needed until request is confirmed
-      console.info('Unconfirmed request, no update needed')
+      console.info(`Unconfirmed request, no update needed for message: ${JSON.stringify(message)}`)
       return null
     }
 
@@ -40,6 +41,8 @@ exports.handleFigureEightConfirmation = functions.database
         valid: false,
       })
     }
+    console.info(`Confirmed: ${confirmed}, adjAmount: ${adjAmount}}`)
+    console.info(`User ID: ${userId}`)
 
     const uid = sanitizeId(userId)
 
@@ -124,15 +127,19 @@ enum PostType {
 export const handlePost = functions.https.onRequest((request, response) => {
   const data = request.body
   const signature = data.signature
+  const payload = JSON.parse(data.payload)
+  console.info(`@handlePost payload: ${JSON.stringify(payload)}`)
 
-  if (!validSignature(signature, JSON.stringify(request.body.payload))) {
-    console.info(`Received request ${JSON.stringify(data)} with invalid signature ${signature}`)
+  if (!validSignature(signature, JSON.stringify(payload))) {
+    console.info(
+      `Received request ${JSON.stringify(request.body)} with invalid signature ${signature}`
+    )
     response.status(401).send(`Unauthorized. Invalid signature: ${signature}`)
     return
   }
 
   const postType =
-    data && typeof data.payload.conversion_id !== 'undefined' ? PostType.CONFIRM : PostType.INITIAL
+    data && typeof payload.conversion_id !== 'undefined' ? PostType.CONFIRM : PostType.INITIAL
 
   const requestsDb = admin
     .app()
@@ -140,7 +147,8 @@ export const handlePost = functions.https.onRequest((request, response) => {
     .ref('confirmations')
 
   if (postType === PostType.INITIAL) {
-    const { amount, adjusted_amount, uid } = data.payload
+    console.info(`Confirmation payload: ${JSON.stringify(payload)}`)
+    const { amount, adjusted_amount, uid } = payload
     console.info(`Initial request for payment of ${adjusted_amount} to user ${uid}`)
     const userId = sanitizeId(uid)
     const conversionId = requestsDb.push({
@@ -150,23 +158,22 @@ export const handlePost = functions.https.onRequest((request, response) => {
       amount,
     }).key
     console.info(`Assigned conversion ID ${conversionId} to unconfirmed request`)
-    response.status(200).send(`${JSON.stringify({ conversion_id: conversionId })}`)
+    response.status(200).send(conversionId) // `${JSON.stringify({ conversion_id: conversionId })}`)
     return
   } else if (postType === PostType.CONFIRM) {
-    const { job_title, conversion_id } = data.payload
+    console.info(`Confirmation payload: ${JSON.stringify(payload)}`)
+    const { job_title, conversion_id } = payload
     if (!conversion_id || !job_title) {
       response
         .status(400)
-        .send(
-          `Missing conversion_id or job_title in received payload: ${JSON.stringify(data.payload)}`
-        )
+        .send(`Missing conversion_id or job_title in received payload: ${JSON.stringify(payload)}`)
       return
     }
-    console.info(`Confirmation request for ${conversion_id}`)
+    console.info(`Confirmation request for ${job_title} and conversion id ${conversion_id}`)
     requestsDb
       .child(conversion_id)
       .update({ jobTitle: job_title, confirmed: true, conversionId: conversion_id }) // Duplicate storage of conversionId for convenient handleFigureEightConfirmation access
-    console.info(`Request ${conversion_id} confirmed`)
+    console.info(`Request ${job_title} confirmed`)
     response.status(200).send('OK')
     return
   } else {
