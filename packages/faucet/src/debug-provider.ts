@@ -1,13 +1,16 @@
 import Web3 from 'web3'
-import { Callback, JsonRPCRequest, JsonRPCResponse, Provider } from 'web3/providers'
+import { WebsocketProvider as Provider } from 'web3-core'
+import { JsonRpcPayload, JsonRpcResponse } from 'web3-core-helpers'
 
-class DebugProvider implements Provider {
-  constructor(private provider: Provider) {}
+class DebugProvider extends Provider {
+  constructor(private provider: Provider) {
+    this.provider = provider
+  }
 
-  send(payload: JsonRPCRequest, callback: Callback<JsonRPCResponse>): any {
+  send(payload: JsonRpcPayload, callback: (error: Error, response: JsonRpcResponse) => void): any {
     console.log('rpc: -> %O', payload)
 
-    const callbackDecorator = (error: Error, result: JsonRPCResponse) => {
+    const callbackDecorator = (error: Error, result: JsonRpcResponse) => {
       console.log('rpc: <- %O', payload)
       callback(error as any, result)
     }
@@ -16,7 +19,7 @@ class DebugProvider implements Provider {
 }
 
 export function wrap(provider: Provider) {
-  return new DebugProvider(provider)
+  return new DebugProvider(provider) as Provider
 }
 
 export function injectDebugProvider(web3: Web3) {

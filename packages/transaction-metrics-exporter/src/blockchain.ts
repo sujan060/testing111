@@ -8,8 +8,8 @@ import { newLogExplorer } from '@celo/contractkit/lib/explorer/log-explorer'
 import { Future } from '@celo/utils/lib/future'
 import { consoleLogger } from '@celo/utils/lib/logger'
 import { conditionWatcher, tryObtainValueWithRetries } from '@celo/utils/lib/task'
-import { Block, BlockHeader } from 'web3/eth/types'
-import { WebsocketProvider } from 'web3/providers'
+import { WebsocketProviderBase } from 'web3-core-helpers'
+import { BlockHeader } from 'web3-eth'
 import { Counters } from './metrics'
 
 const EMPTY_INPUT = 'empty_input'
@@ -53,7 +53,7 @@ type EndReason =
 
 export async function runMetricExporter(kit: ContractKit): Promise<EndReason> {
   const blockProcessor = await newBlockHeaderProcessor(kit)
-  const provider = kit.web3.currentProvider as WebsocketProvider
+  const provider = kit.web3.currentProvider as WebsocketProviderBase
   const subscription = await kit.web3.eth.subscribe('newBlockHeaders')
   subscription.on('data', blockProcessor)
 
@@ -137,7 +137,7 @@ async function newBlockHeaderProcessor(kit: ContractKit): Promise<(block: BlockH
     Counters.blockheader.inc({ miner: header.miner })
 
     const block = await blockExplorer.fetchBlock(header.number)
-    const previousBlock: Block = await blockExplorer.fetchBlock(header.number - 1)
+    const previousBlock = await blockExplorer.fetchBlock(header.number - 1)
 
     const blockTime = block.timestamp - previousBlock.timestamp
     logEvent('RECEIVED_BLOCK', { ...block, blockTime })
