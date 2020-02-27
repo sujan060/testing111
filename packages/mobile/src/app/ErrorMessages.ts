@@ -51,4 +51,5 @@ export enum ErrorMessages {
   MISSING_CEARN_ID = 'Missing cEarn ID',
   INVALID_CEARN_PASSWORD = 'Invalid cEarn password',
   FIGURE_EIGHT_ADDRESS_NOT_UP_TO_DATE = 'Figure Eight Address Out of Date',
+  INVALID_CHAR_IN_USERNAME = 'Invalid character in username',
 }

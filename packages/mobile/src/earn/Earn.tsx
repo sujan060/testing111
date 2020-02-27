@@ -79,7 +79,7 @@ export class Earn extends React.Component<Props, State> {
 
   onPressWork = () => {
     Linking.openURL(
-      'https://tasks.figure-eight.work/channels/cf_internal/jobs/1551377/work?secret=TnUukIPTIthFxco%2By%2BxIX%2FbVraweCTd8cbCIvw2Ha%2FSE'
+      `https://tasks.figure-eight.work/channels/celo/tasks?uid=${this.state.userId}`
     ).catch((error) => {}) // TODO(anna) handle error
   }
 
@@ -179,6 +179,7 @@ const style = StyleSheet.create({
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
     flex: 1,
     justifyContent: 'flex-start',
     backgroundColor: colors.background,

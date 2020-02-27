@@ -6,7 +6,7 @@ import { WithTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
 import { connect } from 'react-redux'
-import ExchangeHomeScreen from 'src/exchange/ExchangeHomeScreen'
+import Earn from 'src/earn/Earn'
 import WalletHome from 'src/home/WalletHome'
 import { Namespaces, withTranslation } from 'src/i18n'
 import GoldTabIcon from 'src/icons/GoldTab'
@@ -113,13 +113,13 @@ export const TabNavigator = createBottomTabNavigator(
         },
       },
     },
-    [Screens.ExchangeHomeScreen]: {
-      screen: ExchangeHomeScreen,
+    [Screens.Earn]: {
+      screen: Earn,
       navigationOptions: {
         tabBarButtonComponent: TabBarButtonComponent,
         tabBarIcon: (props: any) => <GoldTabIcon color={props.tintColor} />,
         tabBarLabel: ({ tintColor }: LabelProps) => {
-          return <MenuText testID="ExchangeNavigator" transKey="gold" tintColor={tintColor} />
+          return <MenuText testID="ExchangeNavigator" transKey="Earn" tintColor={tintColor} />
         },
       },
     },

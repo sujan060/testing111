@@ -243,7 +243,6 @@ export class Account extends React.Component<Props, State> {
             {features.SHOW_ADD_FUNDS && (
               <SettingsItem title={t('addFunds')} onPress={this.goToFiatExchange} />
             )}
-            {features.SHOW_EARN && <SettingsItem title={'Earn'} onPress={this.goToEarn} />}
             <SettingsItem
               title={t('backupKeyFlow6:backupAndRecovery')}
               onPress={this.goToBackupScreen}

@@ -47,10 +47,29 @@ class EarnLogin extends React.Component<Props, State> {
     this.setState({ password })
   }
 
+  getExpectedPassword = (username: string) => {
+    // TODO(anna) if this is used in future pilots use different password system
+    const password = username[5] + username.length + username[0] + username[2]
+    return password
+  }
+
+  checkUsernameCharacters = (username: string) => {
+    const invalidChar = username.includes('.') || username.includes(',') || username.includes(' ')
+    if (invalidChar) {
+      this.props.showError(ErrorMessages.INVALID_CHAR_IN_USERNAME)
+      this.setState({ userId: '' })
+      return false
+    } else if (username === '') {
+      this.props.showError(ErrorMessages.MISSING_CEARN_ID)
+      return false
+    }
+    return true
+  }
+
   validateUsernameAndPassword = () => {
     const username = this.state.userId
-    if (username) {
-      const expected = username[0] // TODO better password system
+    if (this.checkUsernameCharacters(username)) {
+      const expected = this.getExpectedPassword(username)
       if (expected === this.state.password) {
         return true
       } else {
@@ -59,7 +78,6 @@ class EarnLogin extends React.Component<Props, State> {
         return false
       }
     } else {
-      this.props.showError(ErrorMessages.MISSING_CEARN_ID)
       return false
     }
   }

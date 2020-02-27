@@ -9,6 +9,8 @@ const REQUESTS_DB_NAME = 'celo-org-mobile-earn-pilot'
 const REQUESTS_DB_URL = `https://${REQUESTS_DB_NAME}.firebaseio.com`
 const PILOT_PARTICIPANTS_DB_URL = 'https://celo-org-mobile-pilot.firebaseio.com'
 
+const SHILLINGS_PER_DOLLAR = 100
+
 const FIGURE_EIGHT_KEY = functions.config().envs
   ? functions.config().envs.secret_key
   : 'placeholder_for_local_dev'
@@ -124,6 +126,10 @@ enum PostType {
   CONFIRM = 'CONFIRM',
 }
 
+const shillingsToDollars = (amount: string) => {
+  return parseFloat(amount) / SHILLINGS_PER_DOLLAR
+}
+
 export const handlePost = functions.https.onRequest((request, response) => {
   const data = request.body
   const signature = data.signature
@@ -154,7 +160,7 @@ export const handlePost = functions.https.onRequest((request, response) => {
     const conversionId = requestsDb.push({
       userId,
       confirmed: false,
-      adjAmount: adjusted_amount,
+      adjAmount: shillingsToDollars(adjusted_amount), // Use adju
       amount,
     }).key
     console.info(`Assigned conversion ID ${conversionId} to unconfirmed request`)
