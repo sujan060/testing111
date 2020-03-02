@@ -71,25 +71,56 @@ exports.transferEarnedBalance = functions.database
   .ref('requests/{uid}')
   .onWrite(async (change) => {
     const message = change.after.val()
-
     const { timestamp, userId, amountEarned, account, processed, txId } = message
 
     if (processed) {
       console.info(`Already handled request for ${userId}, returning`)
       return
     }
-    console.info(`Cashing out user ${userId}. Request time: ${timestamp}`)
-    const transferSuccess = await transferDollars(amountEarned, account)
 
-    if (!transferSuccess) {
-      console.error(`Unable to fulfill request ${txId}, returning unprocessed`)
+    const userProcessingRecord = admin
+      .app()
+      .database(REQUESTS_DB_URL)
+      .ref('processingUsers')
+      .child(userId)
+    const processingSnap = await userProcessingRecord.once('value')
+    const userProcessing = processingSnap.exists() ? processingSnap.val() : false
+
+    // Reject if user is processing another cashout
+    if (userProcessing) {
+      console.info(`User ${userId} already processing, returning`)
       return
     }
+
+    userProcessingRecord.set(true)
 
     const participantsDb = admin
       .app()
       .database(PILOT_PARTICIPANTS_DB_URL)
       .ref('earnPilot/participants')
+
+    // Ensure request does not exceed current balance
+    const earnSnap = await participantsDb
+      .child(userId)
+      .child('earned')
+      .once('value')
+    const earnedBalance = earnSnap.val()
+
+    if (amountEarned > earnedBalance) {
+      console.error('Attempting to cash out more than user has earned, returning')
+      userProcessingRecord.set(false)
+      return
+    }
+
+    console.info(`Cashing out user ${userId}. Request time: ${timestamp}`)
+    const transferSuccess = await transferDollars(amountEarned, account)
+
+    if (!transferSuccess) {
+      console.error(`Unable to fulfill request ${txId}, returning unprocessed`)
+      userProcessingRecord.set(false)
+      return
+    }
+
     const msgRoot = participantsDb.child(userId)
     msgRoot.child('earned').set(0)
     msgRoot.child('cashedOut').transaction((cashedOut: number) => {
@@ -97,8 +128,7 @@ exports.transferEarnedBalance = functions.database
     })
     msgRoot.child('cashOutTxs').push({ txId, timestamp, userId, amountEarned })
 
-    // TODO confirm userId and address and amount match in database
-
+    userProcessingRecord.set(false)
     return change.after.ref.update({
       processed: true,
     })

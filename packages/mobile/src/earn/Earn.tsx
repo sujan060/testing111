@@ -85,6 +85,7 @@ export class Earn extends React.Component<Props, State> {
 
   onTransferToWallet = () => {
     this.props.initiateFigureEightCashout()
+    this.props.refreshFigureEightEarned()
     navigateHome()
   }
 
