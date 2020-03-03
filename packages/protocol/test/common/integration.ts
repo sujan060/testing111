@@ -61,7 +61,7 @@ async function slashingOfGroups(
   const groups = await election.getGroupsVotedForByAccount(account)
   const res = []
   //
-  for (let i = groups.length - 1; i >= 0; i++) {
+  for (let i = groups.length - 1; i >= 0; i--) {
     const group = groups[i]
     const totalVotes = await election.getTotalVotesForGroup(group)
     const votes = await election.getTotalVotesForGroupByAccount(group, account)
@@ -380,7 +380,6 @@ contract('Integration: Exchange', (accounts: string[]) => {
     reserve = await getDeployedProxiedContract('Reserve', artifacts)
     goldToken = await getDeployedProxiedContract('GoldToken', artifacts)
     stableToken = await getDeployedProxiedContract('StableToken', artifacts)
-    await exchange.unfreeze()
   })
 
   describe('When selling gold', () => {
