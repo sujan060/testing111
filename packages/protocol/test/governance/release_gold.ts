@@ -363,13 +363,12 @@ contract('ReleaseGold', (accounts: string[]) => {
 
   describe('#setAccount', () => {
     const accountName = 'name'
-    const dataEncryptionKey = '0x02f2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e01611111111'
+    const dataEncryptionKey: any =
+      '0x02f2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e01611111111'
     const walletAddress = beneficiary
 
     beforeEach(async () => {
       await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
-      releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
-      releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
     })
 
     describe('when unrevoked', () => {
@@ -497,14 +496,10 @@ contract('ReleaseGold', (accounts: string[]) => {
   })
 
   describe('#setAccountWalletAddress', () => {
-    let releaseGoldInstanceAddress: any
-    let releaseGoldInstance: any
     const walletAddress = beneficiary
 
     beforeEach(async () => {
       await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
-      releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
-      releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
     })
 
     describe('when the releaseGold account has not been created', () => {
