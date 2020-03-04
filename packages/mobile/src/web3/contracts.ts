@@ -1,4 +1,5 @@
-import { newKitFromWeb3 } from '@celo/contractkit'
+import { CeloProvider, newKitFromWeb3 } from '@celo/contractkit'
+import { privateKeyToAddress } from '@celo/utils/src/address'
 import { Platform } from 'react-native'
 import * as net from 'react-native-tcp'
 import { DEFAULT_FORNO_URL } from 'src/config'
@@ -85,21 +86,20 @@ function getWeb3(): Web3 {
 // Mutates web3 with new provider
 export function switchWeb3ProviderForSyncMode(forno: boolean) {
   if (forno) {
-    web3.setProvider(getHttpProvider(DEFAULT_FORNO_URL))
+    contractKit.web3.setProvider(new CeloProvider(getHttpProvider(DEFAULT_FORNO_URL)))
     Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set provider to ${DEFAULT_FORNO_URL}`)
   } else {
-    web3.setProvider(getIpcProvider())
+    contractKit.web3.setProvider(new CeloProvider(getIpcProvider()))
     Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set provider to IPC provider`)
   }
 }
 
-export function addLocalAccount(web3Instance: Web3, privateKey: string) {
-  if (!web3Instance) {
-    throw new Error(`web3 instance is ${web3Instance}`)
-  }
+export function addLocalAccount(privateKey: string, isDefault: boolean = false) {
   if (!privateKey) {
     throw new Error(`privateKey is ${privateKey}`)
   }
   contractKit.addAccount(privateKey)
-  contractKit.defaultAccount = privateKey
+  if (isDefault) {
+    contractKit.defaultAccount = privateKeyToAddress(privateKey)
+  }
 }

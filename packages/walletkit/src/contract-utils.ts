@@ -7,8 +7,6 @@ import Contract from 'web3/eth/contract'
 import { TransactionObject, Tx } from 'web3/eth/types'
 import * as ContractList from '../contracts/index'
 import { GasPriceMinimum as GasPriceMinimumType } from '../types/GasPriceMinimum'
-import { GoldToken } from '../types/GoldToken'
-import { StableToken } from '../types/StableToken'
 import { getGasPriceMinimumContract } from './contracts'
 import { Logger } from './logger'
 
@@ -248,7 +246,7 @@ async function getGasPrice(
 export async function sendTransactionAsync<T>(
   tx: TransactionObject<T>,
   account: string,
-  feeCurrencyContract: StableToken | GoldToken,
+  feeCurrencyAddress: string,
   nonce: number,
   logger: TxLogger = emptyTxLogger,
   estimatedGas?: number | undefined
@@ -285,7 +283,7 @@ export async function sendTransactionAsync<T>(
     const txParams: Tx = {
       from: account,
       // @ts-ignore web3 doesn't know about this Celo-specific prop
-      feeCurrency: feeCurrencyContract._address,
+      feeCurrency: feeCurrencyAddress,
       // Hack to prevent web3 from adding the suggested gold gas price, allowing geth to add
       // the suggested price in the selected feeCurrency.
       gasPrice: '0',
@@ -296,6 +294,8 @@ export async function sendTransactionAsync<T>(
       estimatedGas = Math.round((await tx.estimateGas(txParams)) * gasInflateFactor)
       logger(EstimatedGas(estimatedGas))
     }
+
+    debugger
 
     tx.send({ ...txParams, gas: estimatedGas })
       // @ts-ignore
@@ -359,7 +359,7 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
   web3: Web3,
   tx: TransactionObject<T>,
   account: string,
-  feeCurrencyContract: StableToken | GoldToken,
+  feeCurrencyAddress: string,
   nonce: number,
   logger: TxLogger = emptyTxLogger,
   estimatedGas?: number | undefined
@@ -394,7 +394,7 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
 
   try {
     logger(Started)
-    const feeCurrency = feeCurrencyContract._address
+    const feeCurrency = feeCurrencyAddress
     Logger.debug(tag, `Using nonce ${nonce} for account ${account} and fee currency ${feeCurrency}`)
 
     const txParams: Tx = {

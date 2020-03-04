@@ -318,7 +318,7 @@ function* addTempAccountToWallet(inviteCode: string) {
         'web3 is connected:',
         String(yield call(web3.eth.net.isListening))
       )
-      addLocalAccount(web3, inviteCode)
+      addLocalAccount(inviteCode)
     } else {
       // Import account into the local geth node
       // @ts-ignore
@@ -343,7 +343,7 @@ export function* withdrawFundsFromTempAccount(
   Logger.debug(TAG + '@withdrawFundsFromTempAccount', 'Unlocking temporary account')
   const fornoMode = yield select(fornoSelector)
   if (!fornoMode) {
-    yield call(web3.eth.personal.unlockAccount, tempAccount, TEMP_PW, 600)
+    yield call(contractKit.web3.eth.personal.unlockAccount, tempAccount, TEMP_PW, 600)
   }
   const tempAccountBalance = new BigNumber(web3.utils.fromWei(tempAccountBalanceWei.toString()))
 
@@ -354,6 +354,8 @@ export function* withdrawFundsFromTempAccount(
     // TODO: appropriately withdraw the balance instead of using gas fees will be less than 1 cent
     amount: tempAccountBalance.minus(0.01).toString(),
   })
+
+  debugger
 
   Logger.debug(TAG + '@withdrawFundsFromTempAccount', 'Sending transaction')
   yield call(sendTransaction, tx.txo, tempAccount, TAG, 'Transfer from temp wallet')

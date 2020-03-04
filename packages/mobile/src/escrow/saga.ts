@@ -125,7 +125,7 @@ function* withdrawFromEscrow() {
     const tempWalletAddress = web3.eth.accounts.privateKeyToAccount(tmpWalletPrivateKey).address
     const fornoMode = yield select(fornoSelector)
     if (fornoMode) {
-      addLocalAccount(web3, tmpWalletPrivateKey)
+      addLocalAccount(tmpWalletPrivateKey)
     }
     Logger.debug(TAG + '@withdrawFromEscrow', 'Added temp account to wallet: ' + tempWalletAddress)
 

@@ -202,7 +202,7 @@ export function* assignAccountFromPrivateKey(privateKey: string) {
     const fornoMode = yield select(fornoSelector)
     if (fornoMode) {
       Logger.debug(TAG + '@assignAccountFromPrivateKey', 'Init web3 with private key')
-      addLocalAccount(web3, privateKey)
+      addLocalAccount(privateKey, true)
     } else {
       try {
         // @ts-ignore
@@ -273,7 +273,7 @@ export function* unlockAccount(account: string) {
       } else {
         Logger.info(TAG + '@unlockAccount', `unlockDuration is ignored in forno mode`)
         const privateKey: string = yield readPrivateKeyFromLocalDisk(account, pincode)
-        addLocalAccount(web3, privateKey)
+        addLocalAccount(privateKey, true)
         accountAlreadyAddedInFornoMode = true
       }
       return true

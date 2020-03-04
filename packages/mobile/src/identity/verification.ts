@@ -540,12 +540,12 @@ function* waitForAttestationCode(issuer: string) {
 
 function* setAccount(accountsWrapper: AccountsWrapper, address: string, dataKey: string) {
   Logger.debug(TAG, 'Setting wallet address and public data encryption key')
-  const upToDate = yield call(isAccountUpToDate, accountsWrapper, address, dataKey)
+  const upToDate: boolean = yield call(isAccountUpToDate, accountsWrapper, address, dataKey)
   if (upToDate) {
     return
   }
-  // @ts-ignore datakey type seems wrong
   const setAccountTx = accountsWrapper.setAccount('', dataKey, address)
+  debugger
   yield call(sendTransaction, setAccountTx.txo, address, TAG, 'Set Wallet Address & DEK')
   CeloAnalytics.track(CustomEventNames.verification_set_account)
 }
