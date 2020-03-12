@@ -6685,6 +6685,13 @@
     "@types/events" "*"
     "@types/node" "*"
 
+"@types/ws@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.2.2.tgz#1bd2038bc80aea60f8a20b2dcf08602a72e65063"
+  integrity sha512-oqnI3DbGCVI9zJ/WHdFo3CUE8jQ8CVQDUIKaDtlTcNeT4zs6UCg9Gvk5QrFx2QPkRszpM6yc8o0p4aGjCsTi+w==
+  dependencies:
+    "@types/node" "*"
+
 "@types/xml2js@0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@types/xml2js/-/xml2js-0.4.3.tgz#2f41bfc74d5a4022511721f872ed395a210ad3b7"
@@ -35641,6 +35648,19 @@ web3-eth-contract@1.2.4:
     web3-core-subscriptions "1.2.4"
     web3-eth-abi "1.2.4"
     web3-utils "1.2.4"
+
+web3-eth-debug@1.0.0-beta.55:
+  version "1.0.0-beta.55"
+  resolved "https://registry.yarnpkg.com/web3-eth-debug/-/web3-eth-debug-1.0.0-beta.55.tgz#f2addb40a1ec10e369d7e46a3cc9ecf52825597e"
+  integrity sha512-WBMZo0mHJFDIA31KAwgtG1mOzO/nsAKVM2RAK36pRsvhB9n4Hr0QP6C59oqoBH6MWMYvOAwFnDEYFjHWfsoSfA==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    web3-core "1.0.0-beta.55"
+    web3-core-helpers "1.0.0-beta.55"
+    web3-core-method "1.0.0-beta.55"
+    web3-net "1.0.0-beta.55"
+    web3-providers "1.0.0-beta.55"
+    web3-utils "1.0.0-beta.55"
 
 web3-eth-ens@1.0.0-beta.37:
   version "1.0.0-beta.37"
