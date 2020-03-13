@@ -25,46 +25,101 @@ export default class Trace extends BaseCommand {
 
   async run() {
     const res = this.parse(Trace)
-    const url = this.originalProvider.connection
-      ? this.originalProvider.connection.url
-      : this.originalProvider.host
-    const args: { [key: string]: string } = {}
-    if (res.flags.tracer) {
-      args.tracer = fs.readFileSync(res.flags.tracer).toString()
-    }
+    const tracer = res.flags.tracer ? fs.readFileSync(res.flags.tracer).toString() : ''
 
     if (res.flags.transaction) {
-      if (!(this.originalProvider instanceof Web3.providers.HttpProvider)) {
-        throw Error('HttpProvider is required with --transaction')
-      }
-      const debug = new Debug(url)
-      const trace = await debug.getTransactionTrace(res.flags.transaction, args)
-      printValueMapRecursive(trace)
-    } else if (res.flags.blockNumber) {
-      if (!(this.originalProvider instanceof Web3.providers.HttpProvider)) {
-        throw Error('HttpProvider is required with --blockNumber')
-      }
-      const debug = new Debug(url)
-      const trace = await debug.getBlockTraceByNumber(
-        this.web3.utils.toHex(res.flags.blockNumber),
-        args
+      printValueMapRecursive(
+        await traceTransaction(this.web3, res.flags.transaction, tracer, this.originalProvider)
       )
-      printValueMapRecursive(trace)
-    } else {
-      if (!(this.originalProvider instanceof Web3.providers.WebsocketProvider)) {
-        throw Error('WebsocketProvider is required for debug_subscribe')
-      }
-      const webSocket = new WebSocket(url)
-      webSocket.onopen = () => {
-        webSocket.onmessage = (event) => {
-          console.info(event.data)
-        }
-        webSocket.send(
-          '{"id": 1, "method": "debug_subscribe", "params": ["traceChain", "0x0", "0xffff", ' +
-            JSON.stringify(args) +
-            ']}\n'
-        )
-      }
+    } else if (res.flags.blockNumber) {
+      printValueMapRecursive(
+        await traceBlock(this.web3, res.flags.blockNumber, tracer, this.originalProvider)
+      )
     }
   }
+}
+
+async function traceTransaction(
+  web3: Web3,
+  transaction: string,
+  tracer: string,
+  provider: any
+): Promise<Record<string, any>> {
+  const args: { [key: string]: string } = { tracer }
+  const url = provider.connection ? provider.connection.url : provider.host
+  if (provider instanceof Web3.providers.HttpProvider) {
+    const debug = new Debug(url)
+    const trace = await debug.getTransactionTrace(transaction, args)
+    return trace
+  } else if (provider instanceof Web3.providers.WebsocketProvider) {
+    return (
+      await webSocketRPC(
+        url,
+        '{"id": 1, "method": "debug_traceTransaction", "params": ["' +
+          web3.utils.toHex(transaction) +
+          '", ' +
+          JSON.stringify(args) +
+          ']}\n',
+        1
+      )
+    ).result
+  } else {
+    throw Error('HttpProvider or WebsocketProvider is needed for traceTransaction')
+  }
+}
+
+async function traceBlock(
+  web3: Web3,
+  blockNumber: number,
+  tracer: string,
+  provider: any
+): Promise<Record<string, any>> {
+  const args: { [key: string]: string } = { tracer }
+  const url = provider.connection ? provider.connection.url : provider.host
+  if (provider instanceof Web3.providers.HttpProvider) {
+    const debug = new Debug(url)
+    const trace = await debug.getBlockTraceByNumber(web3.utils.toHex(blockNumber), args)
+    return trace
+  } else if (provider instanceof Web3.providers.WebsocketProvider) {
+    return (
+      await webSocketRPC(
+        url,
+        '{"id": 1, "method": "debug_subscribe", "params": ["traceChain", "' +
+          web3.utils.toHex(blockNumber - 1) +
+          '", "' +
+          web3.utils.toHex(blockNumber) +
+          '", ' +
+          JSON.stringify(args) +
+          ']}\n',
+        2
+      )
+    ).params.result.traces
+  } else {
+    throw Error('HttpProvider or WebsocketProvider is needed for traceBlock')
+  }
+}
+
+async function webSocketRPC(
+  url: string,
+  query: string,
+  responseOffset: number
+): Promise<Record<string, any>> {
+  return new Promise((resolve, reject) => {
+    const webSocket = new WebSocket(url)
+    let messageCount = 0
+    webSocket.onopen = () => {
+      webSocket.onerror = (_) => {
+        webSocket.close()
+        reject()
+      }
+      webSocket.onmessage = (event) => {
+        messageCount++
+        if (messageCount == responseOffset) {
+          webSocket.close()
+          resolve(JSON.parse(event.data.toString()))
+        }
+      }
+      webSocket.send(query)
+    }
+  })
 }
