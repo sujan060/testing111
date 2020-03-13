@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import LottieBase from 'src/animate/LottieBase'
 import { colors } from 'src/styles'
 interface Props {
-  color: colors.white | colors.dark | colors.primary
+  color: string
   size: 'small' | 'medium'
 }
 

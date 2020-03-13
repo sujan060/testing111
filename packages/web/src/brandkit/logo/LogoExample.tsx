@@ -15,7 +15,7 @@ export enum Logos {
 
 interface Props {
   caption: string
-  background: colors
+  background: string
   logoType: Logos
   hasBorder: boolean
   href: string

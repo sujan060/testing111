@@ -4,7 +4,7 @@ import Svg, { ClipPath, Defs, G, Path, Rect } from 'svgs'
 
 interface Props {
   size: number
-  color?: colors
+  color?: string
 }
 
 export default React.memo(function Android({ size, color }: Props) {

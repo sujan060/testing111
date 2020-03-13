@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { colors } from 'src/styles'
 import Svg, { Path } from 'svgs'
 
 export enum Direction {
@@ -10,7 +9,7 @@ export enum Direction {
 }
 
 interface Props {
-  color: colors
+  color: string
   opacity?: number
   size?: number | string
   direction?: Direction

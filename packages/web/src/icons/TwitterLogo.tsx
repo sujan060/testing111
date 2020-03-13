@@ -5,7 +5,7 @@ import Svg, { Path } from 'svgs'
 
 interface Props {
   height?: number
-  color: colors
+  color: string
 }
 
 export default class TwitterLogo extends React.PureComponent<Props> {

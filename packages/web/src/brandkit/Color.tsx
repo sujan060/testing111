@@ -111,8 +111,8 @@ const Backgrounds = withNamespaces(NameSpaces.brand)(
 )
 
 interface LoremProps {
-  backgroundColor: colors
-  color: colors
+  backgroundColor: string
+  color: string
   withGap?: boolean
   hasBorder?: boolean
   image?: ImageRequireSource

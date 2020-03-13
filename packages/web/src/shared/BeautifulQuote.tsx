@@ -7,7 +7,7 @@ interface Props {
   imgSource: ImageSourcePropType
   quote: React.ReactNode
   citation: React.ReactNode
-  color?: colors
+  color?: string
 }
 
 export default React.memo(function BeautifulQuote(props: Props) {

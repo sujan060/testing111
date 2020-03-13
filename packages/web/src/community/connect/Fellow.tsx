@@ -12,7 +12,7 @@ interface FellowProps {
   role: string
   quote: string
   text: string | React.ReactNode
-  color: colors
+  color: string
 }
 
 export default class Fellow extends React.PureComponent<FellowProps> {

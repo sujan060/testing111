@@ -31,7 +31,7 @@ interface State {
   playingIndexes: Set<number> // which index from the VECTORS array have animating coins this render/beat
   beatCycleIndex: number // refers to the 4 count beat of solo | solo | solo | together which coins fade in on
   duration: number
-  color: colors
+  color: string
 }
 
 interface Props {

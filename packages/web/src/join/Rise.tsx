@@ -27,7 +27,7 @@ interface State {
 }
 
 interface RisingCoinProps {
-  color: colors
+  color: string
   windowWidth: number
   windowHeight: number
   duration: number

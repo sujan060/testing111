@@ -18,7 +18,7 @@ export default class PlayCircle extends React.PureComponent {
 
 interface Props {
   height: number
-  color?: colors
+  color?: string
 }
 
 export function PlayCircle2(props: Props) {

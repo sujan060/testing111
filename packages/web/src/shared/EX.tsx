@@ -3,7 +3,7 @@ import { colors } from 'src/styles'
 import Svg, { Line } from 'svgs'
 
 interface Props {
-  color: colors
+  color: string
   size: number
 }
 

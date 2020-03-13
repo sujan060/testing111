@@ -4,7 +4,7 @@ import Svg, { Path } from 'svgs'
 
 interface Props {
   size: number
-  color: colors
+  color: string
 }
 
 export default React.memo(function Apple({ size, color }: Props) {

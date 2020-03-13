@@ -228,10 +228,10 @@ class ValidatorsList extends React.PureComponent<ValidatorsListProps & I18nProps
     const accessor = this.orderAccessors[orderBy]
     const dAccessor = this.orderAccessors[this.defaultOrderAccessor]
     const dir = orderAsc ? 1 : -1
-
+    console.log(data.map(accessor))
     return (data || [])
       .sort((a, b) => (dAccessor(a) > dAccessor(b) ? -1 : 1))
-      .sort((a, b) => dir * (accessor(a) > accessor(b) ? 1 : -1))
+      .sort((a, b) => dir * (accessor(a) === accessor(b) ? 0 : accessor(a) > accessor(b) ? 1 : -1))
   }
 
   render() {

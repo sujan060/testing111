@@ -9,10 +9,10 @@ interface RadioProps {
   selected: boolean
   icon?: React.ReactNode
   label: string
-  labelColor?: colors
+  labelColor?: string
   onValueSelected: (x: any) => void
   value: any
-  colorWhenSelected?: colors
+  colorWhenSelected?: string
 }
 
 export function Radio({

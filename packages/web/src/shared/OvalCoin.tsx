@@ -4,7 +4,7 @@ import { colors } from 'src/styles'
 import Svg from 'svgs'
 
 interface Props {
-  color: colors
+  color: string
   size: number
   style?: unknown
   viewBox?: string

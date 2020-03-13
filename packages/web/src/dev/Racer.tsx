@@ -7,7 +7,7 @@ import { colors, fonts, standardStyles } from 'src/styles'
 interface RacerProps {
   relativePoints: number
   identity: string
-  color: colors
+  color: string
 }
 
 const COIN_OFFSET = 3

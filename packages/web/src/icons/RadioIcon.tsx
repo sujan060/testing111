@@ -4,7 +4,7 @@ import Svg, { Circle } from 'svgs'
 
 interface Props {
   selected: boolean
-  colorWhenSelected?: colors
+  colorWhenSelected?: string
 }
 
 export default function RadioIcon({ selected, colorWhenSelected }: Props) {
