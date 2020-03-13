@@ -2,9 +2,9 @@ import BigNumber from 'bignumber.js'
 import { values } from 'lodash'
 import sleep from 'sleep-promise'
 import Web3 from 'web3'
-import { TransactionReceipt } from 'web3-eth'
-import Contract from 'web3/eth/contract'
-import { TransactionObject, Tx } from 'web3/eth/types'
+import { Tx } from 'web3-core'
+import { TransactionObject, TransactionReceipt } from 'web3-eth'
+import { Contract } from 'web3-eth-contract'
 import * as ContractList from '../contracts/index'
 import { GasPriceMinimum as GasPriceMinimumType } from '../types/GasPriceMinimum'
 import { getGasPriceMinimumContract } from './contracts'
@@ -295,8 +295,6 @@ export async function sendTransactionAsync<T>(
       logger(EstimatedGas(estimatedGas))
     }
 
-    debugger
-
     tx.send({ ...txParams, gas: estimatedGas })
       // @ts-ignore
       .on('receipt', (r: TransactionReceipt) => {
@@ -399,7 +397,7 @@ export async function sendTransactionAsyncWithWeb3Signing<T>(
 
     const txParams: Tx = {
       from: account,
-      // @ts-ignore web3 doesn't know about this Celo-specific prop
+      // web3 doesn't know about this Celo-specific prop
       feeCurrency,
       // Hack to prevent web3 from adding the suggested gold gas price, allowing geth to add
       // the suggested price in the selected feeCurrency.

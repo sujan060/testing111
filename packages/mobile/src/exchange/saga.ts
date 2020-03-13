@@ -257,7 +257,8 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
       Logger.error(TAG, 'No txId. Did not exchange.')
       return
     }
-    yield call(sendAndMonitorTransaction, txId, tx, account)
+    // TODO check types
+    yield call(sendAndMonitorTransaction as any, txId, tx, account)
   } catch (error) {
     Logger.error(TAG, 'Error doing exchange', error)
     if (txId) {
@@ -278,7 +279,7 @@ function* createStandbyTx(
   exchangeRate: BigNumber,
   account: string
 ) {
-  const takerAmount = getTakerAmount(makerAmount, exchangeRate, 2)
+  const takerAmount = getTakerAmount(makerAmount, exchangeRate)
   const txId = generateStandbyTransactionId(account)
   yield put(
     addStandbyTransaction({

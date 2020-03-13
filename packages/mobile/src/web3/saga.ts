@@ -5,8 +5,8 @@ import { generateMnemonic, mnemonicToSeedHex } from 'react-native-bip39'
 import { REHYDRATE } from 'redux-persist/es/constants'
 import { call, delay, put, race, select, spawn, take, takeLatest } from 'redux-saga/effects'
 import { setAccountCreationTime, setPromptForno } from 'src/account/actions'
-import { promptFornoIfNeededSelector } from 'src/account/reducer'
 import { getPincode } from 'src/account/saga'
+import { promptFornoIfNeededSelector } from 'src/account/selectors'
 import { showError } from 'src/alert/actions'
 import CeloAnalytics from 'src/analytics/CeloAnalytics'
 import { CustomEventNames } from 'src/analytics/constants'
@@ -43,7 +43,7 @@ import {
   fornoSelector,
 } from 'src/web3/selectors'
 import { getLatestBlock, isAccountLocked } from 'src/web3/utils'
-import { Block } from 'web3/eth/types'
+import { Block } from 'web3-eth'
 
 const TAG = 'web3/saga'
 

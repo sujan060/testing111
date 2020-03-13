@@ -78,8 +78,8 @@ function* transferStableTokenToEscrow(action: EscrowTransferPaymentAction) {
       tempWalletAddress,
       NUM_ATTESTATIONS_REQUIRED
     )
-
-    yield call(sendAndMonitorTransaction, transferTxId, transferTx, account)
+    // TODO check types
+    yield call(sendAndMonitorTransaction as any, transferTxId, transferTx, account)
     yield put(fetchSentEscrowPayments())
   } catch (e) {
     Logger.error(TAG + '@transferToEscrow', 'Error transfering to escrow', e)
