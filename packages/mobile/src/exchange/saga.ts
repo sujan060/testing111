@@ -28,7 +28,7 @@ import { sendTransaction } from 'src/transactions/send'
 import { getRateForMakerToken, getTakerAmount } from 'src/utils/currencyExchange'
 import { roundDown } from 'src/utils/formatting'
 import Logger from 'src/utils/Logger'
-import { contractKit } from 'src/web3/contracts'
+import { getContractKit } from 'src/web3/contracts'
 import { getConnectedAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
 import * as util from 'util'
 
@@ -43,6 +43,8 @@ export function* doFetchTobinTax({ makerAmount, makerToken }: FetchTobinTaxActio
     let tobinTax
     if (makerToken === CURRENCY_ENUM.GOLD) {
       yield call(getConnectedAccount)
+
+      const contractKit = getContractKit()
 
       // Using native web3 contract wrapper since contractkit
       // hasn't yet implemented tobin tax interface
@@ -103,6 +105,8 @@ export function* doFetchExchangeRate(action: FetchExchangeRateAction) {
         ? makerAmountInWei
         : LARGE_DOLLARS_SELL_AMOUNT_IN_WEI
 
+    const contractKit = getContractKit()
+
     const exchange: ExchangeWrapper = yield call([
       contractKit.contracts,
       contractKit.contracts.getExchange,
@@ -156,6 +160,8 @@ export function* exchangeGoldAndStableTokens(action: ExchangeTokensAction) {
     }
 
     txId = yield createStandbyTx(makerToken, makerAmount, exchangeRate, account)
+
+    const contractKit = getContractKit()
 
     const goldTokenContract: GoldTokenWrapper = yield call([
       contractKit.contracts,

@@ -13,7 +13,7 @@ import { navigate } from 'src/navigator/NavigationService'
 import { Screens } from 'src/navigator/Screens'
 import { navigateToURI } from 'src/utils/linking'
 import Logger from 'src/utils/Logger'
-import { web3 } from 'src/web3/contracts'
+import { getContractKit } from 'src/web3/contracts'
 import { getConnectedUnlockedAccount } from 'src/web3/saga'
 import { currentAccountSelector } from 'src/web3/selectors'
 
@@ -60,6 +60,8 @@ function* produceTxSignature(action: RequestTxSignatureAction) {
   yield call(getConnectedUnlockedAccount)
   const rawTxs = yield Promise.all(
     action.request.txs.map(async (tx) => {
+      const contractKit = getContractKit()
+
       const params: any = {
         from: tx.from,
         gasPrice: '0',
@@ -73,7 +75,7 @@ function* produceTxSignature(action: RequestTxSignatureAction) {
       if (tx.to) {
         params.to = tx.to
       }
-      const signedTx = await web3.eth.signTransaction(params)
+      const signedTx = await contractKit.web3.eth.signTransaction(params)
       return signedTx.raw
     })
   )

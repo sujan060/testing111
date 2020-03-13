@@ -1,4 +1,4 @@
-import { CeloProvider, newKitFromWeb3 } from '@celo/contractkit'
+import { newKitFromWeb3 } from '@celo/contractkit'
 import { privateKeyToAddress } from '@celo/utils/src/address'
 import { Platform } from 'react-native'
 import * as net from 'react-native-tcp'
@@ -12,9 +12,12 @@ import { Provider } from 'web3/providers'
 // Logging tag
 const tag = 'web3/contracts'
 
-export const web3: Web3 = getWeb3()
-// @ts-ignore - need to align web3 versions in contractkit
-export const contractKit = newKitFromWeb3(web3)
+const web3: Web3 = getWeb3()
+let contractKit = newKitFromWeb3(web3)
+
+export function getContractKit() {
+  return contractKit
+}
 
 export function isInitiallyFornoMode() {
   return networkConfig.initiallyForno
@@ -86,11 +89,14 @@ function getWeb3(): Web3 {
 // Mutates web3 with new provider
 export function switchWeb3ProviderForSyncMode(forno: boolean) {
   if (forno) {
-    contractKit.web3.setProvider(new CeloProvider(getHttpProvider(DEFAULT_FORNO_URL)))
-    Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set provider to ${DEFAULT_FORNO_URL}`)
+    contractKit = newKitFromWeb3(new Web3(getHttpProvider(DEFAULT_FORNO_URL)))
+    Logger.info(
+      `${tag}@switchWeb3ProviderForSyncMode`,
+      `Switch contractKit provider to ${DEFAULT_FORNO_URL}`
+    )
   } else {
-    contractKit.web3.setProvider(new CeloProvider(getIpcProvider()))
-    Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set provider to IPC provider`)
+    contractKit = newKitFromWeb3(new Web3(getIpcProvider()))
+    Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set contractKit provider to IPC provider`)
   }
 }
 

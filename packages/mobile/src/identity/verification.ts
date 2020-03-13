@@ -33,7 +33,7 @@ import { acceptedAttestationCodesSelector, attestationCodesSelector } from 'src/
 import { startAutoSmsRetrieval } from 'src/identity/smsRetrieval'
 import { sendTransaction } from 'src/transactions/send'
 import Logger from 'src/utils/Logger'
-import { contractKit } from 'src/web3/contracts'
+import { getContractKit } from 'src/web3/contracts'
 import { getConnectedAccount, getConnectedUnlockedAccount } from 'src/web3/saga'
 import { privateCommentKeySelector } from 'src/web3/selectors'
 
@@ -65,6 +65,8 @@ export interface AttestationCode {
 }
 
 export function* checkVerification() {
+  const contractKit = getContractKit()
+
   const attestationsWrapper: AttestationsWrapper = yield call([
     contractKit.contracts,
     contractKit.contracts.getAttestations,
@@ -127,6 +129,8 @@ export function* doVerificationFlow() {
     const e164Number: string = yield select(e164NumberSelector)
     const privDataKey = yield select(privateCommentKeySelector)
     const dataKey = compressedPubKey(Buffer.from(privDataKey, 'hex'))
+
+    const contractKit = getContractKit()
 
     const attestationsWrapper: AttestationsWrapper = yield call([
       contractKit.contracts,
@@ -544,8 +548,7 @@ function* setAccount(accountsWrapper: AccountsWrapper, address: string, dataKey:
   if (upToDate) {
     return
   }
-  const setAccountTx = accountsWrapper.setAccount('', dataKey, address)
-  debugger
+  const setAccountTx = accountsWrapper.setAccount('', [dataKey], address)
   yield call(sendTransaction, setAccountTx.txo, address, TAG, 'Set Wallet Address & DEK')
   CeloAnalytics.track(CustomEventNames.verification_set_account)
 }

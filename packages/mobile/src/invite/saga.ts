@@ -40,7 +40,7 @@ import { waitForTransactionWithId } from 'src/transactions/saga'
 import { sendTransaction } from 'src/transactions/send'
 import { getAppStoreId } from 'src/utils/appstore'
 import Logger from 'src/utils/Logger'
-import { addLocalAccount, contractKit, web3 } from 'src/web3/contracts'
+import { addLocalAccount, getContractKit } from 'src/web3/contracts'
 import { getConnectedUnlockedAccount, getOrCreateAccount, waitWeb3LastBlock } from 'src/web3/saga'
 import { fornoSelector } from 'src/web3/selectors'
 
@@ -55,6 +55,7 @@ export async function getInviteTxGas(
   amount: string,
   comment: string
 ) {
+  const contractKit = getContractKit()
   const escrowContract = await contractKit.contracts.getEscrow()
   return getSendTxGas(account, currency, {
     amount,
@@ -78,7 +79,7 @@ export function getInvitationVerificationFeeInDollars() {
 }
 
 export function getInvitationVerificationFeeInWei() {
-  return new BigNumber(web3.utils.toWei(INVITE_FEE))
+  return new BigNumber(getContractKit().web3.utils.toWei(INVITE_FEE))
 }
 
 export async function generateInviteLink(inviteCode: string) {
@@ -139,7 +140,8 @@ export function* sendInvite(
 ) {
   yield call(getConnectedUnlockedAccount)
   try {
-    const temporaryWalletAccount = web3.eth.accounts.create()
+    const contractKit = getContractKit()
+    const temporaryWalletAccount = contractKit.web3.eth.accounts.create()
     const temporaryAddress = temporaryWalletAccount.address
     const inviteCode = createInviteCode(temporaryWalletAccount.privateKey)
 
@@ -260,7 +262,8 @@ export function* redeemInviteSaga({ inviteCode }: RedeemInviteAction) {
 
 export function* doRedeemInvite(inviteCode: string) {
   try {
-    const tempAccount = web3.eth.accounts.privateKeyToAccount(inviteCode).address
+    const contractKit = getContractKit()
+    const tempAccount = contractKit.web3.eth.accounts.privateKeyToAccount(inviteCode).address
     Logger.debug(TAG + '@doRedeemInvite', 'Invite code contains temp account', tempAccount)
     const tempAccountBalanceWei: BigNumber = yield call(
       fetchTokenBalanceInWeiWithRetry,
@@ -309,20 +312,24 @@ export function* skipInvite() {
 function* addTempAccountToWallet(inviteCode: string) {
   Logger.debug(TAG + '@addTempAccountToWallet', 'Attempting to add temp wallet')
   try {
+    const contractKit = getContractKit()
     let tempAccount: string | null = null
     const fornoMode = yield select(fornoSelector)
     if (fornoMode) {
-      tempAccount = web3.eth.accounts.privateKeyToAccount(inviteCode).address
+      tempAccount = contractKit.web3.eth.accounts.privateKeyToAccount(inviteCode).address
       Logger.debug(
         TAG + '@redeemInviteCode',
         'web3 is connected:',
-        String(yield call(web3.eth.net.isListening))
+        String(yield call(contractKit.web3.eth.net.isListening))
       )
       addLocalAccount(inviteCode)
     } else {
       // Import account into the local geth node
-      // @ts-ignore
-      tempAccount = yield call(web3.eth.personal.importRawKey, trimLeading0x(inviteCode), TEMP_PW)
+      tempAccount = yield call(
+        contractKit.web3.eth.personal.importRawKey,
+        trimLeading0x(inviteCode),
+        TEMP_PW
+      )
     }
     Logger.debug(TAG + '@addTempAccountToWallet', 'Account added', tempAccount!)
   } catch (e) {
@@ -342,10 +349,13 @@ export function* withdrawFundsFromTempAccount(
 ) {
   Logger.debug(TAG + '@withdrawFundsFromTempAccount', 'Unlocking temporary account')
   const fornoMode = yield select(fornoSelector)
+  const contractKit = getContractKit()
   if (!fornoMode) {
     yield call(contractKit.web3.eth.personal.unlockAccount, tempAccount, TEMP_PW, 600)
   }
-  const tempAccountBalance = new BigNumber(web3.utils.fromWei(tempAccountBalanceWei.toString()))
+  const tempAccountBalance = new BigNumber(
+    contractKit.web3.utils.fromWei(tempAccountBalanceWei.toString())
+  )
 
   Logger.debug(TAG + '@withdrawFundsFromTempAccount', 'Creating send transaction')
   const tx: CeloTransactionObject<boolean> = yield call(createTransaction, CURRENCY_ENUM.DOLLAR, {
@@ -354,8 +364,6 @@ export function* withdrawFundsFromTempAccount(
     // TODO: appropriately withdraw the balance instead of using gas fees will be less than 1 cent
     amount: tempAccountBalance.minus(0.01).toString(),
   })
-
-  debugger
 
   Logger.debug(TAG + '@withdrawFundsFromTempAccount', 'Sending transaction')
   yield call(sendTransaction, tx.txo, tempAccount, TAG, 'Transfer from temp wallet')

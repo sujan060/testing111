@@ -35,7 +35,7 @@ import {
   updateWeb3SyncProgress,
   Web3SyncProgress,
 } from 'src/web3/actions'
-import { addLocalAccount, switchWeb3ProviderForSyncMode, web3 } from 'src/web3/contracts'
+import { addLocalAccount, getContractKit, switchWeb3ProviderForSyncMode } from 'src/web3/contracts'
 import { readPrivateKeyFromLocalDisk, savePrivateKeyToLocalDisk } from 'src/web3/privateKey'
 import {
   currentAccountInWeb3KeystoreSelector,
@@ -65,7 +65,7 @@ export function* checkWeb3SyncProgress() {
       let syncProgress: boolean | Web3SyncProgress
 
       // isSyncing returns a syncProgress object when it's still syncing, false otherwise
-      syncProgress = yield call(web3.eth.isSyncing)
+      syncProgress = yield call(getContractKit().web3.eth.isSyncing)
 
       if (typeof syncProgress === 'boolean' && !syncProgress) {
         Logger.debug(TAG, 'checkWeb3SyncProgress', 'Sync maybe complete, checking')
@@ -215,8 +215,9 @@ export function* assignAccountFromPrivateKey(privateKey: string) {
           throw e
         }
       }
-      yield call(web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
-      web3.eth.defaultAccount = account
+      const contractKit = getContractKit()
+      yield call(contractKit.web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
+      contractKit.web3.eth.defaultAccount = account
     }
 
     Logger.debug(TAG + '@assignAccountFromPrivateKey', `Added to wallet: ${account}`)
@@ -278,7 +279,12 @@ export function* unlockAccount(account: string) {
       }
       return true
     } else {
-      yield call(web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
+      yield call(
+        getContractKit().web3.eth.personal.unlockAccount,
+        account,
+        pincode,
+        UNLOCK_DURATION
+      )
       Logger.debug(TAG + '@unlockAccount', `Account unlocked: ${account}`)
       return true
     }
@@ -334,8 +340,9 @@ export function* addAccountToWeb3Keystore(key: string, currentAccount: string, p
       throw e
     }
   }
-  yield call(web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
-  web3.eth.defaultAccount = account
+  const contractKit = getContractKit()
+  yield call(contractKit.web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
+  contractKit.web3.eth.defaultAccount = account
   return account
 }
 
@@ -379,7 +386,7 @@ export function* switchToGethFromForno() {
       // Call any method on web3 to avoid a persist state issue
       // This is a temporary workaround as this restart will be
       // removed when the geth issue is resolved
-      yield call(web3.eth.isSyncing)
+      yield call(getContractKit().web3.eth.isSyncing)
       // If geth is started twice within the same session,
       // there is an issue where it cannot find deployed contracts.
       // Restarting the app fixes this issue.

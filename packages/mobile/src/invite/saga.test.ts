@@ -24,7 +24,7 @@ import {
 } from 'src/invite/saga'
 import { fetchDollarBalance } from 'src/stableToken/actions'
 import { transactionConfirmed } from 'src/transactions/actions'
-import { contractKit } from 'src/web3/contracts'
+import { getContractKit } from 'src/web3/contracts'
 import { getConnectedUnlockedAccount, getOrCreateAccount, waitWeb3LastBlock } from 'src/web3/saga'
 import { createMockStore, mockContractKitBalance } from 'test/utils'
 import { mockAccount, mockE164Number } from 'test/values'
@@ -158,7 +158,7 @@ describe(watchRedeemInvite, () => {
 
   it('fails with a valid private key but no money on key', async () => {
     // @ts-ignore
-    contractKit.contracts.getStableToken.mockImplementation(async () => ({
+    getContractKit().contracts.getStableToken.mockImplementation(async () => ({
       balanceOf: async () => {
         return new BigNumber(0)
       },
@@ -182,7 +182,7 @@ describe(watchRedeemInvite, () => {
 
   it('fails with error creating account', async () => {
     // @ts-ignore
-    contractKit.contracts.getStableToken.mockImplementation(async () => ({
+    getContractKit().contracts.getStableToken.mockImplementation(async () => ({
       balanceOf: async () => {
         return new BigNumber(10)
       },
