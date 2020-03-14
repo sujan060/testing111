@@ -89,7 +89,7 @@ async function newKeyRotator(
     const signerKit = newKitFromWeb3(signerWeb3)
     const blsPublicKey = getBlsPublicKey(signerPrivateKey)
     const blsPop = getBlsPoP(validator, signerPrivateKey)
-    const pop = await (await signerKit.contracts.getAccounts()).generateProofOfKeyPossession(
+    const pop = await (await signerKit.contracts.getAccounts()).generateProofOfSigningKeyPossession(
       validator,
       signer
     )

@@ -96,7 +96,7 @@ contract('Attestations', (accounts: string[]) => {
   }
 
   async function setAccountWalletAddress() {
-    return accountsInstance.setWalletAddress(caller, '0x0', '0x0', '0x0')
+    return accountsInstance.setWalletAddress(caller)
   }
 
   const getNonIssuer = async () => {
@@ -896,7 +896,7 @@ contract('Attestations', (accounts: string[]) => {
             const issuer = (await attestations.getAttestationIssuers(phoneHash, other))[0]
             const [v, r, s] = await getVerificationCodeSignature(other, issuer)
             await attestations.complete(phoneHash, v, r, s, { from: other })
-            await accountsInstance.setWalletAddress(other, '0x0', '0x0', '0x0', { from: other })
+            await accountsInstance.setWalletAddress(other, { from: other })
           })
 
           it('should return multiple attested accounts', async () => {
