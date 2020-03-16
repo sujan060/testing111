@@ -58,23 +58,26 @@ export class CeloProvider implements Provider {
 
   stop() {
     this.providerEngine.stop()
+    stopProvider(this.underlyingProvider)
+  }
+}
 
-    try {
-      if (this.underlyingProvider.hasOwnProperty('stop')) {
-        // @ts-ignore
-        this.underlyingProvider.stop()
-      }
-
-      // Close the web3 connection or the CLI hangs forever.
-      if (this.underlyingProvider && this.underlyingProvider.hasOwnProperty('connection')) {
-        // @ts-ignore
-        const connection = this.underlyingProvider.connection
-        if (connection.hasOwnProperty('_connection')) {
-          connection._connection.close()
-        }
-      }
-    } catch (error) {
-      debug(`Failed to close the connection: ${error}`)
+export function stopProvider(provider: any) {
+  try {
+    if (provider.hasOwnProperty('stop')) {
+      // @ts-ignore
+      provider.stop()
     }
+
+    // Close the web3 connection or the CLI hangs forever.
+    if (provider.hasOwnProperty('connection')) {
+      // @ts-ignore
+      const connection = provider.connection
+      if (connection.hasOwnProperty('_connection')) {
+        connection._connection.close()
+      }
+    }
+  } catch (error) {
+    debug(`Failed to close the connection: ${error}`)
   }
 }
