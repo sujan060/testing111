@@ -548,7 +548,7 @@ function* setAccount(accountsWrapper: AccountsWrapper, address: string, dataKey:
   if (upToDate) {
     return
   }
-  const setAccountTx = accountsWrapper.setAccount('', [dataKey], address)
+  const setAccountTx = accountsWrapper.setAccount('', dataKey, address)
   yield call(sendTransaction, setAccountTx.txo, address, TAG, 'Set Wallet Address & DEK')
   CeloAnalytics.track(CustomEventNames.verification_set_account)
 }
