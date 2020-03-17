@@ -9,7 +9,7 @@ import {
   NULL_ADDRESS,
   timeTravel,
 } from '@celo/protocol/lib/test-utils'
-import { addressToPublicKey, Signature } from '@celo/utils/src/signatureUtils'
+import { addressToPublicKey } from '@celo/utils/src/signatureUtils'
 import { BigNumber } from 'bignumber.js'
 import * as _ from 'lodash'
 import {
@@ -113,7 +113,6 @@ contract('ReleaseGold', (accounts: string[]) => {
   let mockStableToken: MockStableTokenInstance
   let registry: RegistryInstance
   let releaseGoldInstance: ReleaseGoldInstance
-  let proofOfWalletOwnership: Signature
 
   const releaseGoldDefaultSchedule: ReleaseGoldConfig = {
     releaseStartTime: null, // To be adjusted on every run
@@ -394,96 +393,96 @@ contract('ReleaseGold', (accounts: string[]) => {
     })
   })
 
-  describe('#setAccount', () => {
-    const accountName = 'name'
-    const dataEncryptionKey = '0x02f2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e01611111111'
-    const walletAddress = beneficiary
+  // describe('#setAccount', () => {
+  //   const accountName = 'name'
+  //   const dataEncryptionKey = '0x02f2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e01611111111'
+  //   const walletAddress = beneficiary
 
-    beforeEach(async () => {
-      await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
-      releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
-      releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
-    })
+  //   beforeEach(async () => {
+  //     await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
+  //     releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
+  //     releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
+  //   })
 
-    describe('when unrevoked', () => {
-      it('sets the account by beneficiary', async () => {
-        let isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-          from: beneficiary,
-        })
-        isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isTrue(isAccount)
-      })
+  //   describe('when unrevoked', () => {
+  //     it('sets the account by beneficiary', async () => {
+  //       let isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //         from: beneficiary,
+  //       })
+  //       isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isTrue(isAccount)
+  //     })
 
-      it('reverts if a non-beneficiary attempts to set the account', async () => {
-        const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await assertRevert(
-          releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-            from: accounts[2],
-          })
-        )
-      })
+  //     it('reverts if a non-beneficiary attempts to set the account', async () => {
+  //       const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await assertRevert(
+  //         releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //           from: accounts[2],
+  //         })
+  //       )
+  //     })
 
-      it('should set the name, dataEncryptionKey and walletAddress of the account by beneficiary', async () => {
-        let isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-          from: beneficiary,
-        })
-        isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isTrue(isAccount)
-        const expectedWalletAddress = await accountsInstance.getWalletAddress(
-          releaseGoldInstance.address
-        )
-        assert.equal(expectedWalletAddress, walletAddress)
-        // @ts-ignore
-        const expectedKey: string = await accountsInstance.getDataEncryptionKey(
-          releaseGoldInstance.address
-        )
-        assert.equal(expectedKey, dataEncryptionKey)
-        const expectedName = await accountsInstance.getName(releaseGoldInstance.address)
-        assert.equal(expectedName, accountName)
-      })
+  //     it('should set the name, dataEncryptionKey and walletAddress of the account by beneficiary', async () => {
+  //       let isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //         from: beneficiary,
+  //       })
+  //       isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isTrue(isAccount)
+  //       const expectedWalletAddress = await accountsInstance.getWalletAddress(
+  //         releaseGoldInstance.address
+  //       )
+  //       assert.equal(expectedWalletAddress, walletAddress)
+  //       // @ts-ignore
+  //       const expectedKey: string = await accountsInstance.getDataEncryptionKey(
+  //         releaseGoldInstance.address
+  //       )
+  //       assert.equal(expectedKey, dataEncryptionKey)
+  //       const expectedName = await accountsInstance.getName(releaseGoldInstance.address)
+  //       assert.equal(expectedName, accountName)
+  //     })
 
-      it('should revert to set the name, dataEncryptionKey and walletAddress of the account by a non-beneficiary', async () => {
-        const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await assertRevert(
-          releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-            from: releaseOwner,
-          })
-        )
-      })
-    })
+  //     it('should revert to set the name, dataEncryptionKey and walletAddress of the account by a non-beneficiary', async () => {
+  //       const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await assertRevert(
+  //         releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //           from: releaseOwner,
+  //         })
+  //       )
+  //     })
+  //   })
 
-    describe('when revoked', () => {
-      beforeEach(async () => {
-        await releaseGoldInstance.revoke({ from: releaseOwner })
-      })
+  //   describe('when revoked', () => {
+  //     beforeEach(async () => {
+  //       await releaseGoldInstance.revoke({ from: releaseOwner })
+  //     })
 
-      it('reverts if anyone attempts to set the account', async () => {
-        const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await assertRevert(
-          releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-            from: releaseOwner,
-          })
-        )
-      })
+  //     it('reverts if anyone attempts to set the account', async () => {
+  //       const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await assertRevert(
+  //         releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //           from: releaseOwner,
+  //         })
+  //       )
+  //     })
 
-      it('should revert to set the name, dataEncryptionKey and walletAddress of the account', async () => {
-        const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
-        assert.isFalse(isAccount)
-        await assertRevert(
-          releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
-            from: releaseOwner,
-          })
-        )
-      })
-    })
-  })
+  //     it('should revert to set the name, dataEncryptionKey and walletAddress of the account', async () => {
+  //       const isAccount = await accountsInstance.isAccount(releaseGoldInstance.address)
+  //       assert.isFalse(isAccount)
+  //       await assertRevert(
+  //         releaseGoldInstance.setAccount(accountName, dataEncryptionKey, walletAddress, {
+  //           from: releaseOwner,
+  //         })
+  //       )
+  //     })
+  //   })
+  // })
 
   describe('#setAccountName', () => {
     const accountName = 'name'
@@ -529,63 +528,63 @@ contract('ReleaseGold', (accounts: string[]) => {
     })
   })
 
-  describe('#setAccountWalletAddress', () => {
-    let releaseGoldInstanceAddress: any
-    let releaseGoldInstance: any
-    const walletAddress = beneficiary
+  // describe('#setAccountWalletAddress', () => {
+  //   let releaseGoldInstanceAddress: any
+  //   let releaseGoldInstance: any
+  //   const walletAddress = beneficiary
 
-    beforeEach(async () => {
-      await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
-      releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
-      releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
-    })
+  //   beforeEach(async () => {
+  //     await createNewReleaseGoldInstance(releaseGoldDefaultSchedule, web3)
+  //     releaseGoldInstanceAddress = await releaseGoldFactoryInstance.releases(beneficiary, 0)
+  //     releaseGoldInstance = await ReleaseGoldInstance.at(releaseGoldInstanceAddress)
+  //   })
 
-    describe('when the releaseGold account has not been created', () => {
-      it('should revert', async () => {
-        await assertRevert(
-          releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: beneficiary })
-        )
-      })
-    })
+  //   describe('when the releaseGold account has not been created', () => {
+  //     it('should revert', async () => {
+  //       await assertRevert(
+  //         releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: beneficiary })
+  //       )
+  //     })
+  //   })
 
-    describe('when the account has been created', () => {
-      beforeEach(async () => {
-        await releaseGoldInstance.createAccount({ from: beneficiary })
-      })
+  //   describe('when the account has been created', () => {
+  //     beforeEach(async () => {
+  //       await releaseGoldInstance.createAccount({ from: beneficiary })
+  //     })
 
-      describe('when unrevoked', () => {
-        it('beneficiary should set the walletAddress', async () => {
-          await releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: beneficiary })
-          const result = await accountsInstance.getWalletAddress(releaseGoldInstance.address)
-          assert.equal(result, walletAddress)
-        })
+  //     describe('when unrevoked', () => {
+  //       it('beneficiary should set the walletAddress', async () => {
+  //         await releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: beneficiary })
+  //         const result = await accountsInstance.getWalletAddress(releaseGoldInstance.address)
+  //         assert.equal(result, walletAddress)
+  //       })
 
-        it('should revert if non-beneficiary attempts to set the walletAddress', async () => {
-          await assertRevert(
-            releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: accounts[2] })
-          )
-        })
+  //       it('should revert if non-beneficiary attempts to set the walletAddress', async () => {
+  //         await assertRevert(
+  //           releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: accounts[2] })
+  //         )
+  //       })
 
-        it('beneficiary should set the NULL_ADDRESS', async () => {
-          await releaseGoldInstance.setAccountWalletAddress(NULL_ADDRESS, { from: beneficiary })
-          const result = await accountsInstance.getWalletAddress(releaseGoldInstance.address)
-          assert.equal(result, NULL_ADDRESS)
-        })
-      })
+  //       it('beneficiary should set the NULL_ADDRESS', async () => {
+  //         await releaseGoldInstance.setAccountWalletAddress(NULL_ADDRESS, { from: beneficiary })
+  //         const result = await accountsInstance.getWalletAddress(releaseGoldInstance.address)
+  //         assert.equal(result, NULL_ADDRESS)
+  //       })
+  //     })
 
-      describe('when revoked', () => {
-        beforeEach(async () => {
-          await releaseGoldInstance.revoke({ from: releaseOwner })
-        })
+  //     describe('when revoked', () => {
+  //       beforeEach(async () => {
+  //         await releaseGoldInstance.revoke({ from: releaseOwner })
+  //       })
 
-        it('should revert if anyone attempts to set the walletAddress', async () => {
-          await assertRevert(
-            releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: releaseOwner })
-          )
-        })
-      })
-    })
-  })
+  //       it('should revert if anyone attempts to set the walletAddress', async () => {
+  //         await assertRevert(
+  //           releaseGoldInstance.setAccountWalletAddress(walletAddress, { from: releaseOwner })
+  //         )
+  //       })
+  //     })
+  //   })
+  // })
 
   describe('#setAccountMetadataURL', () => {
     const metadataURL = 'meta'
