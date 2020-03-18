@@ -107,6 +107,8 @@ export async function signTransaction(txn: any, privateKey: string): Promise<Enc
         },
         raw: rawTransaction,
       }
+
+      debugger
     } catch (e) {
       throw e
     }

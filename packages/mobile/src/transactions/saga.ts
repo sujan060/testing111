@@ -1,5 +1,4 @@
 import { CeloTransactionObject } from '@celo/contractkit'
-import { TxPromises } from '@celo/walletkit'
 import { call, put, take } from 'redux-saga/effects'
 import { showError } from 'src/alert/actions'
 import CeloAnalytics from 'src/analytics/CeloAnalytics'
@@ -14,6 +13,7 @@ import {
   removeStandbyTransaction,
   transactionConfirmed,
 } from 'src/transactions/actions'
+import { TxPromises } from 'src/transactions/contract-utils'
 import { sendTransactionPromises, wrapSendTransactionWithRetry } from 'src/transactions/send'
 import Logger from 'src/utils/Logger'
 

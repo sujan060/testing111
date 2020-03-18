@@ -8,6 +8,7 @@ export enum Actions {
   SET_PROGRESS = 'WEB3/SET_PROGRESS',
   SET_IS_READY = 'WEB3/SET_IS_READY',
   SET_IS_FORNO = 'WEB3/SET_IS_FORNO',
+  SET_FORNO_INITIALIZED = 'WEB3/SET_FORNO_INTIALIZED',
   TOGGLE_IS_FORNO = 'WEB3/TOGGLE_IS_FORNO',
   COMPLETE_WEB3_SYNC = 'WEB3/COMPLETE_WEB3_SYNC',
   REQUEST_SYNC_PROGRESS = 'WEB3/REQUEST_SYNC_PROGRESS',
@@ -32,6 +33,10 @@ export interface SetIsFornoAction {
 export interface ToggleIsFornoAction {
   type: Actions.TOGGLE_IS_FORNO
   fornoMode: boolean
+}
+
+export interface SetFornoInitializedAction {
+  type: Actions.SET_FORNO_INITIALIZED
 }
 
 export interface SetCommentKeyAction {
@@ -61,6 +66,7 @@ export type ActionTypes =
   | SetCommentKeyAction
   | CompleteWeb3SyncAction
   | UpdateWeb3SyncProgressAction
+  | SetFornoInitializedAction
 
 export const setAccount = (address: string): SetAccountAction => {
   CeloAnalytics.track(DefaultEventNames.accountSet)
@@ -90,6 +96,13 @@ export const setFornoMode = (fornoMode: boolean): SetIsFornoAction => {
     fornoMode,
   }
 }
+
+export const setFornoInitialized = (): SetFornoInitializedAction => {
+  return {
+    type: Actions.SET_FORNO_INITIALIZED,
+  }
+}
+
 export const setPrivateCommentKey = (commentKey: string): SetCommentKeyAction => {
   return {
     type: Actions.SET_COMMENT_KEY,

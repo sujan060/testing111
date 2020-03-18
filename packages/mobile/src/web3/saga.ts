@@ -29,6 +29,7 @@ import {
   completeWeb3Sync,
   setAccount,
   setAccountInWeb3Keystore,
+  setFornoInitialized,
   setFornoMode,
   SetIsFornoAction,
   setPrivateCommentKey,
@@ -40,6 +41,7 @@ import { readPrivateKeyFromLocalDisk, savePrivateKeyToLocalDisk } from 'src/web3
 import {
   currentAccountInWeb3KeystoreSelector,
   currentAccountSelector,
+  fornoInitializedSelector,
   fornoSelector,
 } from 'src/web3/selectors'
 import { getLatestBlock, isAccountLocked } from 'src/web3/utils'
@@ -416,6 +418,7 @@ export function* switchToFornoFromGeth() {
     yield put(setFornoMode(true))
     switchWeb3ProviderForSyncMode(true)
     yield put(cancelGethSaga())
+    yield put(setFornoInitialized())
     yield call(stopGethIfInitialized)
 
     // Ensure web3 sync state is updated with new forno state.
@@ -423,13 +426,16 @@ export function* switchToFornoFromGeth() {
     // when blocks stop syncing.
     yield call(waitForWeb3Sync)
   } catch (e) {
-    Logger.error(TAG + '@switchToGethFromForno', 'Error switching to forno from geth')
+    Logger.error(TAG + '@switchToFornoFromGeth', 'Error switching to forno from geth')
     yield put(showError(ErrorMessages.FAILED_TO_SWITCH_SYNC_MODES))
   }
 }
 
 export function* toggleFornoMode(action: SetIsFornoAction) {
-  if ((yield select(fornoSelector)) !== action.fornoMode) {
+  if (
+    (yield select(fornoSelector)) !== action.fornoMode &&
+    !(yield select(fornoInitializedSelector))
+  ) {
     Logger.debug(TAG + '@toggleFornoMode', ` to: ${action.fornoMode}`)
     if (action.fornoMode) {
       yield call(switchToFornoFromGeth)

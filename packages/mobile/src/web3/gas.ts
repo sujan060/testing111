@@ -32,7 +32,7 @@ export async function getGasPrice(currency: CURRENCY_ENUM = CURRENCY_ENUM.DOLLAR
 async function fetchGasPrice(currency: CURRENCY_ENUM) {
   const gasPriceMinimum = await getContractKit().contracts.getGasPriceMinimum()
   const address = await getCurrencyAddress(currency)
-  const latestGasPrice = gasPriceMinimum.getGasPriceMinimum(address)
+  const latestGasPrice = await gasPriceMinimum.getGasPriceMinimum(address)
   Logger.debug(
     TAG,
     'fetchGasPrice',

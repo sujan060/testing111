@@ -18,7 +18,7 @@ function isEmpty(value: string | undefined) {
 
 export class TxParamsNormalizer {
   private chainId: number | null = null
-  private gatewayFeeRecipient: string | null = null
+  // private gatewayFeeRecipient: string | null = null
 
   constructor(readonly rpcCaller: RpcCaller) {}
 
@@ -37,9 +37,9 @@ export class TxParamsNormalizer {
       txParams.gas = await this.getEstimateGas(txParams)
     }
 
-    if (isEmpty(txParams.gatewayFeeRecipient)) {
-      txParams.gatewayFeeRecipient = await this.getCoinbase()
-    }
+    // if (isEmpty(txParams.gatewayFeeRecipient)) {
+    //   txParams.gatewayFeeRecipient = await this.getCoinbase()
+    // }
 
     if (!isEmpty(txParams.gatewayFeeRecipient) && isEmpty(txParams.gatewayFee)) {
       txParams.gatewayFee = DefaultGatewayFee.toString(16)
@@ -75,20 +75,20 @@ export class TxParamsNormalizer {
     return gas
   }
 
-  private async getCoinbase(): Promise<string> {
-    if (this.gatewayFeeRecipient === null) {
-      // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_coinbase
-      const result = await this.rpcCaller.call('eth_coinbase', [])
-      this.gatewayFeeRecipient = result.result.toString()
-    }
-    if (this.gatewayFeeRecipient == null) {
-      throw new Error(
-        'missing-tx-params-populator@getCoinbase: Coinbase is null, we are not connected to a full ' +
-          'node, cannot sign transactions locally'
-      )
-    }
-    return this.gatewayFeeRecipient
-  }
+  // private async getCoinbase(): Promise<string> {
+  //   if (this.gatewayFeeRecipient === null) {
+  //     // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_coinbase
+  //     const result = await this.rpcCaller.call('eth_coinbase', [])
+  //     this.gatewayFeeRecipient = result.result.toString()
+  //   }
+  //   if (this.gatewayFeeRecipient == null) {
+  //     throw new Error(
+  //       'missing-tx-params-populator@getCoinbase: Coinbase is null, we are not connected to a full ' +
+  //         'node, cannot sign transactions locally'
+  //     )
+  //   }
+  //   return this.gatewayFeeRecipient
+  // }
 
   private getGasPrice(feeCurrency: string | undefined): Promise<string | undefined> {
     // Gold Token

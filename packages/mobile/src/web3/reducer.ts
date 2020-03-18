@@ -9,6 +9,7 @@ export interface State {
   accountInWeb3Keystore: string | null
   commentKey: string | null
   fornoMode: boolean
+  fornoInitialized: boolean
 }
 
 const initialState: State = {
@@ -22,6 +23,7 @@ const initialState: State = {
   accountInWeb3Keystore: null,
   commentKey: null,
   fornoMode: networkConfig.initiallyForno,
+  fornoInitialized: false,
 }
 
 export const reducer = (
@@ -40,6 +42,7 @@ export const reducer = (
           highestBlock: 0,
         },
         latestBlockNumber: 0,
+        fornoInitialized: false,
       }
     }
     case Actions.SET_ACCOUNT:
@@ -56,6 +59,11 @@ export const reducer = (
       return {
         ...state,
         fornoMode: action.fornoMode,
+      }
+    case Actions.SET_FORNO_INITIALIZED:
+      return {
+        ...state,
+        fornoInitialized: true,
       }
     case Actions.SET_COMMENT_KEY:
       return {

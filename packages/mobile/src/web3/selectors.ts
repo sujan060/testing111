@@ -5,4 +5,5 @@ export const currentAccountSelector = (state: RootState) =>
 export const currentAccountInWeb3KeystoreSelector = (state: RootState) =>
   state.web3.accountInWeb3Keystore
 export const fornoSelector = (state: RootState) => state.web3.fornoMode
+export const fornoInitializedSelector = (state: RootState) => state.web3.fornoInitialized
 export const privateCommentKeySelector = (state: RootState) => state.web3.commentKey
