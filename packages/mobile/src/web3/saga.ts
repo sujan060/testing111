@@ -202,13 +202,13 @@ export function* assignAccountFromPrivateKey(privateKey: string) {
     yield call(savePrivateKeyToLocalDisk, account, privateKey, pincode)
 
     const fornoMode = yield select(fornoSelector)
+    const contractKit = getContractKit()
     if (fornoMode) {
       Logger.debug(TAG + '@assignAccountFromPrivateKey', 'Init web3 with private key')
       addLocalAccount(privateKey, true)
     } else {
       try {
-        // @ts-ignore
-        yield call(web3.eth.personal.importRawKey, privateKey, pincode)
+        yield call(contractKit.web3.eth.personal.importRawKey, privateKey, pincode)
       } catch (e) {
         if (e.toString().includes('account already exists')) {
           Logger.warn(TAG + '@assignAccountFromPrivateKey', 'Attempted to import same account')
@@ -217,7 +217,6 @@ export function* assignAccountFromPrivateKey(privateKey: string) {
           throw e
         }
       }
-      const contractKit = getContractKit()
       yield call(contractKit.web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
       contractKit.web3.eth.defaultAccount = account
     }
@@ -320,13 +319,13 @@ export function* addAccountToWeb3Keystore(key: string, currentAccount: string, p
   let account: string
   Logger.debug(TAG + '@addAccountToWeb3Keystore', `using key ${key} for account ${currentAccount}`)
   const fornoMode = yield select(fornoSelector)
+  const contractKit = getContractKit()
   if (fornoMode) {
     // web3.eth.personal is not accessible in forno mode
     throw new Error('Cannot add account to Web3 keystore while in forno mode')
   }
   try {
-    // @ts-ignore
-    account = yield call(web3.eth.personal.importRawKey, key, pincode)
+    account = yield call(contractKit.web3.eth.personal.importRawKey, key, pincode)
     Logger.debug(
       TAG + '@addAccountToWeb3Keystore',
       `Successfully imported raw key for account ${account}`
@@ -342,7 +341,6 @@ export function* addAccountToWeb3Keystore(key: string, currentAccount: string, p
       throw e
     }
   }
-  const contractKit = getContractKit()
   yield call(contractKit.web3.eth.personal.unlockAccount, account, pincode, UNLOCK_DURATION)
   contractKit.web3.eth.defaultAccount = account
   return account
