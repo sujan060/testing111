@@ -1,12 +1,8 @@
-import BigNumber from 'bignumber.js'
 import { values } from 'lodash'
 import { Tx } from 'web3-core'
 import { TransactionObject, TransactionReceipt } from 'web3-eth'
 
 const gasInflateFactor = 1.5
-
-// TODO(nategraf): Allow this parameter to be fetched from the full-node peer.
-const defaultGatewayFee = new BigNumber(10000)
 
 export type TxLogger = (event: SendTransactionLogEvent) => void
 
@@ -170,7 +166,6 @@ export async function sendTransactionAsync<T>(
     logger(Started)
     const txParams: Tx = {
       from: account,
-      // @ts-ignore web3 doesn't know about this Celo-specific prop
       feeCurrency: feeCurrencyAddress,
       // Hack to prevent web3 from adding the suggested gold gas price, allowing geth to add
       // the suggested price in the selected feeCurrency.
