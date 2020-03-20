@@ -29,6 +29,10 @@ export abstract class BaseWrapper<T extends Contract> {
   protected getPastEvents(event: string, options: PastEventOptions): Promise<EventLog[]> {
     return this.contract.getPastEvents(event, options)
   }
+
+  setDefaultBlock(block: number | 'latest') {
+    this.contract.defaultBlock = block === 'latest' ? 'latest' : this.kit.web3.utils.toHex(block)
+  }
 }
 
 export const valueToBigNumber = (input: BigNumber.Value) => new BigNumber(input)
