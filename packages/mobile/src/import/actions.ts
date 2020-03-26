@@ -3,12 +3,18 @@ export enum Actions {
   IMPORT_BACKUP_PHRASE_SUCCESS = 'IMPORT/IMPORT_BACKUP_PHRASE_SUCCESS',
   IMPORT_BACKUP_PHRASE_FAILURE = 'IMPORT/IMPORT_BACKUP_PHRASE_FAILURE',
   BACKUP_PHRASE_EMPTY = 'IMPORT/BACKUP_PHRASE_EMPTY',
+  IMPORT_LEDGER = 'IMPORT_LEDGER',
 }
 
 export interface ImportBackupPhraseAction {
   type: Actions.IMPORT_BACKUP_PHRASE
   phrase: string
   useEmptyWallet: boolean
+}
+
+export interface ImportLedgerAction {
+  type: Actions.IMPORT_LEDGER
+  address: string
 }
 
 export const importBackupPhrase = (
@@ -18,6 +24,11 @@ export const importBackupPhrase = (
   type: Actions.IMPORT_BACKUP_PHRASE,
   phrase,
   useEmptyWallet,
+})
+
+export const importLedger = (address: string): ImportLedgerAction => ({
+  type: Actions.IMPORT_LEDGER,
+  address,
 })
 
 export interface ImportBackupPhraseSuccessAction {
@@ -49,3 +60,4 @@ export type ActionTypes =
   | ImportBackupPhraseSuccessAction
   | ImportBackupPhraseFailureAction
   | BackupPhraseEmptyAction
+  | ImportLedgerAction

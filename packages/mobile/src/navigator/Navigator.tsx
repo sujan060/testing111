@@ -45,6 +45,7 @@ import ReclaimPaymentConfirmationScreen from 'src/escrow/ReclaimPaymentConfirmat
 import ExchangeReview from 'src/exchange/ExchangeReview'
 import ExchangeTradeScreen from 'src/exchange/ExchangeTradeScreen'
 import FeeExchangeEducation from 'src/exchange/FeeExchangeEducation'
+import ImportLedger from 'src/import/ImportLedger'
 import ImportWallet from 'src/import/ImportWallet'
 import ImportWalletEmpty from 'src/import/ImportWalletEmpty'
 import ImportWalletSocial from 'src/import/ImportWalletSocial'
@@ -130,6 +131,7 @@ const NuxStack = createStackNavigator(
     [Screens.ImportWallet]: { screen: ImportWallet },
     [Screens.ImportWalletSocial]: { screen: ImportWalletSocial },
     [Screens.ImportWalletEmpty]: { screen: ImportWalletEmpty },
+    [Screens.ImportLedger]: { screen: ImportLedger },
     ...verificationScreens,
     ...commonScreens,
   },

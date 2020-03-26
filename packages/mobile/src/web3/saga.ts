@@ -32,6 +32,7 @@ import {
   setFornoMode,
   SetIsFornoAction,
   setPrivateCommentKey,
+  SIGNING_METHOD,
   updateWeb3SyncProgress,
   Web3SyncProgress,
 } from 'src/web3/actions'
@@ -41,6 +42,7 @@ import {
   currentAccountInWeb3KeystoreSelector,
   currentAccountSelector,
   fornoSelector,
+  signingMethodSelector,
 } from 'src/web3/selectors'
 import { getLatestBlock, isAccountLocked } from 'src/web3/utils'
 import { Block } from 'web3-eth'
@@ -259,6 +261,11 @@ let accountAlreadyAddedInFornoMode = false
 
 export function* unlockAccount(account: string) {
   Logger.debug(TAG + '@unlockAccount', `Unlocking account: ${account}`)
+  const signingMethod = yield select(signingMethodSelector)
+  if (signingMethod === SIGNING_METHOD.LEDGER) {
+    Logger.debug(TAG + '@unlockAccount', `Using ledger - no need to unlock`)
+    return true
+  }
   try {
     const isLocked = yield call(isAccountLocked, account)
     if (!isLocked) {

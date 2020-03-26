@@ -14,9 +14,16 @@ export enum Actions {
   UPDATE_WEB3_SYNC_PROGRESS = 'WEB3/UPDATE_WEB3_SYNC_PROGRESS',
 }
 
+export enum SIGNING_METHOD {
+  LEDGER = 'LEDGER',
+  LIGHT_NODE = 'LIGHT_NODE',
+  FORNO_KEY = 'FORNO_KEY',
+}
+
 export interface SetAccountAction {
   type: Actions.SET_ACCOUNT
   address: string
+  signingMethod?: SIGNING_METHOD
 }
 
 export interface SetAccountInWeb3KeystoreAction {
@@ -62,11 +69,12 @@ export type ActionTypes =
   | CompleteWeb3SyncAction
   | UpdateWeb3SyncProgressAction
 
-export const setAccount = (address: string): SetAccountAction => {
+export const setAccount = (address: string, signingMethod?: SIGNING_METHOD): SetAccountAction => {
   CeloAnalytics.track(DefaultEventNames.accountSet)
   return {
     type: Actions.SET_ACCOUNT,
     address: address.toLowerCase(),
+    signingMethod,
   }
 }
 

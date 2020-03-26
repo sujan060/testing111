@@ -93,6 +93,10 @@ export class EnterInviteCode extends React.Component<Props, State> {
     navigate(Screens.VerificationEducationScreen)
   }
 
+  onPressLedger = () => {
+    navigate(Screens.ImportLedger)
+  }
+
   onPressGoToFaucet = () => {
     navigateToURI(CELO_FAUCET_LINK)
   }
@@ -188,6 +192,14 @@ export class EnterInviteCode extends React.Component<Props, State> {
             onPress={this.onPressImportClick}
             disabled={isRedeemingInvite || !!account}
             text={t('importIt')}
+            standard={false}
+            type={BtnTypes.SECONDARY}
+            testID="ContinueInviteButton"
+          />
+          <Button
+            onPress={this.onPressLedger}
+            disabled={isRedeemingInvite || !!account}
+            text={t('importLedger')}
             standard={false}
             type={BtnTypes.SECONDARY}
             testID="ContinueInviteButton"

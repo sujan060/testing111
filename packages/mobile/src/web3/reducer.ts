@@ -1,6 +1,6 @@
 import networkConfig from 'src/geth/networkConfig'
 import { getRehydratePayload, REHYDRATE, RehydrateAction } from 'src/redux/persist-helper'
-import { Actions, ActionTypes, Web3SyncProgress } from 'src/web3/actions'
+import { Actions, ActionTypes, SIGNING_METHOD, Web3SyncProgress } from 'src/web3/actions'
 
 export interface State {
   syncProgress: Web3SyncProgress
@@ -9,6 +9,7 @@ export interface State {
   accountInWeb3Keystore: string | null
   commentKey: string | null
   fornoMode: boolean
+  signingMethod: SIGNING_METHOD
 }
 
 const initialState: State = {
@@ -22,6 +23,7 @@ const initialState: State = {
   accountInWeb3Keystore: null,
   commentKey: null,
   fornoMode: networkConfig.initiallyForno,
+  signingMethod: SIGNING_METHOD.LIGHT_NODE,
 }
 
 export const reducer = (
@@ -46,6 +48,7 @@ export const reducer = (
       return {
         ...state,
         account: action.address.toLowerCase(),
+        signingMethod: action.signingMethod ? action.signingMethod : state.signingMethod,
       }
     case Actions.SET_ACCOUNT_IN_WEB3_KEYSTORE:
       return {
