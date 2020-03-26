@@ -91,6 +91,7 @@ export class Earn extends React.Component<Props, State> {
 
   componentDidMount = () => {
     this.props.refreshFigureEightEarned()
+    // TODO(anna) pull down to refresh
   }
 
   render() {
