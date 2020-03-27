@@ -103,7 +103,7 @@ export function switchWeb3ProviderForSyncMode(forno: boolean) {
 
 export async function switchToLedger() {
   const transport = await TransportHID.create()
-  const wallet = await newLedgerWalletWithSetup(transport)
+  const wallet = await newLedgerWalletWithSetup(transport, [0, 1])
   contractKit = newKitFromWeb3(new Web3(getHttpProvider(DEFAULT_FORNO_URL)), wallet)
 }
 
