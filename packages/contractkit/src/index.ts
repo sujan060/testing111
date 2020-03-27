@@ -4,6 +4,7 @@ export { Address, AllContracts, CeloContract, CeloToken, NULL_ADDRESS } from './
 export { IdentityMetadataWrapper } from './identity'
 export * from './kit'
 export { CeloProvider } from './providers/celo-provider'
+export { newLedgerWalletWithSetup } from './wallets/ledger-wallet'
 export { CeloTransactionObject, CeloTransactionParams } from './wrappers/BaseWrapper'
 
 /**

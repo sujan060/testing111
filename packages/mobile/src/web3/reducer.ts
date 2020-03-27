@@ -42,6 +42,7 @@ export const reducer = (
           highestBlock: 0,
         },
         latestBlockNumber: 0,
+        fornoMode: true,
       }
     }
     case Actions.SET_ACCOUNT:

@@ -1,5 +1,6 @@
-import { newKitFromWeb3 } from '@celo/contractkit'
+import { newKitFromWeb3, newLedgerWalletWithSetup } from '@celo/contractkit'
 import { privateKeyToAddress } from '@celo/utils/src/address'
+import TransportHID from '@ledgerhq/react-native-hid'
 import { Platform } from 'react-native'
 import * as net from 'react-native-tcp'
 import { DEFAULT_FORNO_URL } from 'src/config'
@@ -98,6 +99,12 @@ export function switchWeb3ProviderForSyncMode(forno: boolean) {
     contractKit = newKitFromWeb3(new Web3(getIpcProvider()))
     Logger.info(`${tag}@switchWeb3ProviderForSyncMode`, `Set contractKit provider to IPC provider`)
   }
+}
+
+export async function switchToLedger() {
+  const transport = await TransportHID.create()
+  const wallet = await newLedgerWalletWithSetup(transport)
+  contractKit = newKitFromWeb3(new Web3(getHttpProvider(DEFAULT_FORNO_URL)), wallet)
 }
 
 export function addLocalAccount(privateKey: string, isDefault: boolean = false) {

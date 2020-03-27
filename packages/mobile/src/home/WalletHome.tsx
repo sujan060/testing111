@@ -137,6 +137,7 @@ export class WalletHome extends React.Component<Props> {
     if (SHOW_TESTNET_BANNER) {
       this.showTestnetBanner()
     }
+    // switchToLedger().catch((e) => {})
   }
 
   renderSection = ({ section: { title, bubbleText } }: { section: SectionListData<any> }) => {
