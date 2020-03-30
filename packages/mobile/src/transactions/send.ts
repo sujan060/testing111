@@ -21,7 +21,7 @@ import { TransactionObject } from 'web3-eth'
 const TAG = 'transactions/send'
 const TX_NUM_RETRIES = 3 // Try txs up to 3 times
 const TX_RETRY_DELAY = 1000 // 1s
-const TX_TIMEOUT = 20000 // 20s
+const TX_TIMEOUT = 40000 // 20s
 const NONCE_TOO_LOW_ERROR = 'nonce too low'
 const OUT_OF_GAS_ERROR = 'out of gas'
 const KNOWN_TX_ERROR = 'known transaction'

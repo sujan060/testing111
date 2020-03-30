@@ -166,7 +166,7 @@ export async function sendTransactionAsync<T>(
     logger(Started)
     const txParams: Tx = {
       from: account,
-      feeCurrency: feeCurrencyAddress,
+      // feeCurrency: feeCurrencyAddress,
       // Hack to prevent web3 from adding the suggested gold gas price, allowing geth to add
       // the suggested price in the selected feeCurrency.
       gasPrice: gasPrice ? gasPrice : '0',

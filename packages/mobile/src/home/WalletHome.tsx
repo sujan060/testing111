@@ -42,6 +42,7 @@ import { initializeSentryUserContext } from 'src/sentry/actions'
 import DisconnectBanner from 'src/shared/DisconnectBanner'
 import { resetStandbyTransactions } from 'src/transactions/actions'
 import TransactionsList from 'src/transactions/TransactionsList'
+import { switchToLedger } from 'src/web3/contracts'
 import { currentAccountSelector } from 'src/web3/selectors'
 
 const SCREEN_WIDTH = variables.width
@@ -137,7 +138,8 @@ export class WalletHome extends React.Component<Props> {
     if (SHOW_TESTNET_BANNER) {
       this.showTestnetBanner()
     }
-    // switchToLedger().catch((e) => {})
+
+    switchToLedger().catch((e) => {})
   }
 
   renderSection = ({ section: { title, bubbleText } }: { section: SectionListData<any> }) => {

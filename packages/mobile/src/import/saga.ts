@@ -105,9 +105,9 @@ export function* importLedgerSaga({ address }: ImportLedgerAction) {
     yield put(refreshAllBalances())
 
     // Check if the account was verified
-    const isVerified = yield call(checkVerification)
+    // const isVerified = yield call(checkVerification)
 
-    navigate(isVerified ? Screens.WalletHome : Screens.VerificationEducationScreen)
+    navigate(Screens.WalletHome)
   } catch (e) {
     Logger.error(TAG, e)
   }
