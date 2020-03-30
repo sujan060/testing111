@@ -1,9 +1,4 @@
-import {
-  ensureLeading0x,
-  isHexString,
-  normalizeAddressWith0x,
-  trimLeading0x,
-} from '@celo/utils/lib/address'
+import { isHexString, normalizeAddressWith0x, trimLeading0x } from '@celo/utils/lib/address'
 import { TransportError, TransportStatusError } from '@ledgerhq/errors'
 import Ledger from '@ledgerhq/hw-app-eth'
 import { byContractAddress } from '@ledgerhq/hw-app-eth/erc20'
@@ -16,8 +11,8 @@ import { EIP712TypedData, generateTypedDataHash } from '../utils/sign-typed-data
 import {
   chainIdTransformationForSigning,
   encodeTransaction,
-  makeEven,
   rlpEncodedTx,
+  signatureFormatter,
 } from '../utils/signing-utils'
 import { Wallet } from './wallet'
 
@@ -25,7 +20,7 @@ export const CELO_BASE_DERIVATION_PATH = "44'/52752'/0'/0"
 const ADDRESS_QTY = 5
 
 export async function newLedgerWalletWithSetup(
-  transport: Transport,
+  transport: any,
   derivationPathIndexes?: number[],
   baseDerivationPath?: string
 ): Promise<LedgerWallet> {
@@ -49,7 +44,6 @@ export class LedgerWallet implements Wallet {
    * Example: [3, 99, 53] will retrieve the derivation paths of
    * [`${baseDerivationPath}/3`, `${baseDerivationPath}/99`, `${baseDerivationPath}/53`]
    * @param baseDerivationPath base derivation path. Default: "44'/52752'/0'/0"
-   * @param transport transport to connect the ledger device, otherwise will use TransportNodeHid for the first device it finds
    */
   constructor(
     readonly derivationPathIndexes: number[] = Array.from(Array(ADDRESS_QTY).keys()),
@@ -63,6 +57,9 @@ export class LedgerWallet implements Wallet {
     }
   }
 
+  /**
+   * @param transport Transport to connect the ledger device
+   */
   async init(transport: Transport) {
     try {
       if (this.setupFinished) {
@@ -137,12 +134,8 @@ export class LedgerWallet implements Wallet {
       if (rv !== cv && (rv & cv) !== rv) {
         cv += 1 // add signature v bit.
       }
-
-      signature.v = makeEven(ensureLeading0x(cv.toString(16)))
-      signature.r = ensureLeading0x(signature.r)
-      signature.s = ensureLeading0x(signature.s)
-
-      return encodeTransaction(rlpEncoded, signature)
+      signature.v = cv.toString(16)
+      return encodeTransaction(rlpEncoded, signatureFormatter(signature))
     } catch (error) {
       if (error instanceof TransportStatusError) {
         this.transportErrorFriendlyMessage(error)

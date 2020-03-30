@@ -1,3 +1,4 @@
+import { ensureLeading0x } from '@celo/utils/lib/address'
 import debugFactory from 'debug'
 // @ts-ignore-next-line
 import { account as Account, bytes as Bytes, hash as Hash, RLP } from 'eth-lib'
@@ -72,6 +73,7 @@ export function rlpEncodedTx(tx: Tx): RLPEncodedTx {
   }
   const transaction: Tx = helpers.formatters.inputCallFormatter(tx)
   transaction.to = Bytes.fromNat(tx.to || '0x').toLowerCase()
+  transaction.nonce = Number(((tx.nonce as any) !== '0x' ? tx.nonce : 0) || 0)
   transaction.data = Bytes.fromNat(tx.data || '0x').toLowerCase()
   transaction.value = stringNumberToHex(tx.value?.toString())
   transaction.feeCurrency = Bytes.fromNat(tx.feeCurrency || '0x').toLowerCase()
@@ -115,10 +117,18 @@ export function signEncodedTransaction(
   )(hash, privateKey)
   const [v, r, s] = Account.decodeSignature(signature)
 
+  return signatureFormatter({ v, r, s })
+}
+
+export function signatureFormatter(signature: {
+  v: string
+  r: string
+  s: string
+}): { v: string; r: string; s: string } {
   return {
-    v: makeEven(trimLeadingZero(v)),
-    r: makeEven(trimLeadingZero(r)),
-    s: makeEven(trimLeadingZero(s)),
+    v: makeEven(trimLeadingZero(ensureLeading0x(signature.v))),
+    r: makeEven(trimLeadingZero(ensureLeading0x(signature.r))),
+    s: makeEven(trimLeadingZero(ensureLeading0x(signature.s))),
   }
 }
 
