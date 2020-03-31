@@ -21,6 +21,9 @@ import { RootState } from 'src/redux/reducers'
 interface State {
   address: string | null
   appVersion: string | null
+  title: string
+  error: string | null
+  isFetching: boolean
 }
 
 interface DispatchProps {
@@ -29,17 +32,28 @@ interface DispatchProps {
   importLedger: typeof importLedger
 }
 
-interface StateProps {
-  isImportingWallet: boolean
+type Props = DispatchProps & WithTranslation & NavigationInjectedProps
+
+interface Step {
+  header: string
+  body: string
 }
 
-type Props = StateProps & DispatchProps & WithTranslation & NavigationInjectedProps
-
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    isImportingWallet: state.imports.isImportingWallet,
-  }
-}
+const steps: Step[] = [
+  {
+    header: 'Install the Celo Ledger app',
+    body: 'Install and open the Celo Ledger app using Ledger Live',
+  },
+  {
+    header: 'Connect and unlock your Ledger',
+    body:
+      'Connect to the Ledger by plugging it into your phone or connecting via Bluetooth. Use your Ledger PIN to unlock your Ledger.',
+  },
+  {
+    header: 'Open the Celo app',
+    body: 'You should see a message that says "Application is Ready"',
+  },
+]
 
 export class ImportLedger extends React.Component<Props, State> {
   static navigationOptions = nuxNavigationOptions
@@ -47,34 +61,52 @@ export class ImportLedger extends React.Component<Props, State> {
   state: State = {
     address: null,
     appVersion: null,
+    title: 'Connecting to Ledger',
+    error: null,
+    isFetching: false,
   }
 
   onPressGetAddress = async () => {
-    const devices = await TransportHID.list()
-    if (devices.length < 1) {
-      throw new Error(
-        'No device found - try unlocking if it is connected and starting the Celo app'
-      )
-    }
-
-    const transport = await TransportHID.create()
-    const eth = new Eth(transport)
-    const config = await eth.getAppConfiguration()
-    this.setState({ appVersion: config.version })
-
-    const { address } = await eth.getAddress("44'/52752'/0'/0/0")
-    this.setState({ address })
-  }
-
-  confirmAddress = () => {
     if (this.state.address) {
       this.props.importLedger(this.state.address)
+      return
     }
+
+    this.setState({ error: null, isFetching: true })
+    try {
+      const devices = await TransportHID.list()
+      if (devices.length < 1) {
+        throw new Error('No devices found')
+      }
+
+      const transport = await TransportHID.create()
+      const eth = new Eth(transport)
+      const config = await eth.getAppConfiguration()
+      const { address } = await eth.getAddress("44'/52752'/0'/0/0")
+      this.setState({
+        address,
+        appVersion: config.version,
+        title: 'Ledger Connected',
+        isFetching: false,
+      })
+    } catch {
+      this.setState({
+        error: 'No Ledger device found. Ensure you have followed the directions above',
+        isFetching: false,
+      })
+    }
+  }
+
+  cancel = () => {
+    this.setState({
+      address: null,
+      appVersion: null,
+      title: 'Connecting to Ledger',
+    })
   }
 
   render() {
-    const { t, isImportingWallet } = this.props
-    const { appVersion, address } = this.state
+    const { appVersion, address, isFetching } = this.state
 
     return (
       <SafeAreaView style={styles.container}>
@@ -82,26 +114,66 @@ export class ImportLedger extends React.Component<Props, State> {
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="always"
         >
-          <BackupKeyIcon style={styles.logo} width={140} height={102} />
-          <Text style={fontStyles.h1}>{'Use a Ledger'}</Text>
-          <Text style={fontStyles.h1}>{`App Version: ${appVersion}`}</Text>
-          <Text style={fontStyles.h1}>{`Address: ${address}`}</Text>
+          <BackupKeyIcon style={styles.logo} height={101} />
+          <Text style={fontStyles.h1}>{this.state.title}</Text>
+          {appVersion && (
+            <View style={{ alignItems: 'center' }}>
+              <Text style={fontStyles.bodySmallSemiBold}>
+                {'Celo Ledger App Version'.toUpperCase()}
+              </Text>
+              <Text style={styles.appInfo}>{appVersion}</Text>
+              <Text style={[fontStyles.bodySmallSemiBold, { marginTop: 15 }]}>
+                {'Address'.toUpperCase()}
+              </Text>
+              <Text style={styles.appInfo}>{address}</Text>
+            </View>
+          )}
+          {!appVersion && (
+            <>
+              <Text style={fontStyles.regular}>{'Follow these steps to connect:'}</Text>
+              {steps.map((step, index) => {
+                return (
+                  <View style={styles.stepContainer} key={step.header}>
+                    <View style={styles.stepNumber}>
+                      <Text style={fontStyles.regular}>{`${index + 1}.`}</Text>
+                    </View>
+                    <View>
+                      <Text style={fontStyles.headerTitle}>{step.header}</Text>
+                      <Text style={fontStyles.regular}>{step.body}</Text>
+                    </View>
+                  </View>
+                )
+              })}
+              {this.state.error && (
+                <Text style={[fontStyles.regular, styles.error]}>{this.state.error}</Text>
+              )}
+            </>
+          )}
         </KeyboardAwareScrollView>
 
-        {isImportingWallet && (
+        {isFetching && (
           <View style={styles.loadingSpinnerContainer} testID="ImportWalletLoadingCircle">
             <ActivityIndicator size="large" color={colors.celoGreen} />
           </View>
         )}
 
         <Button
-          disabled={isImportingWallet}
-          onPress={address ? this.confirmAddress : this.onPressGetAddress}
-          text={address ? 'Use this address' : 'Get your Ledger Address'}
+          key={'textbutton'}
+          onPress={this.onPressGetAddress}
+          text={address ? 'Use this address' : 'Connect to Ledger'}
           standard={false}
           type={BtnTypes.PRIMARY}
           testID="ImportWalletSocialButton"
         />
+        {address && (
+          <Button
+            onPress={this.cancel}
+            text={'Cancel'}
+            standard={false}
+            type={BtnTypes.SECONDARY}
+            testID="ImportWalletSocialButton"
+          />
+        )}
         <KeyboardSpacer />
       </SafeAreaView>
     )
@@ -121,19 +193,30 @@ const styles = StyleSheet.create({
   logo: {
     alignSelf: 'center',
     marginBottom: 20,
-  },
-  tip: {
-    ...fontStyles.bodySmall,
-    color: colors.darkSecondary,
-    marginTop: 20,
-    marginHorizontal: 2,
+    marginLeft: 20,
   },
   loadingSpinnerContainer: {
     marginVertical: 20,
   },
+  stepContainer: {
+    flexDirection: 'row',
+    marginTop: 16,
+  },
+  stepNumber: {
+    marginRight: 15,
+  },
+  error: {
+    color: colors.errorRed,
+    padding: 20,
+  },
+  appInfo: {
+    fontSize: 16,
+    ...fontStyles.light,
+    color: colors.grayHeavy,
+  },
 })
 
-export default connect<StateProps, DispatchProps, any, RootState>(mapStateToProps, {
+export default connect<null, DispatchProps, any, RootState>(null, {
   importBackupPhrase,
   hideAlert,
   importLedger,

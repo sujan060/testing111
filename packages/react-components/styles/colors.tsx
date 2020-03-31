@@ -8,6 +8,7 @@ export default {
   lightGray: '#BDBDBD',
   listBorderColor: 'rgba(0, 0, 0, .5)',
   inputLabelColor: 'rgba(0, 0, 0, 0.3)',
+  grayHeavy: '#9ca4a9',
 
   celoGold: '#FBCC5C', // brandSecondary
   celoGoldInactive: '#F4E8BE',

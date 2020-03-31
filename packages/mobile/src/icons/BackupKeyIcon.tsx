@@ -3,15 +3,13 @@ import { View, ViewStyle } from 'react-native'
 import Svg, { Path } from 'svgs'
 
 interface Props {
-  height?: number
-  width?: number
+  height: number
   style?: ViewStyle
 }
 
 export default class BackupKeyIcon extends React.PureComponent<Props> {
-  static defaultProps = {
-    height: 74,
-    width: 101,
+  static defaultProps: Props = {
+    height: 101,
   }
 
   render() {
@@ -20,7 +18,7 @@ export default class BackupKeyIcon extends React.PureComponent<Props> {
         <Svg
           xmlns="http://www.w3.org/2000/svg"
           height={this.props.height}
-          width={this.props.width}
+          width={(this.props.height * 74) / 101}
           viewBox="0 0 74 101"
           fill="none"
         >
