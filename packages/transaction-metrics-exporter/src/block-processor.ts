@@ -89,7 +89,11 @@ export class BlockProcessor {
 
   async onNewBlock(blockNumber: number, blockIntervalNumber?: number) {
     if ((blockIntervalNumber ?? blockNumber) % this.blockInterval === 0) {
-      await Promise.all([this.fetchBlockState(blockNumber), this.processBlockHeader(blockNumber)])
+      if (process.env.ONLY_STATE || '') {
+        await Promise.all([this.fetchBlockState(blockNumber)])
+      } else {
+        await Promise.all([this.fetchBlockState(blockNumber), this.processBlockHeader(blockNumber)])
+      }
     }
   }
 
