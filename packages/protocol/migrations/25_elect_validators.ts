@@ -21,7 +21,7 @@ const hdkey = require('ethereumjs-wallet/hdkey')
 function ganachePrivateKey(num) {
   const seed = bip39.mnemonicToSeedSync(truffle.networks.development.mnemonic)
   const hdk = hdkey.fromMasterSeed(seed)
-  const addrNode = hdk.derivePath("m/44'/60'/0'/0/" + num) // m/44'/60'/0'/0/0 is derivation path for the first account. m/44'/60'/0'/0/1 is the derivation path for the second account and so on
+  const addrNode = hdk.derivePath("m/44'/52752'/0'/0/" + num) // m/44'/52752'/0'/0/0 is derivation path for the first account. m/44'/52752'/0'/0/1 is the derivation path for the second account and so on
   return addrNode
     .getWallet()
     .getPrivateKey()
