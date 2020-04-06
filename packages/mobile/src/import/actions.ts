@@ -15,6 +15,7 @@ export interface ImportBackupPhraseAction {
 export interface ImportLedgerAction {
   type: Actions.IMPORT_LEDGER
   address: string
+  deviceId?: string
 }
 
 export const importBackupPhrase = (
@@ -26,9 +27,10 @@ export const importBackupPhrase = (
   useEmptyWallet,
 })
 
-export const importLedger = (address: string): ImportLedgerAction => ({
+export const importLedger = (address: string, deviceId?: string): ImportLedgerAction => ({
   type: Actions.IMPORT_LEDGER,
   address,
+  deviceId,
 })
 
 export interface ImportBackupPhraseSuccessAction {

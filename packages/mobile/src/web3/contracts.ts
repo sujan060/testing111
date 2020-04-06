@@ -1,11 +1,12 @@
 import { newKitFromWeb3, newLedgerWalletWithSetup } from '@celo/contractkit'
 import { privateKeyToAddress } from '@celo/utils/src/address'
-import TransportHID from '@ledgerhq/react-native-hid'
+import TransportBLE from '@ledgerhq/react-native-hw-transport-ble'
 import { Platform } from 'react-native'
 import * as net from 'react-native-tcp'
 import { DEFAULT_FORNO_URL } from 'src/config'
 import { IPC_PATH } from 'src/geth/geth'
 import networkConfig from 'src/geth/networkConfig'
+import { store } from 'src/redux/store'
 import Logger from 'src/utils/Logger'
 import Web3 from 'web3'
 import { provider } from 'web3-core'
@@ -102,7 +103,8 @@ export function switchWeb3ProviderForSyncMode(forno: boolean) {
 }
 
 export async function switchToLedger() {
-  const transport = await TransportHID.create()
+  const deviceId = store.getState().web3.ledgerDeviceId
+  const transport = await TransportBLE.open(deviceId)
   const wallet = await newLedgerWalletWithSetup(transport, [0, 1])
   contractKit = newKitFromWeb3(new Web3(getHttpProvider(DEFAULT_FORNO_URL)), wallet)
 }

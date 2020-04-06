@@ -10,6 +10,7 @@ export interface State {
   commentKey: string | null
   fornoMode: boolean
   signingMethod: SIGNING_METHOD
+  ledgerDeviceId: string | null
 }
 
 const initialState: State = {
@@ -24,6 +25,7 @@ const initialState: State = {
   commentKey: null,
   fornoMode: networkConfig.initiallyForno,
   signingMethod: SIGNING_METHOD.LIGHT_NODE,
+  ledgerDeviceId: null,
 }
 
 export const reducer = (
@@ -50,6 +52,7 @@ export const reducer = (
         ...state,
         account: action.address.toLowerCase(),
         signingMethod: action.signingMethod ? action.signingMethod : state.signingMethod,
+        ledgerDeviceId: action.ledgerDeviceId ? action.ledgerDeviceId : state.ledgerDeviceId,
       }
     case Actions.SET_ACCOUNT_IN_WEB3_KEYSTORE:
       return {

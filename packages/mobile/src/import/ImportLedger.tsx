@@ -4,7 +4,7 @@ import KeyboardSpacer from '@celo/react-components/components/KeyboardSpacer'
 import colors from '@celo/react-components/styles/colors'
 import { fontStyles } from '@celo/react-components/styles/fonts'
 import Eth from '@ledgerhq/hw-app-eth'
-import TransportHID from '@ledgerhq/react-native-hid'
+import TransportBLE from '@ledgerhq/react-native-hw-transport-ble'
 import * as React from 'react'
 import { WithTranslation } from 'react-i18next'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
@@ -24,6 +24,7 @@ interface State {
   title: string
   error: string | null
   isFetching: boolean
+  deviceId: string | undefined
 }
 
 interface DispatchProps {
@@ -55,6 +56,8 @@ const steps: Step[] = [
   },
 ]
 
+const log = (e: any) => console.log(e)
+
 export class ImportLedger extends React.Component<Props, State> {
   static navigationOptions = nuxNavigationOptions
 
@@ -64,31 +67,59 @@ export class ImportLedger extends React.Component<Props, State> {
     title: 'Connecting to Ledger',
     error: null,
     isFetching: false,
+    deviceId: undefined,
   }
 
   onPressGetAddress = async () => {
     if (this.state.address) {
-      this.props.importLedger(this.state.address)
+      this.props.importLedger(this.state.address, this.state.deviceId)
       return
     }
 
     this.setState({ error: null, isFetching: true })
     try {
-      const devices = await TransportHID.list()
-      if (devices.length < 1) {
-        throw new Error('No devices found')
-      }
-
-      const transport = await TransportHID.create()
-      const eth = new Eth(transport)
-      const config = await eth.getAppConfiguration()
-      const { address } = await eth.getAddress("44'/52752'/0'/0/0")
-      this.setState({
-        address,
-        appVersion: config.version,
-        title: 'Ledger Connected',
-        isFetching: false,
+      TransportBLE.observeState({
+        next: log,
+        complete: log,
+        error: log,
       })
+
+      TransportBLE.listen({
+        complete: log,
+        next: async (e: any) => {
+          if (e.type === 'add') {
+            const device = e.descriptor
+            const transport = await TransportBLE.open(device)
+            const eth = new Eth(transport)
+            const config = await eth.getAppConfiguration()
+            const { address } = await eth.getAddress("44'/52752'/0'/0/0")
+            this.setState({
+              address,
+              appVersion: config.version,
+              title: 'Ledger Connected',
+              isFetching: false,
+              deviceId: device.id,
+            })
+          }
+        },
+        error: log,
+      })
+
+      // const devices = await TransportHID.list()
+      // if (devices.length < 1) {
+      //   throw new Error('No devices found')
+      // }
+
+      // const transport = await TransportHID.create()
+      // const eth = new Eth(transport)
+      // const config = await eth.getAppConfiguration()
+      // const { address } = await eth.getAddress("44'/52752'/0'/0/0")
+      // this.setState({
+      //   address,
+      //   appVersion: config.version,
+      //   title: 'Ledger Connected',
+      //   isFetching: false,
+      // })
     } catch {
       this.setState({
         error: 'No Ledger device found. Ensure you have followed the directions above',

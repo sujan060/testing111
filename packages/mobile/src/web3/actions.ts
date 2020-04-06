@@ -24,6 +24,7 @@ export interface SetAccountAction {
   type: Actions.SET_ACCOUNT
   address: string
   signingMethod?: SIGNING_METHOD
+  ledgerDeviceId?: string
 }
 
 export interface SetAccountInWeb3KeystoreAction {
@@ -69,12 +70,17 @@ export type ActionTypes =
   | CompleteWeb3SyncAction
   | UpdateWeb3SyncProgressAction
 
-export const setAccount = (address: string, signingMethod?: SIGNING_METHOD): SetAccountAction => {
+export const setAccount = (
+  address: string,
+  signingMethod?: SIGNING_METHOD,
+  ledgerDeviceId?: string
+): SetAccountAction => {
   CeloAnalytics.track(DefaultEventNames.accountSet)
   return {
     type: Actions.SET_ACCOUNT,
     address: address.toLowerCase(),
     signingMethod,
+    ledgerDeviceId,
   }
 }
 

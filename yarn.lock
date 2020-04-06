@@ -4959,6 +4959,19 @@
     "@ledgerhq/logs" "^5.11.0"
     rxjs "^6.5.4"
 
+"@ledgerhq/react-native-hw-transport-ble@^5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-5.12.0.tgz#70758cbe76e66fc42e7c0adc3e36326bb3009f51"
+  integrity sha512-nTk6V4vgOaFAuGl6jDfxvW1TnXrsbXCM0Cm2JPB80ZeYESLw6r7T+m4fuMgT5l3lPm0afOA4HC4twlb9ZkYWQg==
+  dependencies:
+    "@ledgerhq/devices" "^5.12.0"
+    "@ledgerhq/errors" "^5.12.0"
+    "@ledgerhq/hw-transport" "^5.12.0"
+    "@ledgerhq/logs" "^5.11.0"
+    invariant "^2.2.4"
+    rxjs "^6.5.4"
+    uuid "^3.4.0"
+
 "@lerna/add@3.16.0":
   version "3.16.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.16.0.tgz#f871eda820fe43b868c3a6154906799485c33342"
@@ -29384,6 +29397,11 @@ react-native-autocomplete-input@^4.1.0:
     react-native-secure-randombytes "^2.2.3"
     unorm "^1.3.3"
 
+react-native-ble-plx@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.1.1.tgz#90b55a29e77f0a1bb270a60bd234e1d36b5c227b"
+  integrity sha512-UR1Kf3ubJbXI/F7+ApJYN0MJne7M7PapCXYhgi+MyQ7rUEYQ//3f2U5TFK2XdxMnz+Q0cuNaltg5uM42zyVsfg==
+
 react-native-camera@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-3.7.1.tgz#8429fd7d237a2c71d067508d435b790014fc2450"
@@ -35470,6 +35488,11 @@ uuid@^3.2.1:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
   integrity sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
+
+uuid@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
+  integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
 uuid@^7.0.1:
   version "7.0.2"

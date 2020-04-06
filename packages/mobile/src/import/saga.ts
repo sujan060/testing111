@@ -92,11 +92,11 @@ export function* importBackupPhraseSaga({ phrase, useEmptyWallet }: ImportBackup
   }
 }
 
-export function* importLedgerSaga({ address }: ImportLedgerAction) {
+export function* importLedgerSaga({ address, deviceId }: ImportLedgerAction) {
   Logger.debug(TAG + '@importLedgerSaga', 'Importing Ledger')
   yield call(waitWeb3LastBlock)
   try {
-    yield put(setAccount(address, SIGNING_METHOD.LEDGER))
+    yield put(setAccount(address, SIGNING_METHOD.LEDGER, deviceId))
     yield put(setAccountCreationTime())
     // Set backup complete so user isn't prompted to do backup flow
     yield put(setBackupCompleted())
