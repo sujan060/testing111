@@ -22,7 +22,7 @@ function trimLeadingZero(hex: string) {
   return hex
 }
 
-export function makeEven(hex: string) {
+function makeEven(hex: string) {
   if (hex.length % 2 === 1) {
     hex = hex.replace('0x', '0x0')
   }

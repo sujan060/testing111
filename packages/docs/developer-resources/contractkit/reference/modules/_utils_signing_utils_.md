@@ -11,7 +11,6 @@
 * [chainIdTransformationForSigning](_utils_signing_utils_.md#chainidtransformationforsigning)
 * [encodeTransaction](_utils_signing_utils_.md#encodetransaction)
 * [getHashFromEncoded](_utils_signing_utils_.md#gethashfromencoded)
-* [makeEven](_utils_signing_utils_.md#makeeven)
 * [recoverTransaction](_utils_signing_utils_.md#recovertransaction)
 * [rlpEncodedTx](_utils_signing_utils_.md#rlpencodedtx)
 * [signEncodedTransaction](_utils_signing_utils_.md#signencodedtransaction)
@@ -69,22 +68,6 @@ ___
 Name | Type |
 ------ | ------ |
 `rlpEncode` | string |
-
-**Returns:** *string*
-
-___
-
-###  makeEven
-
-▸ **makeEven**(`hex`: string): *string*
-
-*Defined in [contractkit/src/utils/signing-utils.ts:25](https://github.com/celo-org/celo-monorepo/blob/master/packages/contractkit/src/utils/signing-utils.ts#L25)*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`hex` | string |
 
 **Returns:** *string*
 
