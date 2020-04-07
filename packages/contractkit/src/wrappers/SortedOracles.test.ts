@@ -1,4 +1,4 @@
-import { NetworkConfig, testWithGanache } from '@celo/dev-utils/lib/ganache-test'
+import { NetworkConfig, testWithGanache, timeTravel } from '@celo/dev-utils/lib/ganache-test'
 import { Address, CeloContract } from '../base'
 import { newKitFromWeb3 } from '../kit'
 import { OracleRate, SortedOraclesWrapper } from './SortedOracles'
@@ -111,6 +111,44 @@ testWithGanache('SortedOracles Wrapper', (web3) => {
           const resultingRates = await sortedOracles.getRates(CeloContract.StableToken)
           expect(resultingRates).toMatchObject(initialRates)
         }
+      })
+    })
+  })
+
+  describe('#removeExpiredReports', () => {
+    beforeEach(async () => {
+      for (let i = 0; i < stableTokenOracles.length; i++) {
+        const tx = await sortedOracles.report(
+          CeloContract.StableToken,
+          (i + 1) / 2,
+          stableTokenOracles[i]
+        )
+        await tx.sendAndWaitForReceipt()
+      }
+    })
+
+    describe('when expired reports exist', () => {
+      beforeEach(async () => {
+        const expirySeconds = 60 * 10
+        await timeTravel(expirySeconds + 5, web3)
+      })
+
+      it('should successfully remove a report', async () => {
+        const initialReportCount = await sortedOracles.numRates(CeloContract.StableToken)
+        const tx = await sortedOracles.removeExpiredReports(CeloContract.StableToken, 1)
+        await tx.sendAndWaitForReceipt({ from: oracleAddress })
+        expect(await sortedOracles.numRates(CeloContract.StableToken)).toEqual(
+          initialReportCount - 1
+        )
+      })
+    })
+
+    describe('when reports exist but are not expired', () => {
+      it('should not remove any reports', async () => {
+        const initialReportCount = await sortedOracles.numRates(CeloContract.StableToken)
+        const tx = await sortedOracles.removeExpiredReports(CeloContract.StableToken, 1)
+        await tx.sendAndWaitForReceipt({ from: oracleAddress })
+        expect(await sortedOracles.numRates(CeloContract.StableToken)).toEqual(initialReportCount)
       })
     })
   })

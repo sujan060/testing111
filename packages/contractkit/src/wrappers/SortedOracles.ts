@@ -105,18 +105,14 @@ export class SortedOraclesWrapper extends BaseWrapper<SortedOracles> {
     valueToBigNumber
   )
 
-  // removeExpiredReports = proxySend(this.kit, this.contract.methods.removeExpiredReports)
-
   async removeExpiredReports(
     token: CeloToken,
-    numReports: number,
-    from: Address
+    numReports: number
   ): Promise<CeloTransactionObject<void>> {
     const tokenAddress = await this.kit.registry.addressFor(token)
     return toTransactionObject(
       this.kit,
-      this.contract.methods.removeExpiredReports(tokenAddress, numReports),
-      { from }
+      this.contract.methods.removeExpiredReports(tokenAddress, numReports)
     )
   }
 

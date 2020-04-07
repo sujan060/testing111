@@ -29,7 +29,7 @@ export default class RemoveExpired extends BaseCommand {
 
     await displaySendTx(
       'sortedOracles.removeExpiredReports',
-      await sortedOracles.removeExpiredReports(res.args.token, numReports, res.flags.from)
+      await sortedOracles.removeExpiredReports(res.args.token, numReports)
     )
 
     console.info('succeeded at removing expired reports')
