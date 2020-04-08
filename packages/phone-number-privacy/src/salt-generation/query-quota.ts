@@ -22,7 +22,7 @@ export async function getRemainingQueryCount(account: string, phoneNumber: strin
  * Calculates how many queries the caller has unlocked based on the algorithm
  * unverifiedQueryCount + verifiedQueryCount + (queryPerTransaction * transactionCount)
  */
-async function getQueryQuota(account: string, phoneNumber: string) {
+export async function getQueryQuota(account: string, phoneNumber: string) {
   let queryQuota = config.salt.unverifiedQueryMax
   if (await isVerified(account, phoneNumber)) {
     queryQuota += config.salt.additionalVerifiedQueryMax
@@ -32,7 +32,7 @@ async function getQueryQuota(account: string, phoneNumber: string) {
   return queryQuota
 }
 
-async function isVerified(account: string, phoneNumber: string): Promise<boolean> {
+export async function isVerified(account: string, phoneNumber: string): Promise<boolean> {
   const attestationsWrapper: AttestationsWrapper = await getContractKit().contracts.getAttestations()
   const attestationStats = await attestationsWrapper.getAttestationStat(phoneNumber, account)
   const numAttestationsCompleted = attestationStats.completed
@@ -41,7 +41,7 @@ async function isVerified(account: string, phoneNumber: string): Promise<boolean
   return numAttestationsRemaining <= 0
 }
 
-async function getTransactionCountFromAccount(account: string): Promise<number> {
+export async function getTransactionCountFromAccount(account: string): Promise<number> {
   // TODO [amyslawson] consider adding retry
   const transactionUrl = `${config.blockchain.blockscout}/api?module=account&action=tokentx&address=${account}`
   const resp = await fetch(transactionUrl)

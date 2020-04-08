@@ -34,17 +34,17 @@ if (DEV_MODE) {
       provider: 'https://alfajores-forno.celo-testnet.org',
       blockscout: 'https://alfajores-blockscout.celo-testnet.org',
     },
+    db: {
+      user: 'postgres',
+      database: 'phoneNumberPrivacy',
+      password: 'dmLNnocCwFp41leM',
+      host: '35.238.12.97',
+    },
     salt: {
-      key: 'fakeSecretKey',
+      key: 'test_pk_1h2j39dfb39403cb09f7',
       unverifiedQueryMax: 2,
       additionalVerifiedQueryMax: 30,
       queryPerTransaction: 2,
-    },
-    db: {
-      user: 'postgres',
-      password: 'fakePass',
-      database: 'phoneNumberPrivacy',
-      host: 'fakeHost',
     },
     attestations: {
       numberAttestationsRequired: 3,
