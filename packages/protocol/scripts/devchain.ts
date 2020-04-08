@@ -39,9 +39,20 @@ yargs
         .option('upto', {
           type: 'number',
           description: 'When reset, run upto given migration',
+        })
+        .option('contractkit', {
+          type: 'boolean',
+          description: 'Run migrations for contractkit tests',
         }),
     (args) =>
-      exitOnError(runDevChain(args.datadir, { reset: args.reset, upto: args.upto, targz: false }))
+      exitOnError(
+        runDevChain(args.datadir, {
+          reset: args.reset,
+          upto: args.upto,
+          contractkit: args.contractkit,
+          targz: false,
+        })
+      )
   )
   .command(
     'run-tar <filename>',
@@ -62,6 +73,10 @@ yargs
         .option('migration_override', {
           type: 'string',
           description: 'Path to JSON containing config values to use in migrations',
+        })
+        .option('contractkit', {
+          type: 'boolean',
+          description: 'Run migrations for contractkit tests',
         }),
     (args) =>
       exitOnError(
@@ -69,6 +84,7 @@ yargs
           upto: args.upto,
           migrationOverride: args.migration_override,
           targz: false,
+          contractkit: args.contractkit,
         })
       )
   )
@@ -89,6 +105,10 @@ yargs
         .option('release_gold_contracts', {
           type: 'string',
           description: 'JSON list of release gold contracts',
+        })
+        .option('contractkit', {
+          type: 'boolean',
+          description: 'Run migrations for contractkit tests',
         }),
     (args) =>
       exitOnError(
@@ -97,6 +117,7 @@ yargs
           migrationOverride: args.migration_override,
           releaseGoldContracts: args.release_gold_contracts,
           targz: true,
+          contractkit: args.contractkit,
         })
       )
   ).argv
@@ -196,7 +217,9 @@ function createDirIfMissing(dir: string) {
   }
 }
 
-function runMigrations(opts: { upto?: number; migrationOverride?: string } = {}) {
+async function runMigrations(
+  opts: { upto?: number; migrationOverride?: string; extra?: number } = {}
+) {
   const cmdArgs = ['truffle', 'migrate']
 
   if (opts.upto) {
@@ -208,7 +231,24 @@ function runMigrations(opts: { upto?: number; migrationOverride?: string } = {})
     cmdArgs.push('--migration_override')
     cmdArgs.push(fs.readFileSync(opts.migrationOverride).toString())
   }
-  return execCmd(`yarn`, cmdArgs, { cwd: ProtocolRoot })
+  const code = await execCmd(`yarn`, cmdArgs, { cwd: ProtocolRoot })
+  if (code !== 0) {
+    return code
+  }
+  if (opts.extra) {
+    const nextCmdArgs = ['truffle', 'migrate']
+
+    nextCmdArgs.push('--f')
+    nextCmdArgs.push(opts.extra.toString())
+    nextCmdArgs.push('--to')
+    nextCmdArgs.push(opts.extra.toString())
+
+    if (opts.migrationOverride) {
+      nextCmdArgs.push('--migration_override')
+      nextCmdArgs.push(fs.readFileSync(opts.migrationOverride).toString())
+    }
+    return execCmd(`yarn`, nextCmdArgs, { cwd: ProtocolRoot })
+  }
 }
 
 function deployReleaseGold(releaseGoldContracts: string) {
@@ -267,14 +307,24 @@ async function runDevChain(
     targz?: boolean
     runMigrations?: boolean
     releaseGoldContracts?: string
+    contractkit?: boolean
   } = {}
 ) {
   if (opts.reset) {
     await resetDir(datadir)
   }
   createDirIfMissing(datadir)
-  const stopGanache = await startGanache(datadir, { verbose: true })
-  if (opts.reset || opts.runMigrations) {
+  const stopGanache = await startGanache(datadir, { verbose: false })
+  if (opts.contractkit) {
+    const code = await runMigrations({
+      upto: 24,
+      extra: 26,
+      migrationOverride: opts.migrationOverride,
+    })
+    if (code !== 0) {
+      throw Error('Migrations failed')
+    }
+  } else if (opts.reset || opts.runMigrations) {
     const code = await runMigrations({ upto: opts.upto, migrationOverride: opts.migrationOverride })
     if (code !== 0) {
       throw Error('Migrations failed')
@@ -296,6 +346,7 @@ async function generateDevChain(
     migrationOverride?: string
     releaseGoldContracts?: string
     targz?: boolean
+    contractkit?: boolean
   } = {}
 ) {
   let chainPath = filePath
@@ -310,6 +361,7 @@ async function generateDevChain(
     reset: !opts.targz,
     runMigrations: true,
     upto: opts.upto,
+    contractkit: opts.contractkit,
     migrationOverride: opts.migrationOverride,
     releaseGoldContracts: opts.releaseGoldContracts,
   })
