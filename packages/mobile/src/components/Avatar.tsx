@@ -8,11 +8,12 @@ import { Avatar as BaseAvatar } from '@celo/react-components/components/Avatar'
 import * as React from 'react'
 import { WithTranslation } from 'react-i18next'
 import { Image, StyleSheet } from 'react-native'
-import { useSelector } from 'react-redux'
 import { defaultCountryCodeSelector } from 'src/account/selectors'
+import { getPrivateDemoEnabled } from 'src/app/selectors'
 import { Namespaces, withTranslation } from 'src/i18n'
 import { unknownUserIcon } from 'src/images/Images'
 import { getRecipientThumbnail, Recipient } from 'src/recipients/recipient'
+import useSelector from 'src/redux/useSelector'
 
 const DEFAULT_ICON_SIZE = 40
 
@@ -48,6 +49,7 @@ function getE164Number(e164Number?: string, recipient?: Recipient) {
 }
 
 export function Avatar(props: Props) {
+  const isPrivateDemoEnabled = useSelector(getPrivateDemoEnabled)
   const defaultCountryCode = useSelector(defaultCountryCodeSelector)
   const { recipient, e164Number, iconSize = DEFAULT_ICON_SIZE } = props
 
@@ -59,6 +61,7 @@ export function Avatar(props: Props) {
       e164Number={getE164Number(e164Number, recipient)}
       iconSize={iconSize}
       thumbnailPath={getRecipientThumbnail(recipient)}
+      useFakeNumber={isPrivateDemoEnabled}
     >
       <Image
         source={unknownUserIcon}

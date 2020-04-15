@@ -259,6 +259,42 @@ export function getExampleNumber(
   return formatedExample
 }
 
+// Fake numbers taken from the default contacts in the iOS simulator
+const FAKE_NUMBERS = [
+  '+18885555512',
+  '+18885551212',
+  '+15555648583',
+  '+14155553695',
+  '+15555228243',
+  '+15554787672',
+  '+14085555270',
+  '+14085553514',
+  '+15556106679',
+  '+15557664823',
+  '+17075551854',
+]
+
+// Taken from https://github.com/darkskyapp/string-hash/blob/cb38ab492aba198b9658b286bb2391278bb6992b/index.js
+function hashString(str: string) {
+  let hash = 5381,
+    i = str.length
+
+  while (i) {
+    // tslint:disable-next-line: no-bitwise
+    hash = (hash * 33) ^ str.charCodeAt(--i)
+  }
+
+  /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
+   * integers. Since we want the results to be always positive, convert the
+   * signed int to an unsigned by doing an unsigned bitshift. */
+  // tslint:disable-next-line: no-bitwise
+  return hash >>> 0
+}
+
+export function mapToFakeNumber(originalNumber: string): string {
+  return FAKE_NUMBERS[hashString(originalNumber) % FAKE_NUMBERS.length]
+}
+
 export const PhoneNumberUtils = {
   getPhoneHash,
   getCountryCode,

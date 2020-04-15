@@ -3,12 +3,14 @@ import SearchUser from '@celo/react-components/icons/SearchUser'
 import VerificationTexts from '@celo/react-components/icons/VerificationTexts'
 import colors from '@celo/react-components/styles/colors'
 import { fontStyles } from '@celo/react-components/styles/fonts'
+import { mapToFakeNumber } from '@celo/utils/src/phoneNumbers'
 import * as React from 'react'
 import { WithTranslation } from 'react-i18next'
 import { BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native'
 import SafeAreaView from 'react-native-safe-area-view'
 import { connect } from 'react-redux'
 import componentWithAnalytics from 'src/analytics/wrapper'
+import { getPrivateDemoEnabled } from 'src/app/selectors'
 import CancelButton from 'src/components/CancelButton'
 import Carousel, { CarouselItem } from 'src/components/Carousel'
 import DevSkipButton from 'src/components/DevSkipButton'
@@ -27,6 +29,7 @@ const TAG = 'VerificationLoadingScreen'
 interface StateProps {
   e164Number: string
   verificationStatus: VerificationStatus
+  isPrivateDemoEnabled: boolean
 }
 
 interface DispatchProps {
@@ -45,6 +48,7 @@ const mapStateToProps = (state: RootState): StateProps => {
   return {
     e164Number: state.account.e164PhoneNumber,
     verificationStatus: state.identity.verificationStatus,
+    isPrivateDemoEnabled: getPrivateDemoEnabled(state),
   }
 }
 
@@ -81,7 +85,7 @@ class VerificationLoadingScreen extends React.Component<Props> {
   }
 
   render() {
-    const { e164Number, t, verificationStatus } = this.props
+    const { e164Number, t, verificationStatus, isPrivateDemoEnabled } = this.props
 
     const items: CarouselItem[] = [
       {
@@ -108,7 +112,9 @@ class VerificationLoadingScreen extends React.Component<Props> {
             <View style={styles.statusContainer}>
               <LoadingSpinner />
               <Text style={styles.textPhoneNumber}>
-                {t('loading.verifyingNumber', { number: e164Number })}
+                {t('loading.verifyingNumber', {
+                  number: isPrivateDemoEnabled ? mapToFakeNumber(e164Number) : e164Number,
+                })}
               </Text>
               <Text style={styles.textOpenTip}>{t('loading.keepOpen')}</Text>
             </View>

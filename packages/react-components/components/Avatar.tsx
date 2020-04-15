@@ -1,6 +1,7 @@
 import ContactCircle from '@celo/react-components/components/ContactCircle'
 import PhoneNumberWithFlag from '@celo/react-components/components/PhoneNumberWithFlag'
 import { fontStyles } from '@celo/react-components/styles/fonts'
+import { mapToFakeNumber } from '@celo/utils/src/phoneNumbers'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { MinimalContact } from 'react-native-contacts'
@@ -13,6 +14,7 @@ export interface Props {
   address?: string
   e164Number?: string
   thumbnailPath?: string
+  useFakeNumber?: boolean // Used in private demo mode
 }
 
 export class Avatar extends React.PureComponent<Props> {
@@ -26,7 +28,10 @@ export class Avatar extends React.PureComponent<Props> {
       iconSize,
       name,
       children,
+      useFakeNumber,
     } = this.props
+
+    const number = e164Number || ''
 
     return (
       <View style={style.container}>
@@ -49,7 +54,7 @@ export class Avatar extends React.PureComponent<Props> {
         </Text>
         {e164Number ? (
           <PhoneNumberWithFlag
-            e164PhoneNumber={e164Number || ''}
+            e164PhoneNumber={useFakeNumber ? mapToFakeNumber(number) : number}
             defaultCountryCode={defaultCountryCode}
           />
         ) : null}

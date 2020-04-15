@@ -26,6 +26,8 @@ export enum Actions {
   SET_LOCK_WITH_PIN_ENABLED = 'APP/SET_LOCK_WITH_PIN_ENABLED',
   LOCK = 'APP/LOCK',
   UNLOCK = 'APP/UNLOCK',
+  ENABLE_PRIVATE_DEMO = 'APP/ENABLE_PRIVATE_DEMO',
+  DISABLE_PRIVATE_DEMO = 'APP/DISABLE_PRIVATE_DEMO',
 }
 
 export interface SetAppState {
@@ -83,6 +85,15 @@ export interface Unlock {
   type: Actions.UNLOCK
 }
 
+export interface EnablePrivateDemo {
+  type: Actions.ENABLE_PRIVATE_DEMO
+  initialPhoneNumber?: string
+}
+
+export interface DisablePrivateDemo {
+  type: Actions.DISABLE_PRIVATE_DEMO
+}
+
 export type ActionTypes =
   | SetAppState
   | SetLoggedIn
@@ -96,6 +107,8 @@ export type ActionTypes =
   | SetLockWithPinEnabled
   | Lock
   | Unlock
+  | EnablePrivateDemo
+  | DisablePrivateDemo
 
 export const setAppState = (state: string) => ({
   type: Actions.SET_APP_STATE,
@@ -161,4 +174,13 @@ export const appLock = (): Lock => ({
 
 export const appUnlock = (): Unlock => ({
   type: Actions.UNLOCK,
+})
+
+export const enablePrivateDemo = (initialPhoneNumber: string | undefined): EnablePrivateDemo => ({
+  type: Actions.ENABLE_PRIVATE_DEMO,
+  initialPhoneNumber,
+})
+
+export const disablePrivateDemo = (): DisablePrivateDemo => ({
+  type: Actions.DISABLE_PRIVATE_DEMO,
 })

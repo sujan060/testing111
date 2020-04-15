@@ -13,6 +13,8 @@ export interface State {
   appState: AppState
   locked: boolean
   lastTimeBackgrounded: number
+  privateDemoEnabled: boolean
+  initialPhoneNumber?: string
 }
 
 const initialState = {
@@ -26,6 +28,7 @@ const initialState = {
   appState: AppState.Active,
   locked: false,
   lastTimeBackgrounded: 0,
+  privateDemoEnabled: false,
 }
 
 export const currentLanguageSelector = (state: RootState) => state.app.language
@@ -118,6 +121,18 @@ export const appReducer = (
       return {
         ...state,
         locked: false,
+      }
+    case Actions.ENABLE_PRIVATE_DEMO:
+      return {
+        ...state,
+        privateDemoEnabled: true,
+        initialPhoneNumber: action.initialPhoneNumber,
+      }
+    case Actions.DISABLE_PRIVATE_DEMO:
+      return {
+        ...state,
+        privateDemoEnabled: false,
+        initialPhoneNumber: undefined,
       }
     default:
       return state

@@ -1,4 +1,6 @@
+import { stringToBoolean } from '@celo/utils/src/parsing'
 import { AppState, Linking } from 'react-native'
+import Toast from 'react-native-simple-toast'
 import { REHYDRATE } from 'redux-persist/es/constants'
 import { eventChannel } from 'redux-saga'
 import { all, call, cancelled, put, select, spawn, take, takeLatest } from 'redux-saga/effects'
@@ -6,6 +8,8 @@ import { PincodeType } from 'src/account/reducer'
 import {
   Actions,
   appLock,
+  disablePrivateDemo,
+  enablePrivateDemo,
   OpenDeepLink,
   SetAppState,
   setAppState,
@@ -25,7 +29,7 @@ import { clockInSync } from 'src/utils/time'
 import { toggleFornoMode } from 'src/web3/actions'
 import { isInitiallyFornoMode } from 'src/web3/contracts'
 import { fornoSelector } from 'src/web3/selectors'
-import { parse } from 'url'
+import { parse, UrlWithParsedQuery } from 'url'
 
 const TAG = 'app/saga'
 
@@ -141,10 +145,31 @@ export function* handleDeepLink(action: OpenDeepLink) {
   if (rawParams.path) {
     if (rawParams.path.startsWith('/v/')) {
       yield put(receiveAttestationMessage(rawParams.path.substr(3), CodeInputType.DEEP_LINK))
-    }
-
-    if (rawParams.path.startsWith('/dappkit')) {
+    } else if (rawParams.path.startsWith('/dappkit')) {
       handleDappkitDeepLink(deepLink)
+    } else if (rawParams.path.startsWith('/settings')) {
+      yield call(handleSettingsDeepLink, rawParams)
+    }
+  }
+}
+
+function* handleSettingsDeepLink(url: UrlWithParsedQuery) {
+  const rawPrivateDemoEnabled = url.query.privateDemoEnabled
+  const privateDemoEnabled =
+    typeof rawPrivateDemoEnabled === 'string' ? stringToBoolean(rawPrivateDemoEnabled) : undefined
+  if (privateDemoEnabled !== undefined) {
+    if (privateDemoEnabled) {
+      const rawPhoneNumber = url.query.initialPhoneNumber
+      const initialPhoneNumber = typeof rawPhoneNumber === 'string' ? rawPhoneNumber : undefined
+      yield put(enablePrivateDemo(initialPhoneNumber))
+      Toast.showWithGravity(
+        `Private demo enabled with ${initialPhoneNumber}`,
+        Toast.SHORT,
+        Toast.BOTTOM
+      )
+    } else {
+      yield put(disablePrivateDemo())
+      Toast.showWithGravity(`Private demo disabled`, Toast.SHORT, Toast.BOTTOM)
     }
   }
 }

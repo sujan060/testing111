@@ -14,6 +14,7 @@ import { PincodeType } from 'src/account/reducer'
 import { hideAlert, showError } from 'src/alert/actions'
 import { componentWithAnalytics } from 'src/analytics/wrapper'
 import { ErrorMessages } from 'src/app/ErrorMessages'
+import { getPrivateDemoEnabled, getPrivateDemoInitialPhoneNumber } from 'src/app/selectors'
 import DevSkipButton from 'src/components/DevSkipButton'
 import { CELO_TERMS_LINK } from 'src/config'
 import { Namespaces, withTranslation } from 'src/i18n'
@@ -30,6 +31,8 @@ interface StateProps {
   cachedNumber: string
   cachedCountryCode: string
   pincodeType: PincodeType
+  isPrivateDemoEnabled: boolean
+  initialPhoneNumber?: string
 }
 
 interface DispatchProps {
@@ -64,6 +67,8 @@ const mapStateToProps = (state: RootState): StateProps => {
     cachedNumber: state.account.e164PhoneNumber,
     cachedCountryCode: state.account.defaultCountryCode,
     pincodeType: state.account.pincodeType,
+    isPrivateDemoEnabled: getPrivateDemoEnabled(state),
+    initialPhoneNumber: getPrivateDemoInitialPhoneNumber(state),
   }
 }
 
@@ -121,7 +126,13 @@ export class JoinCelo extends React.Component<Props, State> {
     this.props.hideAlert()
 
     const { name, e164Number, isValidNumber, countryCode } = this.state
-    const { cachedName, cachedNumber, cachedCountryCode } = this.props
+    const {
+      cachedName,
+      cachedNumber,
+      cachedCountryCode,
+      isPrivateDemoEnabled,
+      initialPhoneNumber,
+    } = this.props
 
     if (cachedName === name && cachedNumber === e164Number && cachedCountryCode === countryCode) {
       this.goToNextScreen()
@@ -139,7 +150,13 @@ export class JoinCelo extends React.Component<Props, State> {
     }
 
     this.props.setPromptForno(true) // Allow forno prompt after Welcome screen
-    this.props.setPhoneNumber(e164Number, countryCode)
+    this.props.setPhoneNumber(
+      // Use the passed initialPhoneNumber when private demo is enabled
+      // This allows entering any number in the input but using a hidden real number
+      // under the hood
+      isPrivateDemoEnabled && initialPhoneNumber ? initialPhoneNumber : e164Number,
+      countryCode
+    )
     this.props.setName(name)
     this.goToNextScreen()
   }
