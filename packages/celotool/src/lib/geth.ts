@@ -922,7 +922,7 @@ export async function startGeth(
       '--rpcport',
       rpcport.toString(),
       '--rpccorsdomain=*',
-      '--rpcapi=eth,net,web3,debug,admin,personal,txpool,istanbul'
+      '--rpcapi=eth,net,web3,debug,admin,personal,txpool,istanbul,les'
     )
   }
 
@@ -932,7 +932,7 @@ export async function startGeth(
       '--ws',
       '--wsport',
       wsport.toString(),
-      '--wsapi=eth,net,web3,debug,admin,personal,txpool,istanbul'
+      '--wsapi=eth,net,web3,debug,admin,personal,txpool,istanbul,les'
     )
   }
 
