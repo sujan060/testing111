@@ -39,4 +39,5 @@ yarn run truffle migrate --compile-all --network $NETWORK --build_directory $PWD
   ${TO:+ --to $TO} \
   ${FROM:+ -f $FROM} \
   --truffle_override "$TRUFFLE_OVERRIDE" \
-  --migration_override "$MIGRATION_OVERRIDE"
+  --migration_override "$MIGRATION_OVERRIDE" \
+  --hack
