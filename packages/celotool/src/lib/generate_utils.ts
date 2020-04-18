@@ -20,9 +20,6 @@ import {
 import { GenesisConfig } from './interfaces/genesis-config'
 import { ensure0x, strip0x } from './utils'
 
-import bip32 = require('bip32')
-import bip39 = require('bip39')
-
 const ec = new EC('secp256k1')
 
 export enum AccountType {

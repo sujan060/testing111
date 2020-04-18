@@ -42,10 +42,7 @@ const DefaultConfig = {
       minor: 9,
       patch: 0,
     },
-<<<<<<< HEAD
     deploymentBlockGasLimit: 20000000,
-=======
->>>>>>> javi_test_chaos
     blockGasLimit: 10000000,
   },
   doubleSigningSlasher: {
