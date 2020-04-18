@@ -745,6 +745,7 @@ export function makeHelmParameters(map: { [key: string]: string }) {
 export async function deleteFromCluster(celoEnv: string) {
   await removeHelmRelease(celoEnv)
   console.info(`Deleting namespace ${celoEnv}`)
+  // Todo: Clean the testnet resources (pvc) and do not delete the namespace if there is any other resource on it
   await execCmdWithExitOnFailure(`kubectl delete namespace ${celoEnv}`)
 }
 
