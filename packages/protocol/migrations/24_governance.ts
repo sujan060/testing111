@@ -44,7 +44,7 @@ module.exports = deploymentForCoreContract<GovernanceInstance>(
   CeloContractName.Governance,
   initializeArgs,
   async (governance: GovernanceInstance) => {
-    if (!config.governance.skipSetConstitution) {
+    if (false) {
       console.info('Setting constitution thresholds')
       const constitutionContractNames = Object.keys(constitution).filter(
         (contractName) => contractName !== 'proxy'
