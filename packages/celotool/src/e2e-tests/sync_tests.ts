@@ -11,11 +11,20 @@ describe('sync tests', function(this: any) {
   this.timeout(0)
 
   const gethConfig: GethRunConfig = {
-    networkId: 1101,
+    // networkId: 1101,
+    networkId: 42220,
     network: 'local',
     runPath: TMP_PATH,
     migrate: true,
-    verbosity: 1,
+    verbosity: 3,
+    migrateTo: 24,
+    genesisConfig: {
+      blockTime: 5,
+      requestTimeout: 3000,
+      epoch: 17280,
+      lookbackwindow: 12,
+    },
+
     instances: [
       {
         name: 'validator0',
@@ -31,20 +40,20 @@ describe('sync tests', function(this: any) {
         port: 30305,
         rpcport: 8547,
       },
-      {
-        name: 'validator2',
-        validating: true,
-        syncmode: 'full',
-        port: 30307,
-        rpcport: 8549,
-      },
-      {
-        name: 'validator3',
-        validating: true,
-        syncmode: 'full',
-        port: 30309,
-        rpcport: 8551,
-      },
+      // {
+      //   name: 'validator2',
+      //   validating: true,
+      //   syncmode: 'full',
+      //   port: 30307,
+      //   rpcport: 8549,
+      // },
+      // {
+      //   name: 'validator3',
+      //   validating: true,
+      //   syncmode: 'full',
+      //   port: 30309,
+      //   rpcport: 8551,
+      // },
     ],
   }
 

@@ -58,6 +58,13 @@ const networks = {
     network_id: 200312,
     gasPrice: 100000000000,
   },
+  rc1: {
+    host: '127.0.0.1',
+    port: 8545,
+    from: '0x47e172f6cfb6c7d01c1574fa3e2be7cc73269d95',
+    network_id: 42220,
+    gasPrice: 100000000000,
+  },
   coverage: {
     host: 'localhost',
     network_id: '*',

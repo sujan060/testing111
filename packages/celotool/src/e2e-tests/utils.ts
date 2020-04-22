@@ -2,7 +2,6 @@
 import BigNumber from 'bignumber.js'
 import { assert } from 'chai'
 import fs from 'fs'
-import _ from 'lodash'
 import { join as joinPath, resolve as resolvePath } from 'path'
 import readLastLines from 'read-last-lines'
 import Web3 from 'web3'
@@ -14,7 +13,6 @@ import {
   privateKeyToPublicKey,
 } from '../lib/generate_utils'
 import {
-  buildGeth,
   checkoutGethRepo,
   connectPeers,
   connectValidatorPeers,
@@ -223,7 +221,7 @@ export function getContext(gethConfig: GethRunConfig, verbose: boolean = verbose
       await checkoutGethRepo(branch, gethConfig.gethRepoPath!)
     }
 
-    await buildGeth(gethConfig.gethRepoPath!)
+    // await buildGeth(gethConfig.gethRepoPath!)
 
     if (!gethConfig.keepData && fs.existsSync(gethConfig.runPath)) {
       await resetDataDir(gethConfig.runPath, verbose)
@@ -298,6 +296,10 @@ export function getContext(gethConfig: GethRunConfig, verbose: boolean = verbose
     await Promise.all(
       gethConfig.instances.filter((i) => i.validating).map((i) => waitToFinishInstanceSyncing(i))
     )
+    while (true) {
+      console.log('Waiting')
+      await sleep(1)
+    }
 
     if (gethConfig.migrate || gethConfig.migrateTo) {
       await migrateContracts(
