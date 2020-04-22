@@ -63,6 +63,7 @@ const networks = {
     port: 8545,
     from: '0x47e172f6cfb6c7d01c1574fa3e2be7cc73269d95',
     network_id: 42220,
+    gas: gasLimit,
     gasPrice: 100000000000,
   },
   coverage: {
