@@ -112,7 +112,7 @@ export const handler = async (argv: ValidatorsExecArgv) => {
   console.info('Done.')
 }
 
-async function runSshCommand(instanceName: string, cmd: string) {
+export async function runSshCommand(instanceName: string, cmd: string) {
   const bareSshCmd = getVmSshCommand(instanceName)
   const fullCmd = `${bareSshCmd} --command "${cmd}"`
   console.info(`Running ${fullCmd}`)
