@@ -4,9 +4,11 @@ import { useInView } from 'react-intersection-observer'
 import FlowerLines from 'src/cambio/flower-linework.png'
 import FlowerFull from 'src/cambio/flower-full.png'
 
+const THREASHOLD = [0, 0.5, 1]
+
 export default React.memo(function Cover() {
-  const [ref, inView] = useInView({ threshold: 0 })
-  const [ref2, inView2] = useInView({ threshold: 0 })
+  const [ref, inView] = useInView({ threshold: THREASHOLD })
+  const [ref2, inView2] = useInView({ threshold: THREASHOLD })
 
   const greenRef = React.useRef()
   const wireRef = React.useRef()
@@ -38,6 +40,9 @@ export default React.memo(function Cover() {
     ref: wireRef,
     zIndex: -5,
     position: 'absolute' as 'absolute',
+    onRest: (x) => {
+      console.log(x)
+    },
   })
 
   useChain([greenRef, wireRef])
@@ -45,7 +50,7 @@ export default React.memo(function Cover() {
   return (
     <>
       <div style={root}>
-        <div style={flowerPosition}>
+        <div>
           <animated.div style={linework}>
             <img style={imageStyle} src={FlowerLines} />
           </animated.div>
@@ -53,13 +58,13 @@ export default React.memo(function Cover() {
           <animated.div style={fullFlower}>
             <img style={imageStyle} src={FlowerFull} />
           </animated.div>
+          <animated.h1
+            // @ts-ignore
+            style={cambio}
+          >
+            Câmbio
+          </animated.h1>
         </div>
-        <animated.h1
-          // @ts-ignore
-          style={cambio}
-        >
-          Câmbio
-        </animated.h1>
       </div>
 
       <div ref={ref2} style={{ height: '30vh' }} />
@@ -78,7 +83,5 @@ const root = {
   justifyContent: 'center',
   alignItems: 'center',
 }
-
-const flowerPosition = {}
 
 const imageStyle = { width: 400, height: 400 }
