@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useSpring, animated, config, useChain } from 'react-spring'
+import { useSpring, animated, useChain, config } from 'react-spring'
 import { useInView } from 'react-intersection-observer'
 import FlowerLines from 'src/cambio/flower-linework.png'
 import FlowerFull from 'src/cambio/flower-full.png'
@@ -7,6 +7,10 @@ import FlowerFull from 'src/cambio/flower-full.png'
 export default React.memo(function Cover() {
   const [ref, inView] = useInView({ threshold: 0 })
   const [ref2, inView2] = useInView({ threshold: 0 })
+
+  const greenRef = React.useRef()
+  const wireRef = React.useRef()
+
   const fullFlower = useSpring({ opacity: inView ? 1 : 0, config: config.slow })
   const backdrop = useSpring({
     opacity: inView ? 1 : 0,
@@ -18,6 +22,7 @@ export default React.memo(function Cover() {
     width: '100vw',
     height: '100vh',
     config: config.slow,
+    ref: greenRef,
   })
   const cambio = useSpring({
     color: '#0A4028',
@@ -27,13 +32,22 @@ export default React.memo(function Cover() {
     textTransform: 'uppercase',
     config: config.slow,
   })
-  const linework = useSpring({ opacity: inView ? 0 : 1, config: config.slow })
+  const linework = useSpring({
+    opacity: inView ? 0.8 : 1,
+    config: config.slow,
+    ref: wireRef,
+    zIndex: -5,
+    position: 'absolute' as 'absolute',
+  })
+
+  useChain([greenRef, wireRef])
+
   return (
     <>
       <div style={root}>
         <div style={flowerPosition}>
           <animated.div style={linework}>
-            <img style={{ position: 'absolute', ...imageStyle }} src={FlowerLines} />
+            <img style={imageStyle} src={FlowerLines} />
           </animated.div>
           <animated.div style={backdrop} />
           <animated.div style={fullFlower}>
