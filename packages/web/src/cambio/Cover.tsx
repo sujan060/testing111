@@ -9,6 +9,7 @@ const THREASHOLD = [0, 0.5, 1]
 export default React.memo(function Cover() {
   const [ref, inView] = useInView({ threshold: THREASHOLD })
   const [ref2, inView2] = useInView({ threshold: THREASHOLD })
+  const [ref3, inView3] = useInView({ threshold: THREASHOLD })
 
   const greenRef = React.useRef()
   const wireRef = React.useRef()
@@ -16,39 +17,38 @@ export default React.memo(function Cover() {
   const fullFlower = useSpring({ opacity: inView ? 1 : 0, config: config.slow })
   const backdrop = useSpring({
     opacity: inView ? 1 : 0,
-    backgroundColor: '#13603C',
+    backgroundColor: '#317350',
     top: 0,
     left: 0,
     zIndex: -1,
-    position: 'fixed' as 'fixed',
+    position: 'absolute' as 'absolute',
     width: '100vw',
     height: '100vh',
     config: config.slow,
     ref: greenRef,
   })
+
   const cambio = useSpring({
-    color: '#0A4028',
+    color: '#2c5440',
     opacity: inView2 ? 1 : 0,
     transform: inView2 ? 'scale(2)' : 'scale(1)',
     textAlign: 'center',
     textTransform: 'uppercase',
     config: config.slow,
   })
+
   const linework = useSpring({
-    opacity: inView ? 0.8 : 1,
+    opacity: inView3 ? (inView ? 0.8 : 1) : 0,
     config: config.slow,
     ref: wireRef,
     zIndex: -5,
     position: 'absolute' as 'absolute',
-    onRest: (x) => {
-      console.log(x)
-    },
   })
 
   useChain([greenRef, wireRef])
 
   return (
-    <>
+    <div style={{ position: 'sticky', height: 0 }}>
       <div style={root}>
         <div>
           <animated.div style={linework}>
@@ -66,11 +66,11 @@ export default React.memo(function Cover() {
           </animated.h1>
         </div>
       </div>
-
-      <div ref={ref2} style={{ height: '30vh' }} />
-      <div ref={ref} style={{ height: '50vh' }} />
-      <div style={{ height: '40vh' }} />
-    </>
+      <div ref={ref3} style={{ width: '100%', height: '150vh' }}>
+        <div ref={ref2} style={{ width: '100%', height: '30vh' }} />
+        <div ref={ref} style={{ width: '100%', height: '30vh' }} />
+      </div>
+    </div>
   )
 })
 

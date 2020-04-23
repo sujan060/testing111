@@ -8,7 +8,12 @@ export default function Cambio() {
         <title>Câmbio</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Cover />
+      <div style={{ position: 'relative' }}>
+        <Cover />
+        {/* <div style={{backgroundColor: colors.faintRed, height: '40vh'}} />
+        <div style={{backgroundColor: colors.faintGold, height: '30vh'}} />
+        <div style={{backgroundColor: colors.faintPurple, height: '50vh'}} /> */}
+      </div>
     </div>
   )
 }
