@@ -1,19 +1,20 @@
 import Head from 'next/head'
 import Cover from 'src/cambio/Cover'
+import { View } from 'react-native'
+import Curitiba from 'src/cambio/Curitiba'
+import OpenGraph from 'src/header/OpenGraph'
 
 export default function Cambio() {
   return (
-    <div style={{ height: '300vh' }}>
+    <View style={{ height: '300vh' }}>
+      <OpenGraph title="Câmbio" description="The Sacred Gift" path="/cambio" image="/TODO" />
       <Head>
-        <title>Câmbio</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div style={{ position: 'relative' }}>
+      <View style={{ position: 'relative' }}>
         <Cover />
-        {/* <div style={{backgroundColor: colors.faintRed, height: '40vh'}} />
-        <div style={{backgroundColor: colors.faintGold, height: '30vh'}} />
-        <div style={{backgroundColor: colors.faintPurple, height: '50vh'}} /> */}
-      </div>
-    </div>
+        <Curitiba />
+      </View>
+    </View>
   )
 }

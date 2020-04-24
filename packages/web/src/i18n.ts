@@ -17,12 +17,13 @@ export const useTranslation = NextI18NextInstance.useTranslation
 
 export enum NameSpaces {
   common = 'common',
+  alliance = 'alliance',
   about = 'about',
   applications = 'applications',
   brand = 'brand',
+  cambio = 'cambio',
   codeofconduct = 'codeofconduct',
   community = 'community',
-  alliance = 'alliance',
   download = 'download',
   dev = 'dev',
   faucet = 'faucet',
