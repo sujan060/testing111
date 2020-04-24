@@ -29,7 +29,7 @@ export default class QueryQuota {
   }
 
   async isVerified(account: string, phoneNumber: string): Promise<boolean> {
-    const attestationsWrapper: AttestationsWrapper = await ((await getContractKit()) as any).contracts.getAttestations()
+    const attestationsWrapper: AttestationsWrapper = await getContractKit().contracts.getAttestations()
     const attestationStats = await attestationsWrapper.getAttestationStat(phoneNumber, account)
     const numAttestationsCompleted = attestationStats.completed
     const numAttestationsRemaining =

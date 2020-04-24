@@ -44,10 +44,11 @@ function hasValidAccountParam(requestBody: any): boolean {
   return requestBody.account && (requestBody.account as string).startsWith('0x')
 }
 
+// TODO -- make this optional for first request
 function hasValidPhoneNumberParam(requestBody: any): boolean {
   return requestBody.phoneNumber && PhoneNumberUtils.isE164Number(requestBody.phoneNumber)
 }
 
 function hasValidQueryPhoneNumberParam(requestBody: any): boolean {
-  return requestBody.queryPhoneNumber
+  return requestBody.queryPhoneNumber // TODO update
 }
