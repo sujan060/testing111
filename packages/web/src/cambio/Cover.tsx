@@ -49,7 +49,7 @@ export default React.memo(function Cover() {
           </animated.div>
         </div>
       </div>
-      <div ref={refForLineWork} style={{ width: '100%', height: '120vh' }}>
+      <div ref={refForLineWork} style={{ width: '100%', height: '120vh', marginBottom: '25vh' }}>
         <div ref={refForDarkGreen} style={{ width: '100%', height: '40vh' }} />
       </div>
     </div>

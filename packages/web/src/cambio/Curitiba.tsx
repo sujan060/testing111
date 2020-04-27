@@ -4,9 +4,9 @@ import { StyleSheet, Text, View } from 'react-native'
 import { animated, config, useSpring } from 'react-spring'
 import BusToken from 'src/cambio/BusToken'
 import { H1, H4 } from 'src/fonts/Fonts'
+import { NameSpaces, useTranslation } from 'src/i18n'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { colors, fonts, standardStyles } from 'src/styles'
-import { useTranslation, NameSpaces } from 'src/i18n'
 
 const AnimatedView = animated.div
 
@@ -20,7 +20,6 @@ export default function Curitiba() {
   })
   const contentStyle = useSpring({
     opacity: inView ? 1 : 0,
-    transform: inView ? 'rotate3d(0, 2, 0, 0)' : 'rotate3d(-2, 2, 0, -27deg)',
     config: config.molasses,
   })
 
@@ -43,7 +42,7 @@ export default function Curitiba() {
           </AnimatedView>
         </Cell>
       </GridRow>
-      <div ref={ref} style={{ height: '100vh', marginTop: '50vh' }} />
+      <div ref={ref} style={{ height: '200vh', marginBottom: '50vh' }} />
     </>
   )
 }

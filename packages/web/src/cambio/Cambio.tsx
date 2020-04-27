@@ -1,8 +1,10 @@
 import Head from 'next/head'
-import Cover from 'src/cambio/Cover'
 import { View } from 'react-native'
+import Cover from 'src/cambio/Cover'
 import Curitiba from 'src/cambio/Curitiba'
+import Incarnation from 'src/cambio/Incarnation'
 import OpenGraph from 'src/header/OpenGraph'
+import Myth from './Myth'
 
 export default function Cambio() {
   return (
@@ -11,9 +13,11 @@ export default function Cambio() {
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <View style={{ position: 'relative' }}>
+      <View>
         <Cover />
         <Curitiba />
+        <Myth />
+        <Incarnation />
       </View>
     </View>
   )
