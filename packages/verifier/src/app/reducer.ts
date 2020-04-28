@@ -67,6 +67,7 @@ export interface ShowErrorAction {
   type: actions.SHOW_ERROR
   error: errorMessages
   dismissErrorAfter: number | null
+  info: object | null
 }
 
 export interface ClearErrorAction {
@@ -121,6 +122,7 @@ export interface State {
   language: string | null
   educationCompleted: boolean
   error: errorMessages | null
+  errorInfo: object | null
   dismissErrorAfter: number | null
   message: string | null
   bannerTitle: string | null
@@ -140,6 +142,7 @@ export const initialState = {
   language: null,
   educationCompleted: false,
   error: null,
+  errorInfo: null,
   dismissErrorAfter: null,
   message: null,
   bannerTitle: null,
@@ -195,6 +198,7 @@ export const reducer = (state: State | undefined = initialState, action: ActionT
       return {
         ...state,
         error: action.error,
+        errorInfo: action.info,
         dismissErrorAfter: action.dismissErrorAfter,
       }
     case actions.CLEAR_ERROR:

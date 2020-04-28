@@ -70,11 +70,13 @@ export const setEducationCompleted = (): SetEducationCompletedAction => ({
 
 export const showError = (
   error: errorMessages,
-  dismissErrorAfter: number | null = null
+  dismissErrorAfter: number | null = null,
+  info: object | null = null
 ): ShowErrorAction => {
   return {
     type: actions.SHOW_ERROR,
     error,
+    info,
     dismissErrorAfter,
   }
 }
