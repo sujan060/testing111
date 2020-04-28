@@ -1,7 +1,10 @@
 import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import frames from 'src/cambio/incarnation-frames/index'
+import { H2 } from 'src/fonts/Fonts'
+import { Cell, GridRow, Spans } from 'src/layout/GridRow'
+import { fonts, standardStyles } from 'src/styles'
 
 function getCamera(_, two, three, four, five, six) {
   if (six) {
@@ -19,55 +22,118 @@ function getCamera(_, two, three, four, five, six) {
 }
 
 export default function Incarnation() {
-  const [ref1, showFrame1] = useInView()
-  const [ref2, showFrame2] = useInView()
-  const [ref3, showFrame3] = useInView()
-  const [ref4, showFrame4] = useInView()
-  const [ref5, showFrame5] = useInView()
-  const [ref6, showFrame6] = useInView()
+  const [ref1, showStack1] = useInView()
+  const [ref2, showStack2] = useInView()
+  const [ref3, showStack3] = useInView()
+  const [ref4, showStack4] = useInView()
+  const [ref5, showStack5] = useInView()
+  const [ref6, showStack6] = useInView()
   const cameraPosition = getCamera(
-    showFrame1,
-    showFrame2,
-    showFrame3,
-    showFrame4,
-    showFrame5,
-    showFrame6
+    showStack1,
+    showStack2,
+    showStack3,
+    showStack4,
+    showStack5,
+    showStack6
   )
+
+  const isFrame1 =
+    showStack1 && !(showStack2 || showStack3 || showStack4 || showStack5 || showStack6)
+  const isFrame2 = showStack2 && !(showStack3 || showStack4 || showStack5 || showStack6)
+  const isFrame3 = showStack3 && !(showStack4 || showStack5 || showStack6)
+  const isFrame4 = showStack4 && !(showStack5 || showStack6)
+  const isFrame5 = showStack5 && !showStack6
+  // const isFrame6 = showStack6
   return (
     <>
       <View style={styles.root}>
-        <View style={[styles.container, cameraPosition]}>
-          <Image
-            style={[styles.frame, showFrame1 && styles.visible]}
-            source={frames.first}
-            resizeMode="contain"
-          />
-          <Image
-            style={[styles.frame, showFrame2 && styles.visible]}
-            source={frames.second}
-            resizeMode="contain"
-          />
-          <Image
-            style={[styles.frame, showFrame3 && styles.visible]}
-            source={frames.third}
-            resizeMode="contain"
-          />
-          <Image
-            style={[styles.frame, showFrame4 && styles.visible]}
-            source={frames.fourth}
-            resizeMode="contain"
-          />
-          <Image
-            style={[styles.frame, showFrame5 && styles.visible]}
-            source={frames.fifth}
-            resizeMode="contain"
-          />
-          <Image
-            style={[styles.frame, showFrame6 && styles.visible]}
-            source={frames.sixth}
-            resizeMode="contain"
-          />
-        </View>
+        <GridRow allStyle={standardStyles.centered}>
+          <Cell span={Spans.half}>
+            <H2
+              style={[
+                standardStyles.elementalMarginBottom,
+                isFrame1 ? styles.visible : styles.invisible,
+              ]}
+            >
+              Innovating on Money
+            </H2>
+            <Text style={[fonts.p, isFrame1 ? styles.visible : styles.invisible]}>
+              We recognize that the features of money, like the features of any widely used
+              technology, have a considerable impact on society.
+            </Text>
+            <View style={[styles.container, cameraPosition]}>
+              <Image
+                style={[styles.frame, showStack1 && styles.visible]}
+                source={frames.first}
+                resizeMode="contain"
+              />
+              <Image
+                style={[styles.frame, showStack2 && styles.visible]}
+                source={frames.second}
+                resizeMode="contain"
+              />
+              <Image
+                style={[styles.frame, showStack3 && styles.visible]}
+                source={frames.third}
+                resizeMode="contain"
+              />
+              <Image
+                style={[styles.frame, showStack4 && styles.visible]}
+                source={frames.fourth}
+                resizeMode="contain"
+              />
+              <Image
+                style={[styles.frame, showStack5 && styles.visible]}
+                source={frames.fifth}
+                resizeMode="contain"
+              />
+              <Image
+                style={[styles.frame, showStack6 && styles.visible]}
+                source={frames.sixth}
+                resizeMode="contain"
+              />
+            </View>
+            <View style={standardStyles.elementalMarginTop}>
+              <Text
+                style={[
+                  fonts.p,
+                  { position: 'absolute' },
+                  isFrame2 ? styles.visible : styles.invisible,
+                ]}
+              >
+                Our means of payment are, by and large, loaned into existence, national in nature,
+                fractional reserve backed, and established by fiat.
+              </Text>
+              <Text
+                style={[
+                  fonts.p,
+                  { position: 'absolute' },
+                  isFrame3 ? styles.visible : styles.invisible,
+                ]}
+              >
+                While this design has been and will continue to be useful for a large variety of
+                transactions, it obscures a vast design space, some of which has been explored on
+                the margins, including:
+              </Text>
+              <Text
+                style={[
+                  fonts.p,
+                  { position: 'absolute' },
+                  isFrame4 ? styles.visible : styles.invisible,
+                ]}
+              >
+                time banks, mutual credit, local currencies backed by local goods, demurrage-charged
+                currencies, natural-capital backed currencies, money gifted into existence through a
+                basic income, and others.
+              </Text>
+              <Text style={[fonts.p, isFrame5 ? styles.visible : styles.invisible]}>
+                We believe that many of these features have great potential for positive impact, and
+                that we would be well-served to have a world in which the way value is stored and
+                transmitted is more an ecology than a monoculture.
+              </Text>
+            </View>
+          </Cell>
+        </GridRow>
       </View>
       <div ref={ref1} style={referenceStyle}>
         <div ref={ref2} style={referenceStyle}>
@@ -94,7 +160,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: '100vw',
-    height: '100vh',
+    minHeight: '100vh',
   },
   container: {
     marginTop: 50,
@@ -108,16 +174,16 @@ const styles = StyleSheet.create({
     perspective: 100,
   },
   camera1: {
-    transform: [{ scale: 2.25 }, { translateY: 150 }],
+    transform: [{ scale: 2.25 }, { translateY: 50 }],
   },
   camera2: {
-    transform: [{ scale: 2 }, { translateY: 150 }],
+    transform: [{ scale: 2.25 }, { translateY: 50 }],
   },
   camera3: {
-    transform: [{ scale: 2 }, { translateY: 150 }],
+    transform: [{ scale: 1 }, { translateY: 50 }],
   },
   camera4: {
-    transform: [{ scale: 1.5 }, { translateY: 0 }],
+    transform: [{ scale: 1 }, { translateY: 0 }],
   },
   camera5: {
     transform: [{ scale: 1 }, { translateY: 0 }],
@@ -135,5 +201,10 @@ const styles = StyleSheet.create({
   },
   visible: {
     opacity: 1,
+    zIndex: 10,
+  },
+  invisible: {
+    zIndex: 0,
+    opacity: 0,
   },
 })

@@ -14,11 +14,10 @@ export default function Magazine({ source, children, align }: Props) {
   const [ref, inView] = useInView()
   return (
     <>
-      {' '}
       <View style={[styles.root, inView && styles.visible]}>
         <ImageBackground source={source} resizeMode="cover" style={styles.canvas}>
           <div style={gradient}>
-            <GridRow allStyle={align === 'right' ? styles.right : styles.content}>
+            <GridRow desktopStyle={align === 'right' ? styles.right : styles.content}>
               <Cell span={Spans.half}>{children}</Cell>
             </GridRow>
           </div>
@@ -39,9 +38,11 @@ const styles = StyleSheet.create({
     opacity: 0,
     transitionProperty: 'opacity',
     transitionDuration: '500ms',
+    zIndex: 0,
   },
   visible: {
     opacity: 1,
+    zIndex: 10,
   },
   right: {
     alignItems: 'center',
@@ -54,6 +55,8 @@ const styles = StyleSheet.create({
 
 const gradient = {
   display: 'flex',
+  justifyContent: 'center',
   background: `linear-gradient(90deg, ${colors.dark} 2%, rgba(46,51,56,0) 50%, ${colors.dark} 98%)`,
   height: '100vh',
+  width: '100%',
 }
