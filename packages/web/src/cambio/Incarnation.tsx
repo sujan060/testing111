@@ -5,6 +5,7 @@ import frames from 'src/cambio/incarnation-frames/index'
 import { H2 } from 'src/fonts/Fonts'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { fonts, standardStyles } from 'src/styles'
+// import AspectRatio from 'src/shared/AspectRatio'
 
 function getCamera(_, two, three, four, five, six) {
   if (six) {
@@ -48,7 +49,7 @@ export default function Incarnation() {
     <>
       <View style={styles.root}>
         <GridRow allStyle={standardStyles.centered}>
-          <Cell span={Spans.half}>
+          <Cell span={Spans.half} tabletSpan={Spans.twoThird}>
             <H2
               style={[
                 standardStyles.elementalMarginBottom,
@@ -160,18 +161,20 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: '100vw',
-    minHeight: '100vh',
+    height: '100vh',
   },
   container: {
     marginTop: 50,
-    width: 500,
-    height: 500,
+    width: 250,
+    height: 250,
+    alignSelf: 'center',
+    justifyContent: 'center',
     transitionProperty: 'transform',
     transitionDuration: '0.75s',
     // @ts-ignore
     willChange: 'transform',
     transformOrigin: 'center',
-    perspective: 100,
+    perspective: 10,
   },
   camera1: {
     transform: [{ scale: 2.25 }, { translateY: 50 }],
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1 }, { translateY: 0 }],
   },
   frame: {
-    transitionDuration: '1s',
+    transitionDuration: '800ms',
     transitionProperty: 'opacity',
     position: 'absolute',
     width: '100%',
@@ -202,9 +205,13 @@ const styles = StyleSheet.create({
   visible: {
     opacity: 1,
     zIndex: 10,
+    transitionDuration: '400ms',
+    transitionProperty: 'opacity',
   },
   invisible: {
     zIndex: 0,
     opacity: 0,
+    transitionDuration: '400ms',
+    transitionProperty: 'opacity',
   },
 })
