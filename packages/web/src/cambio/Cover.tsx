@@ -4,7 +4,7 @@ import { animated, config, useChain, useSpring } from 'react-spring'
 import FlowerLines from 'src/cambio/Hibiscus/06-full-lines.png'
 import FlowerFull from 'src/cambio/Hibiscus/full-green.png'
 
-const THREASHOLD = [0, 0.5, 1]
+const THREASHOLD = [0, 0.5, 0.9]
 
 export default React.memo(function Cover() {
   const [refForDarkGreen, darkGreenInView] = useInView({ threshold: THREASHOLD })
@@ -49,7 +49,7 @@ export default React.memo(function Cover() {
           </animated.div>
         </div>
       </div>
-      <div ref={refForLineWork} style={{ width: '100%', height: '120vh', marginBottom: '25vh' }}>
+      <div ref={refForLineWork} style={{ width: '100%', height: '120vh', marginBottom: '100vh' }}>
         <div ref={refForDarkGreen} style={{ width: '100%', height: '40vh' }} />
       </div>
     </div>

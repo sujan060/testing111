@@ -11,19 +11,23 @@ interface Props {
 }
 
 export default function Magazine({ source, children, align }: Props) {
-  const [ref, inView] = useInView()
+  const [ref, inView] = useInView({ threshold: 0.2 })
   return (
     <>
+      <div ref={ref}>
+        <View style={{ minHeight: '100vh', zIndex: 100, marginVertical: '5vh' }}>
+          <GridRow desktopStyle={align === 'right' ? styles.right : styles.left}>
+            <Cell span={Spans.half} style={[styles.content, inView && styles.contentVisible]}>
+              {children}
+            </Cell>
+          </GridRow>
+        </View>
+      </div>
       <View style={[styles.root, inView && styles.visible]}>
         <ImageBackground source={source} resizeMode="cover" style={styles.canvas}>
-          <div style={gradient}>
-            <GridRow desktopStyle={align === 'right' ? styles.right : styles.content}>
-              <Cell span={Spans.half}>{children}</Cell>
-            </GridRow>
-          </div>
+          <div style={gradient} />
         </ImageBackground>
       </View>
-      <div ref={ref} style={{ height: '75vh', marginTop: '25vh', marginBottom: '25vh' }} />
     </>
   )
 }
@@ -44,12 +48,22 @@ const styles = StyleSheet.create({
     opacity: 1,
     zIndex: 10,
   },
+  contentVisible: {
+    opacity: 1,
+  },
+  content: {
+    opacity: 0,
+    transitionProperty: 'opacity',
+    transitionDuration: '1000ms',
+  },
   right: {
     alignItems: 'center',
     justifyContent: 'flex-end',
+    zIndex: 15,
   },
-  content: {
+  left: {
     alignItems: 'center',
+    zIndex: 15,
   },
 })
 

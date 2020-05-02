@@ -11,7 +11,7 @@ import { colors, fonts, standardStyles } from 'src/styles'
 const AnimatedView = animated.div
 
 export default function Curitiba() {
-  const [ref, inView] = useInView({ threshold: 0.5 })
+  const [ref, inView] = useInView({ threshold: 0.3 })
 
   const busToken = useSpring({
     transform: inView ? 'rotate(0)' : 'rotate(180deg)',
@@ -25,9 +25,14 @@ export default function Curitiba() {
 
   const { t } = useTranslation(NameSpaces.cambio)
 
+  // @ts-ignore
+  // const refHandler = (view) => ref(findNodeHandle(view))
+
   return (
-    <>
-      {' '}
+    <div
+      // @ts-ignore
+      ref={ref}
+    >
       <GridRow allStyle={styles.root}>
         <Cell span={Spans.half} tabletSpan={Spans.twoThird}>
           <AnimatedView style={contentStyle}>
@@ -42,8 +47,7 @@ export default function Curitiba() {
           </AnimatedView>
         </Cell>
       </GridRow>
-      <div ref={ref} style={{ height: '200vh', marginBottom: '50vh' }} />
-    </>
+    </div>
   )
 }
 
@@ -51,8 +55,8 @@ const styles = StyleSheet.create({
   root: {
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'fixed',
-    height: '100vh',
+    minHeight: '100vh',
+    paddingBottom: 200,
   },
   title: {
     fontSize: 72,
