@@ -469,7 +469,11 @@ function* revealAndCompleteAttestation(
 ) {
   const issuer = attestation.issuer
 
-  yield call(tryRevealPhoneNumber, attestationsWrapper, account, e164Number, attestation)
+  // Check if the code is already in the store from a previous run
+  const storedCode = yield call(getCodeForIssuer, issuer)
+  if (!storedCode) {
+    yield call(tryRevealPhoneNumber, attestationsWrapper, account, e164Number, attestation)
+  }
 
   const code: AttestationCode = yield call(waitForAttestationCode, issuer)
 
