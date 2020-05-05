@@ -2,7 +2,6 @@ import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import frames from 'src/cambio/incarnation-frames/index'
-import { H2 } from 'src/fonts/Fonts'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { fonts, standardStyles } from 'src/styles'
 // import AspectRatio from 'src/shared/AspectRatio'
@@ -38,8 +37,7 @@ export default function Incarnation() {
     showStack6
   )
 
-  const isFrame1 =
-    showStack1 && !(showStack2 || showStack3 || showStack4 || showStack5 || showStack6)
+  // const isFrame1 = showStack1 && !(showStack2 || showStack3 || showStack4 || showStack5 || showStack6)
   const isFrame2 = showStack2 && !(showStack3 || showStack4 || showStack5 || showStack6)
   const isFrame3 = showStack3 && !(showStack4 || showStack5 || showStack6)
   const isFrame4 = showStack4 && !(showStack5 || showStack6)
@@ -50,18 +48,6 @@ export default function Incarnation() {
       <View style={styles.root}>
         <GridRow allStyle={standardStyles.centered}>
           <Cell span={Spans.half} tabletSpan={Spans.twoThird}>
-            <H2
-              style={[
-                standardStyles.elementalMarginBottom,
-                isFrame1 ? styles.visible : styles.invisible,
-              ]}
-            >
-              Innovating on Money
-            </H2>
-            <Text style={[fonts.p, isFrame1 ? styles.visible : styles.invisible]}>
-              We recognize that the features of money, like the features of any widely used
-              technology, have a considerable impact on society.
-            </Text>
             <View style={[styles.container, cameraPosition]}>
               <Image
                 style={[styles.frame, showStack1 && styles.visible]}

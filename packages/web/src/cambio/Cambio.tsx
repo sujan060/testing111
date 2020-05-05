@@ -5,6 +5,7 @@ import Curitiba from 'src/cambio/Intro'
 import Incarnation from 'src/cambio/Incarnation'
 import OpenGraph from 'src/header/OpenGraph'
 import Myth from './Myth'
+import Creed from './Creed'
 
 export default function Cambio() {
   return (
@@ -17,6 +18,7 @@ export default function Cambio() {
         <Cover />
         <Curitiba />
         <Myth />
+        <Creed />
         <Incarnation />
       </View>
     </View>
