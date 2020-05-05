@@ -14,10 +14,13 @@ export default function Myth() {
         <>
           <H2 style={textStyles.invert}>The Myth</H2>
           <Text style={[fonts.p, textStyles.invert]}>
-            In the 1970s in the Brazilian city of Curitiba, there was, as there is in many
-            impoverished parts of the globe, too much garbage. The roads that went through the
-            favelas were not wide enough for garbage trucks to go through, and the garbage
-            accumulated on the streets, in the river, in the fields on the outskirts of the favelas.
+            <Text style={{ marginBottom: '100vh' }}>
+              In the 1970s in the Brazilian city of Curitiba, there was, as there is in many
+              impoverished parts of the globe, too much garbage.
+            </Text>
+            The roads that went through the favelas were not wide enough for garbage trucks to go
+            through, and the garbage accumulated on the streets, in the river, in the fields on the
+            outskirts of the favelas.
           </Text>
         </>
       </Magazine>

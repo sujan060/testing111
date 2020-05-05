@@ -36,7 +36,7 @@ class MyApp extends App {
   }
 
   // there are a few pages we dont want the header on
-  // currently this is just the animation demo pages and brand kit
+  // currently this is just the animation demo pages and BrandKit
   skipHeader() {
     const path = this.props.router.asPath
     return path.startsWith('/animation') || this.isBrand() || path.startsWith('/cambio')

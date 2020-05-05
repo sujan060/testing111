@@ -1,52 +1,46 @@
-import { PhoneNumberUtils } from '@celo/utils'
+import { isValidAddress } from '@celo/utils/lib/address'
 import { Request, Response } from 'firebase-functions'
+import { BLSCryptographyClient } from '../bls/bls-cryptography-client'
 import { ErrorMessages, respondWithError } from '../common/error-utils'
 import { authenticateUser } from '../common/identity'
+import logger from '../common/logger'
 import { incrementQueryCount } from '../database/wrappers/account'
-import { computeBLSSalt } from './bls-salt'
-import QueryQuota from './query-quota'
+import { getRemainingQueryCount } from './query-quota'
 
-export async function handleGetSalt(request: Request, response: Response) {
+export async function handleGetBlindedMessageForSalt(request: Request, response: Response) {
   try {
-    const queryQuota: QueryQuota = new QueryQuota()
-    if (!isValidGetSaltInput(request.body)) {
+    if (!isValidGetSignatureInput(request.body)) {
       respondWithError(response, 400, ErrorMessages.INVALID_INPUT)
       return
     }
     authenticateUser()
-    const remainingQueryCount = await queryQuota.getRemainingQueryCount(
+    const remainingQueryCount = await getRemainingQueryCount(
       request.body.account,
-      request.body.phoneNumber
+      request.body.hashedPhoneNumber
     )
     if (remainingQueryCount <= 0) {
-      respondWithError(response, 400, ErrorMessages.EXCEEDED_QUOTA)
+      respondWithError(response, 403, ErrorMessages.EXCEEDED_QUOTA)
       return
     }
-    const salt = computeBLSSalt(request.body.queryPhoneNumber)
+    const signature = await BLSCryptographyClient.computeBlindedSignature(
+      request.body.blindedQueryPhoneNumber
+    )
     await incrementQueryCount(request.body.account)
-    response.json({ success: true, salt })
+    response.json({ success: true, signature })
   } catch (error) {
-    console.error('Failed to getSalt', error)
+    logger.error('Failed to getSalt', error)
     respondWithError(response, 500, ErrorMessages.UNKNOWN_ERROR)
   }
 }
 
-function isValidGetSaltInput(requestBody: any): boolean {
-  return (
-    hasValidAccountParam(requestBody) &&
-    hasValidPhoneNumberParam(requestBody) &&
-    hasValidQueryPhoneNumberParam(requestBody)
-  )
+function isValidGetSignatureInput(requestBody: any): boolean {
+  return hasValidAccountParam(requestBody) && hasValidQueryPhoneNumberParam(requestBody)
 }
 
 function hasValidAccountParam(requestBody: any): boolean {
-  return requestBody.account && (requestBody.account as string).startsWith('0x')
-}
-
-function hasValidPhoneNumberParam(requestBody: any): boolean {
-  return requestBody.phoneNumber && PhoneNumberUtils.isE164Number(requestBody.phoneNumber)
+  return requestBody.account && isValidAddress(requestBody.account)
 }
 
 function hasValidQueryPhoneNumberParam(requestBody: any): boolean {
-  return requestBody.queryPhoneNumber
+  return requestBody.blindedQueryPhoneNumber
 }
