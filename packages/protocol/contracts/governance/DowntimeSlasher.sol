@@ -64,6 +64,7 @@ contract DowntimeSlasher is SlasherUtil {
       startSignerIndex < numberValidatorsInSet(startBlock),
       "Bad validator index at start block"
     );
+    // Ensure that the start and end validator signer indices are valid.
     require(endSignerIndex < numberValidatorsInSet(endBlock), "Bad validator index at end block");
     address startSigner = validatorSignerAddressFromSet(startSignerIndex, startBlock);
     address endSigner = validatorSignerAddressFromSet(endSignerIndex, endBlock);
@@ -72,17 +73,34 @@ contract DowntimeSlasher is SlasherUtil {
       accounts.signerToAccount(startSigner) == accounts.signerToAccount(endSigner),
       "Signers do not match"
     );
+
+    // Determine the dividing line between the start epoch and the end epoch.
     uint256 sz = getEpochSize();
-    uint256 startEpoch = epochNumberOfBlock(startBlock, sz);
-    for (uint256 n = startBlock; n <= endBlock; n = n.add(1)) {
-      uint256 signerIndex = epochNumberOfBlock(n, sz) == startEpoch
-        ? startSignerIndex
-        : endSignerIndex;
+    uint256 lastBlockOfStartEpoch = epochNumberOfBlock(startBlock, sz).mul(sz);
+    assert(lastBlockOfStartEpoch >= startBlock);
+    if (endBlock < lastBlockOfStartEpoch) {
+      lastBlockOfStartEpoch = endBlock;
+    }
+
+    // SafeMath is not used in the following loops to save gas required for conditional checks.
+    // Overflow safety is guaranteed by previous checks on the values of the loop parameters.
+    uint256 accumulator;
+    for (uint256 n = startBlock; n <= lastBlockOfStartEpoch; n++) {
       // We want to check signers for block n,
       // so we get the parent seal bitmap for the next block
-      if (uint256(getParentSealBitmap(n.add(1))) & (1 << signerIndex) != 0) return false;
+      accumulator |= uint256(getParentSealBitmap(n + 1));
     }
-    return true;
+    if (accumulator & (1 << startSignerIndex) != 0) {
+      return false;
+    }
+
+    accumulator = 0;
+    for (uint256 n = lastBlockOfStartEpoch + 1; n <= endBlock; n++) {
+      // We want to check signers for block n,
+      // so we get the parent seal bitmap for the next block
+      accumulator |= uint256(getParentSealBitmap(n + 1));
+    }
+    return (accumulator & (1 << endSignerIndex) == 0);
   }
 
   /**
