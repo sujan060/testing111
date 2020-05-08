@@ -2,7 +2,6 @@ import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 import { StyleSheet, Text, View } from 'react-native'
 import { animated, config, useSpring } from 'react-spring'
-// import BusToken from 'src/cambio/BusToken'
 import { H1, H4 } from 'src/fonts/Fonts'
 import { NameSpaces, useTranslation } from 'src/i18n'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
@@ -10,23 +9,17 @@ import { fonts, standardStyles } from 'src/styles'
 
 const AnimatedView = animated.div
 
-export default function Intro() {
-  const [ref, inView] = useInView({ threshold: 0.3 })
+const THRESH = [0.3, 1]
 
-  // const busToken = useSpring({
-  //   transform: inView ? 'rotate(0)' : 'rotate(180deg)',
-  //   width: 'fit-content',
-  //   config: config.slow,
-  // })
+export default function Intro() {
+  const [ref, inView] = useInView({ threshold: THRESH })
+
   const contentStyle = useSpring({
     opacity: inView ? 1 : 0,
     config: config.molasses,
   })
 
   const { t } = useTranslation(NameSpaces.cambio)
-
-  // @ts-ignore
-  // const refHandler = (view) => ref(findNodeHandle(view))
 
   return (
     <div ref={ref}>
@@ -52,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    paddingBottom: 200,
+    paddingBottom: '100%',
   },
   title: {
     fontSize: 72,

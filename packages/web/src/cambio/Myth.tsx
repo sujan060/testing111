@@ -5,6 +5,8 @@ import BusToken from 'src/cambio/BusToken'
 import Bridge from 'src/cambio/myth/01.jpg'
 import Guy from 'src/cambio/myth/02.jpg'
 import Truck from 'src/cambio/myth/03.jpg'
+import BridgeMobile from 'src/cambio/myth/bridge-mobile.jpg'
+import GuyMobile from 'src/cambio/myth/guy-mobile.jpg'
 import TruckSmall from 'src/cambio/myth/truck-mobile.jpg'
 import { H1, H2, H4 } from 'src/fonts/Fonts'
 import { NameSpaces, useTranslation } from 'src/i18n'
@@ -12,24 +14,25 @@ import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { useScreenSize } from 'src/layout/ScreenSize'
 import { colors, fonts, standardStyles, textStyles } from 'src/styles'
 import Magazine from './Magazine'
+import { stdStyles } from './standards'
 
 export default function Myth() {
   const { t } = useTranslation(NameSpaces.cambio)
   const { isMobile } = useScreenSize()
-  const [ref, inView] = useInView()
+  const [ref, inView] = useInView({ threshold: 0.2 })
   return (
     <>
       <View style={[styles.root, inView ? styles.inView : styles.outOfView]} />
       <div ref={ref}>
-        <GridRow allStyle={standardStyles.centered}>
-          <Cell span={Spans.half} style={{ paddingBottom: 100 }}>
+        <GridRow desktopStyle={standardStyles.centered} mobileStyle={stdStyles.fullScreen}>
+          <Cell span={Spans.half}>
             <BusToken color={colors.white} size={44} />
             <H1 style={[standardStyles.elementalMarginTop, textStyles.invert]}>{t('mythTitle')}</H1>
             <H4 style={[standardStyles.elementalMargin, textStyles.invert]}>{t('mythSubTitle')}</H4>
           </Cell>
         </GridRow>
       </div>
-      <Magazine source={Bridge} align="left">
+      <Magazine source={isMobile ? BridgeMobile : Bridge} align="left">
         <H2
           style={[
             standardStyles.elementalMarginBottom,
@@ -49,7 +52,7 @@ export default function Myth() {
           excess capacity on buses.
         </Paragraph>
       </Magazine>
-      <Magazine source={Guy} align="right">
+      <Magazine source={isMobile ? GuyMobile : Guy} align="right">
         <Paragraph>
           Government representatives then agreed to compensate locals to clean up garbage — and pay
           them with bus tokens. For every pound of garbage collected, one bus token was rewarded.

@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { CeloLinks } from 'src/shared/menu-items'
-import { colors } from 'src/styles'
+import { colors, UnionColors } from 'src/styles'
 import Svg, { Path } from 'svgs'
 
 interface Props {
   height?: number
-  color: colors
+  color: UnionColors
   wrapWithLink?: boolean
 }
 

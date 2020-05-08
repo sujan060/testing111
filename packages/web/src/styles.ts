@@ -1,4 +1,5 @@
 import { StyleSheet, TextStyle } from 'react-native'
+import { colors as cambioColors } from 'src/cambio/standards'
 
 export enum colors {
   white = '#FFFFFF',
@@ -44,6 +45,8 @@ export enum colors {
   grayHeavy = '#ABADAF',
   black = '#000',
 }
+
+export type UnionColors = colors | cambioColors
 
 export enum typeFaces {
   futura = 'Jost, futura-pt, futura, sans-serif',

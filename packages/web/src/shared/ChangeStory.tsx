@@ -12,7 +12,11 @@ const CHANGE_STORY = [
   '새로운 이야기를 쓰다', // ko
 ]
 
-export default function ChangeStory() {
+interface Props {
+  color?: string
+}
+
+export default function ChangeStory({ color }: Props) {
   const [count, setCount] = React.useState(0)
 
   const next = () => {
@@ -34,24 +38,31 @@ export default function ChangeStory() {
         source={globe}
         style={[styles.globe, styles.symbols, isMobile && styles.globeMobile]}
       />
-      {!isMobile && <Text style={[styles.separator, styles.symbols]}>|</Text>}
-      <Wipe text={CHANGE_STORY[count]} />
+      {!isMobile && <Text style={[styles.separator, styles.symbols, { color }]}>|</Text>}
+      <Wipe text={CHANGE_STORY[count]} color={color} />
     </View>
   )
 }
 
 interface WipeProps {
   text: string
+  color?: string
 }
 
-const Wipe = React.memo(function _Wipe({ text }: WipeProps) {
+const Wipe = React.memo(function _Wipe({ text, color }: WipeProps) {
   const { isMobile } = useScreenSize()
   return (
     <View>
       <View key={`hide-${text}`} style={[styles.mask, styles.hide]} />
       <Text
         key={text}
-        style={[fonts.legal, isMobile && textStyles.center, textStyles.italic, styles.textFadeIn]}
+        style={[
+          fonts.legal,
+          isMobile && textStyles.center,
+          textStyles.italic,
+          styles.textFadeIn,
+          { color },
+        ]}
       >
         "{text}"
       </Text>
