@@ -7,7 +7,7 @@ import RingsGlyph from 'src/logos/RingsGlyph'
 import ChangeStory from 'src/shared/ChangeStory'
 import { Copyright } from 'src/shared/Copyright'
 import { socialMenu } from 'src/shared/SocialMenu'
-import { fonts } from 'src/styles'
+import { fonts, standardStyles } from 'src/styles'
 import Button, { BTN } from 'src/shared/Button.3'
 
 export default function Footer() {
@@ -30,7 +30,9 @@ export default function Footer() {
               />
             </Text>
           </Text>
-          <Social />
+          <View style={[standardStyles.centered]}>
+            <Social />
+          </View>
         </View>
         <View style={styles.copyChange}>
           <Copyright style={styles.copyright} />
