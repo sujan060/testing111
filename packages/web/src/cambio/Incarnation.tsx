@@ -3,11 +3,14 @@ import { useInView } from 'react-intersection-observer'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import frames from 'src/cambio/incarnation-frames/index'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
-import { fonts, standardStyles } from 'src/styles'
+import { fonts, standardStyles, textStyles } from 'src/styles'
+import { getFade } from './standards'
 // import AspectRatio from 'src/shared/AspectRatio'
 
-function getCamera(_, two, three, four, five, six) {
-  if (six) {
+function getCamera(_, two, three, four, five, six, seven) {
+  if (seven) {
+    return styles.camera7
+  } else if (six) {
     return styles.camera6
   } else if (five) {
     return styles.camera5
@@ -28,21 +31,24 @@ export default function Incarnation() {
   const [ref4, showStack4] = useInView()
   const [ref5, showStack5] = useInView()
   const [ref6, showStack6] = useInView()
+  const [ref7, showStack7] = useInView()
   const cameraPosition = getCamera(
     showStack1,
     showStack2,
     showStack3,
     showStack4,
     showStack5,
-    showStack6
+    showStack6,
+    showStack7
   )
 
-  // const isFrame1 = showStack1 && !(showStack2 || showStack3 || showStack4 || showStack5 || showStack6)
-  const isFrame2 = showStack2 && !(showStack3 || showStack4 || showStack5 || showStack6)
-  const isFrame3 = showStack3 && !(showStack4 || showStack5 || showStack6)
-  const isFrame4 = showStack4 && !(showStack5 || showStack6)
-  const isFrame5 = showStack5 && !showStack6
-  // const isFrame6 = showStack6
+  const isFrame2 =
+    showStack2 && !(showStack3 || showStack4 || showStack5 || showStack6 || showStack7)
+  const isFrame3 = showStack3 && !(showStack4 || showStack5 || showStack6 || showStack7)
+  const isFrame4 = showStack4 && !(showStack5 || showStack6 || showStack7)
+  const isFrame5 = showStack5 && !(showStack6 || showStack7)
+  const isFrame6 = showStack6 && !showStack7
+  const isFrame7 = showStack7
   return (
     <>
       <View style={styles.root}>
@@ -79,44 +85,35 @@ export default function Incarnation() {
                 source={frames.sixth}
                 resizeMode="contain"
               />
+              <Image
+                style={[styles.frame, showStack7 && styles.visible]}
+                source={frames.seven}
+                resizeMode="contain"
+              />
             </View>
-            <View style={standardStyles.elementalMarginTop}>
-              <Text
-                style={[
-                  fonts.p,
-                  { position: 'absolute' },
-                  isFrame2 ? styles.visible : styles.invisible,
-                ]}
-              >
-                Our means of payment are, by and large, loaned into existence, national in nature,
-                fractional reserve backed, and established by fiat.
+            <View style={[standardStyles.elementalMarginTop, { alignItems: 'center' }]}>
+              <Text style={[fonts.p, styles.caption, isFrame2 ? fades.show : fades.hide]}>
+                <Text style={textStyles.heavy}>Money</Text>, backed by underutilized resources. —
+                Natural capital backed currencies
               </Text>
-              <Text
-                style={[
-                  fonts.p,
-                  { position: 'absolute' },
-                  isFrame3 ? styles.visible : styles.invisible,
-                ]}
-              >
-                While this design has been and will continue to be useful for a large variety of
-                transactions, it obscures a vast design space, some of which has been explored on
-                the margins, including:
+
+              <Text style={[fonts.p, styles.caption, isFrame3 ? fades.show : fades.hide]}>
+                <Text style={textStyles.heavy}>Money</Text>, independently issued as a complement
+                alongside federal currency. — Local currencies, backed by local goods
               </Text>
-              <Text
-                style={[
-                  fonts.p,
-                  { position: 'absolute' },
-                  isFrame4 ? styles.visible : styles.invisible,
-                ]}
-              >
-                time banks, mutual credit, local currencies backed by local goods, demurrage-charged
-                currencies, natural-capital backed currencies, money gifted into existence through a
-                basic income, and others.
+              <Text style={[fonts.p, styles.caption, isFrame4 ? fades.show : fades.hide]}>
+                <Text style={textStyles.heavy}>Money</Text> that can reduce our system’s structural
+                dependence on debt. — Time banks, Mutual credit, Demurrage-charged currencies
               </Text>
-              <Text style={[fonts.p, isFrame5 ? styles.visible : styles.invisible]}>
-                We believe that many of these features have great potential for positive impact, and
-                that we would be well-served to have a world in which the way value is stored and
-                transmitted is more an ecology than a monoculture.
+              <Text style={[fonts.p, styles.caption, isFrame5 ? fades.show : fades.hide]}>
+                <Text style={textStyles.heavy}>Money</Text>, gifted into existence — through a basic
+                income
+              </Text>
+              <Text style={[fonts.p, styles.caption, isFrame6 ? fades.show : fades.hide]}>
+                <Text style={textStyles.heavy}>Money</Text>, earned into being.
+              </Text>
+              <Text style={[fonts.p, styles.caption, isFrame7 ? fades.show : fades.hide]}>
+                — like a good deed for a bus token.
               </Text>
             </View>
           </Cell>
@@ -127,7 +124,9 @@ export default function Incarnation() {
           <div ref={ref3} style={referenceStyle}>
             <div ref={ref4} style={referenceStyle}>
               <div ref={ref5} style={referenceStyle}>
-                <div ref={ref6} style={referenceStyle} />
+                <div ref={ref6} style={referenceStyle}>
+                  <div ref={ref7} style={referenceStyle} />
+                </div>
               </div>
             </div>
           </div>
@@ -137,24 +136,26 @@ export default function Incarnation() {
   )
 }
 
+const fades = getFade('400ms')
+
 const referenceStyle = { paddingTop: '101vh', width: 100, marginTop: '25vh' }
 
 const styles = StyleSheet.create({
   root: {
     position: 'fixed',
-    justifyContent: 'center',
     alignItems: 'center',
-    top: 0,
+    top: 50,
     left: 0,
     width: '100vw',
     height: '100vh',
   },
   container: {
     marginTop: 50,
-    width: 250,
-    height: 250,
+    width: 300,
+    height: 300,
+    maxWidth: '90vw',
+    maxHeight: '90vw',
     alignSelf: 'center',
-    justifyContent: 'center',
     transitionProperty: 'transform',
     transitionDuration: '0.75s',
     // @ts-ignore
@@ -169,16 +170,23 @@ const styles = StyleSheet.create({
     transform: [{ scale: 2.25 }, { translateY: 50 }],
   },
   camera3: {
-    transform: [{ scale: 1 }, { translateY: 50 }],
+    transform: [{ scale: 2.25 }, { translateY: 50 }],
   },
   camera4: {
-    transform: [{ scale: 1 }, { translateY: 0 }],
+    transform: [{ scale: 2 }, { translateY: 50 }],
   },
   camera5: {
-    transform: [{ scale: 1 }, { translateY: 0 }],
+    transform: [{ scale: 0.9 }, { translateY: 0 }],
   },
   camera6: {
     transform: [{ scale: 1 }, { translateY: 0 }],
+  },
+  camera7: {
+    transform: [{ scale: 1.1 }, { translateY: 0 }],
+  },
+  caption: {
+    position: 'absolute',
+    textAlign: 'center',
   },
   frame: {
     transitionDuration: '800ms',
@@ -191,12 +199,6 @@ const styles = StyleSheet.create({
   visible: {
     opacity: 1,
     zIndex: 10,
-    transitionDuration: '400ms',
-    transitionProperty: 'opacity',
-  },
-  invisible: {
-    zIndex: 0,
-    opacity: 0,
     transitionDuration: '400ms',
     transitionProperty: 'opacity',
   },
