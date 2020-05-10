@@ -1,13 +1,11 @@
+import { StyleSheet, Text } from 'react-native'
 import { H2, H4 } from 'src/fonts/Fonts'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
-import { fonts, standardStyles, colors } from 'src/styles'
-import { Text } from 'react-native'
+import { fonts, standardStyles } from 'src/styles'
 
 export default function Creed() {
   return (
-    <GridRow
-      allStyle={[standardStyles.centered, { backgroundColor: colors.white, minHeight: '100vh' }]}
-    >
+    <GridRow allStyle={[standardStyles.centered, styles.root]}>
       <Cell span={Spans.half} tabletSpan={Spans.twoThird}>
         <H2 style={[standardStyles.elementalMarginBottom]}>Innovating on Money</H2>
         <H4 style={standardStyles.elementalMarginBottom}>
@@ -26,3 +24,10 @@ export default function Creed() {
     </GridRow>
   )
 }
+
+const styles = StyleSheet.create({
+  root: {
+    marginTop: '50vh',
+    minHeight: '100vh',
+  },
+})

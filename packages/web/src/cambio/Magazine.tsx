@@ -2,6 +2,8 @@ import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 import { ImageBackground, ImageRequireSource, StyleSheet, View } from 'react-native'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
+import { colors } from './standards'
+import { standardStyles } from 'src/styles'
 // import { colors } from 'src/styles'
 
 interface Props {
@@ -10,8 +12,10 @@ interface Props {
   align: 'left' | 'right'
 }
 
+const THRESHOLD = [0.1, 0.5, 0.9]
+
 export default function Magazine({ source, children, align }: Props) {
-  const [ref, inView] = useInView({ threshold: 0.2 })
+  const [ref, inView] = useInView({ threshold: THRESHOLD })
   return (
     <>
       <View style={[styles.root, inView && styles.visible]}>
@@ -25,7 +29,10 @@ export default function Magazine({ source, children, align }: Props) {
       </View>
       <div ref={ref}>
         <View style={{ minHeight: '100vh', zIndex: 50 }}>
-          <GridRow desktopStyle={align === 'right' ? styles.right : styles.left}>
+          <GridRow
+            allStyle={standardStyles.centered}
+            desktopStyle={align === 'right' ? styles.right : styles.left}
+          >
             <Cell span={Spans.half} style={[styles.content, inView && styles.contentVisible]}>
               {children}
             </Cell>
@@ -49,7 +56,7 @@ const styles = StyleSheet.create({
     transitionProperty: 'opacity',
     transitionDuration: '1000ms',
     zIndex: 5,
-    backgroundColor: '#000',
+    backgroundColor: colors.darkest,
   },
   visible: {
     opacity: 1,
@@ -59,7 +66,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   content: {
-    opacity: 0.5,
+    opacity: 0.2,
     transitionProperty: 'opacity',
     transitionDuration: '100ms',
   },

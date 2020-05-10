@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { colors } from 'src/styles'
+import { colors } from 'src/cambio/standards'
 import Svg, { Path } from 'svgs'
 
 interface Props {
