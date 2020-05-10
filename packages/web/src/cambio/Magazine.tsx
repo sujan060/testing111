@@ -2,9 +2,8 @@ import * as React from 'react'
 import { useInView } from 'react-intersection-observer'
 import { ImageBackground, ImageRequireSource, StyleSheet, View } from 'react-native'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
-import { colors } from './standards'
+import { colors, getFade } from './standards'
 import { standardStyles } from 'src/styles'
-// import { colors } from 'src/styles'
 
 interface Props {
   source: ImageRequireSource
@@ -18,7 +17,7 @@ export default function Magazine({ source, children, align }: Props) {
   const [ref, inView] = useInView({ threshold: THRESHOLD })
   return (
     <>
-      <View style={[styles.root, inView && styles.visible]}>
+      <View style={[styles.root, inView ? fade.show : fade.hide]}>
         <ImageBackground
           source={source}
           resizeMode="contain"
@@ -33,7 +32,7 @@ export default function Magazine({ source, children, align }: Props) {
             allStyle={standardStyles.centered}
             desktopStyle={align === 'right' ? styles.right : styles.left}
           >
-            <Cell span={Spans.half} style={[styles.content, inView && styles.contentVisible]}>
+            <Cell span={Spans.half} style={[styles.content, inView ? fade.show : fade.hide]}>
               {children}
             </Cell>
           </GridRow>
@@ -42,6 +41,8 @@ export default function Magazine({ source, children, align }: Props) {
     </>
   )
 }
+
+const fade = getFade('100ms')
 
 const styles = StyleSheet.create({
   canvas: {
@@ -57,10 +58,6 @@ const styles = StyleSheet.create({
     transitionDuration: '1000ms',
     zIndex: 5,
     backgroundColor: colors.darkest,
-  },
-  visible: {
-    opacity: 1,
-    zIndex: 10,
   },
   contentVisible: {
     opacity: 1,
