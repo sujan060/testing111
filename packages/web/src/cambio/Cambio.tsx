@@ -8,6 +8,7 @@ import Intro from 'src/cambio/Intro'
 import Myth from 'src/cambio/Myth'
 import OpenGraph from 'src/header/OpenGraph'
 import Invitation from './Invitation'
+import Video from './Video'
 
 export default function Cambio() {
   return (
@@ -16,6 +17,7 @@ export default function Cambio() {
       <View>
         <Cover />
         <Intro />
+        <Video />
         <Myth />
         <Creed />
         <Incarnation />
