@@ -16,7 +16,7 @@ import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { useScreenSize } from 'src/layout/ScreenSize'
 import { fonts, standardStyles, textStyles } from 'src/styles'
 
-const threshold = [0.1, 0.5]
+const threshold = [0.3, 0.5]
 
 export default function Myth() {
   const { t } = useTranslation(NameSpaces.cambio)
@@ -27,7 +27,10 @@ export default function Myth() {
     <>
       <View style={[styles.root, inView || inView2 ? styles.inView : styles.outOfView]} />
       <div ref={ref}>
-        <GridRow desktopStyle={standardStyles.centered} mobileStyle={stdStyles.fullScreen}>
+        <GridRow
+          desktopStyle={standardStyles.centered}
+          mobileStyle={[stdStyles.fullScreen, standardStyles.sectionMarginTopMobile]}
+        >
           <Cell span={Spans.half}>
             <BusToken color={colors.lightest} size={44} />
             <H1 style={[standardStyles.elementalMarginTop, textStyles.invert]}>{t('mythTitle')}</H1>
