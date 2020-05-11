@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { InView } from 'react-intersection-observer'
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import YouTube from 'react-youtube'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
 import { fonts, standardStyles, textStyles } from 'src/styles'
 import { colors, getFade } from './standards'
-import coverImage from 'src/cambio/Hibiscus/full-green.png'
+// import coverImage from 'src/cambio/Hibiscus/full-green.png'
+import PlayCircle from 'src/shared/PlayCircle'
 
 const opts = {
   // height: this.playerHeight(),
@@ -21,6 +22,7 @@ const opts = {
 
 export default function Video() {
   const [isPlaying, setIsPlaying] = React.useState(false)
+  const [isPressing, setIsPressing] = React.useState(false)
 
   const videoRef = React.useRef()
 
@@ -31,6 +33,9 @@ export default function Video() {
 
   const onStop = React.useCallback(() => setIsPlaying(false), [])
 
+  const onPressOut = React.useCallback(() => setIsPressing(false), [])
+  const onPressIn = React.useCallback(() => setIsPressing(true), [])
+
   const onPressPlay = React.useCallback(() => {
     if (videoRef.current) {
       // @ts-ignore
@@ -38,19 +43,22 @@ export default function Video() {
     }
   }, [videoRef.current])
 
-  const onViewChange = React.useCallback((inView) => {
-    if (!videoRef?.current) {
-      return
-    }
+  const onViewChange = React.useCallback(
+    (inView) => {
+      if (!videoRef?.current) {
+        return
+      }
 
-    if (inView) {
-      // @ts-ignore
-      // videoRef.current?.playVideo()
-    } else {
-      // @ts-ignore
-      videoRef.current?.pauseVideo()
-    }
-  }, [])
+      if (inView) {
+        // @ts-ignore
+        // videoRef.current?.playVideo()
+      } else {
+        // @ts-ignore
+        videoRef.current?.pauseVideo()
+      }
+    },
+    [videoRef?.current]
+  )
 
   function onPlayerReady(event) {
     videoRef.current = event.target
@@ -66,10 +74,18 @@ export default function Video() {
               <Cell span={Spans.half}>
                 <div ref={ref} style={{ position: 'relative' }}>
                   <TouchableOpacity
-                    style={[styles.pressable, isPlaying ? fade.hide : fade.show]}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
+                    style={[
+                      standardStyles.centered,
+                      styles.pressable,
+                      isPlaying ? fade.hide : fade.show,
+                    ]}
                     onPress={onPressPlay}
                   >
-                    <Image style={[styles.coverImage]} source={coverImage} resizeMode="contain" />
+                    <View style={isPressing && styles.isPressing}>
+                      <PlayCircle outline={colors.forest} background={colors.dew} />
+                    </View>
                   </TouchableOpacity>
                   <YouTube
                     videoId={'eusVhYgm6sI'}
@@ -106,8 +122,6 @@ const styles = StyleSheet.create({
     marginBottom: '30vh',
   },
   cinema: {
-    transitionProperty: 'background-color',
-    transitionDuration: '400ms',
     position: 'fixed',
     height: '100vh',
     width: '100vw',
@@ -121,8 +135,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderColor: colors.forest,
-    borderWidth: 4,
+    borderColor: colors.dew,
+    backgroundColor: colors.lightest,
+    borderWidth: 1,
+  },
+  isPressing: {
+    transitionDuration: '200ms',
+    transitionProperty: 'transform',
+    transform: [{ scale: 0.85 }],
   },
 })
 
