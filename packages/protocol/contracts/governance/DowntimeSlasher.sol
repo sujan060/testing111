@@ -58,12 +58,22 @@ contract DowntimeSlasher is SlasherUtil {
     view
     returns (bool)
   {
+    require(startBlock > 0, "startBlock must be bigger than zero");
+    uint256 currentBlock = block.number.sub(1);
     uint256 endBlock = getEndBlock(startBlock);
-    require(endBlock < block.number.sub(1), "end block must be smaller than current block");
+    // Determine the dividing line between the start epoch and the end epoch.
+    uint256 sz = getEpochSize();
+    require(endBlock < currentBlock, "end block must be smaller than current block");
+    // @Dev comment
+    require(
+      currentBlock - startBlock <= sz.mul(4),
+      "startBlock must be within 4 epochs of the current head."
+    );
     require(
       startSignerIndex < numberValidatorsInSet(startBlock),
       "Bad validator index at start block"
     );
+    // Ensure that the start and end validator signer indices are valid.
     require(endSignerIndex < numberValidatorsInSet(endBlock), "Bad validator index at end block");
     address startSigner = validatorSignerAddressFromSet(startSignerIndex, startBlock);
     address endSigner = validatorSignerAddressFromSet(endSignerIndex, endBlock);
@@ -72,17 +82,35 @@ contract DowntimeSlasher is SlasherUtil {
       accounts.signerToAccount(startSigner) == accounts.signerToAccount(endSigner),
       "Signers do not match"
     );
-    uint256 sz = getEpochSize();
-    uint256 startEpoch = epochNumberOfBlock(startBlock, sz);
-    for (uint256 n = startBlock; n <= endBlock; n = n.add(1)) {
-      uint256 signerIndex = epochNumberOfBlock(n, sz) == startEpoch
-        ? startSignerIndex
-        : endSignerIndex;
-      // We want to check signers for block n,
-      // so we get the parent seal bitmap for the next block
-      if (uint256(getParentSealBitmap(n.add(1))) & (1 << signerIndex) != 0) return false;
+
+    // Epoch 1 starts in the block 1
+    uint256 lastBlockOfStartEpoch = epochNumberOfBlock(startBlock, sz).mul(sz).sub(1);
+    assert(lastBlockOfStartEpoch >= startBlock);
+    if (endBlock < lastBlockOfStartEpoch) {
+      lastBlockOfStartEpoch = endBlock;
     }
-    return true;
+
+    // SafeMath is not used in the following loops to save gas required for conditional checks.
+    // Overflow safety is guaranteed by previous checks on the values of the loop parameters.
+    uint256 accumulator;
+    // 1) We want to check signers for the block,
+    // so we get the parent seal bitmap for the next block
+    // 2) To save gas, instead of iterating between n and lastBlockOfStartEpoch
+    // and retrieving getParentSealBitmap(n+1), we shift 1 block to use n as the parent
+    for (uint256 n = startBlock + 1; n <= (lastBlockOfStartEpoch + 1); n++) {
+      accumulator |= uint256(getParentSealBitmap(n));
+    }
+    if (accumulator & (1 << startSignerIndex) != 0) {
+      return false;
+    }
+
+    accumulator = 0;
+    // Same comments as the last for
+    for (uint256 n = lastBlockOfStartEpoch + 2; n <= (endBlock + 1); n++) {
+      accumulator |= uint256(getParentSealBitmap(n));
+    }
+
+    return (accumulator & (1 << endSignerIndex) == 0);
   }
 
   /**
