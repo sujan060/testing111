@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command'
 import BigNumber from 'bignumber.js'
 import { BaseCommand } from '../../base'
-import { displaySendTx } from '../../utils/cli'
+import { displaySendTx, printValueMap } from '../../utils/cli'
 import { Flags } from '../../utils/command'
 
 export default class TransferGold extends BaseCommand {
@@ -12,6 +12,7 @@ export default class TransferGold extends BaseCommand {
     from: Flags.address({ required: true, description: 'Address of the sender' }),
     to: Flags.address({ required: true, description: 'Address of the receiver' }),
     value: flags.string({ required: true, description: 'Amount to transfer (in wei)' }),
+    native: flags.boolean({ description: 'Transfer cGLD withoug using the GoldContract' }),
   }
 
   static examples = [
@@ -23,10 +24,15 @@ export default class TransferGold extends BaseCommand {
 
     const from: string = res.flags.from
     const to: string = res.flags.to
-    const value = new BigNumber(res.flags.value)
+    const value = new BigNumber(res.flags.value).toFixed()
 
     this.kit.defaultAccount = from
-    const goldToken = await this.kit.contracts.getGoldToken()
-    await displaySendTx('transfer', goldToken.transfer(to, value.toFixed()))
+    if (res.flags.native) {
+      const receipt = await this.kit.web3.eth.sendTransaction({ from, to, value })
+      printValueMap({ txHash: receipt.transactionHash })
+    } else {
+      const goldToken = await this.kit.contracts.getGoldToken()
+      await displaySendTx('transfer', goldToken.transfer(to, value))
+    }
   }
 }

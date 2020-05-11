@@ -59,6 +59,8 @@ OPTIONS
                                                      index addresses for local signing. Example --ledgerCustomAddresses
                                                      "[4,99]"
 
+  --native                                           Transfer cGLD withoug using the GoldContract
+
   --to=0xc1912fEE45d61C87Cc5EA59DaE31190FFFFf232d    (required) Address of the receiver
 
   --useLedger                                        Set it to use a ledger wallet
