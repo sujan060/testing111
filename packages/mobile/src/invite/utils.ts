@@ -1,14 +1,13 @@
+import { trimLeading0x } from '@celo/utils/src/address'
 import { sanitizeMessageBase64 } from '@celo/utils/src/attestations'
+import dynamicLinks from '@react-native-firebase/dynamic-links'
 import URLSearchParamsReal from '@ungap/url-search-params'
-import { Platform } from 'react-native'
-import RNInstallReferrer from 'react-native-install-referrer'
-import Logger from 'src/utils/Logger'
+import url from 'url'
 
 export const createInviteCode = (privateKey: string) => {
   // TODO(Rossy) we need some scheme to encrypt this PK
   // Buffer.from doesn't expect a 0x for hex input
-  const privateKeyHex = privateKey.substring(2)
-  return Buffer.from(privateKeyHex, 'hex').toString('base64')
+  return Buffer.from(trimLeading0x(privateKey), 'hex').toString('base64')
 }
 
 // exported for testing
@@ -43,31 +42,14 @@ export function extractValidInviteCode(inviteFieldInput: string) {
   }
 }
 
-interface ReferrerData {
-  clickTimestamp: string
-  installReferrer: string
-  installTimestamp: string
-}
-
-interface ReferrerDataError {
-  message: string
-}
-
-export function decodeInvite(encodedInvite: string) {
-  const params = new URLSearchParamsReal(decodeURIComponent(encodedInvite))
-  const code: string = params.get('invite-code')
-  return { code }
-}
-
 export const getValidInviteCodeFromReferrerData = async () => {
-  if (Platform.OS === 'android') {
-    const referrerData: ReferrerData | ReferrerDataError = await RNInstallReferrer.getReferrer()
-    Logger.info(
-      'invite/utils/getInviteCodeFromReferrerData',
-      'Referrer Data: ' + JSON.stringify(referrerData)
-    )
-    if (referrerData && referrerData.hasOwnProperty('installReferrer')) {
-      const { code } = decodeInvite((referrerData as ReferrerData).installReferrer)
+  const deepLinkWithInviteCode = await dynamicLinks().getInitialLink()
+
+  if (deepLinkWithInviteCode) {
+    const parsedUrl = url.parse(deepLinkWithInviteCode.url)
+    if (parsedUrl.query) {
+      const params = new URLSearchParamsReal(decodeURIComponent(parsedUrl.query))
+      const code: string = params.get('invite-code')
       if (code) {
         const sanitizedCode = code.replace(' ', '+')
         // Accept invite codes which are either base64 encoded or direct hex keys

@@ -16,8 +16,14 @@ export enum Actions {
   SKIP_INVITE_FAILURE = 'INVITE/SKIP_INVITE_FAILURE',
 }
 
-export interface Invitees {
-  [tempAddress: string]: string // tempAddress -> e164Number
+export interface InviteDetails {
+  timestamp: number
+  e164Number: string
+  tempWalletAddress: string
+  tempWalletPrivateKey: string
+  tempWalletRedeemed: boolean
+  inviteCode: string
+  inviteLink: string
 }
 
 export enum InviteBy {
@@ -27,14 +33,12 @@ export enum InviteBy {
 
 export interface StoreInviteeDataAction {
   type: Actions.STORE_INVITEE_DATA
-  address: string
-  e164Number: string
+  inviteDetails: InviteDetails
 }
 
-export const storeInviteeData = (address: string, e164Number: string): StoreInviteeDataAction => ({
+export const storeInviteeData = (inviteDetails: InviteDetails): StoreInviteeDataAction => ({
   type: Actions.STORE_INVITEE_DATA,
-  address,
-  e164Number,
+  inviteDetails,
 })
 
 export interface SendInviteAction {

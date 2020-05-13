@@ -156,21 +156,41 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                     <Text
                       style={
                         Object {
-                          "color": "#81868B",
-                          "fontFamily": "Hind-Regular",
+                          "color": "#2E3338",
+                          "fontFamily": "Hind-SemiBold",
                           "fontSize": 14,
                           "lineHeight": 18,
                         }
                       }
+                      testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/Title"
                     >
-                      outgoingPaymentRequestNotificationTitle
+                      Requested
+                       
+                      <Text
+                        numberOfLines={1}
+                        style={
+                          Array [
+                            undefined,
+                            Object {
+                              "color": undefined,
+                            },
+                          ]
+                        }
+                      >
+                        
+                        $
+                        26.60
+                      </Text>
+                       
+                      from 
+                      0x15280126303735b625
                     </Text>
                     <View
                       style={
                         Object {
                           "justifyContent": "space-between",
                           "minHeight": 60,
-                          "paddingTop": 8,
+                          "paddingTop": 2,
                         }
                       }
                     >
@@ -190,14 +210,13 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         style={
                           Object {
                             "flexDirection": "row",
-                            "marginTop": 5,
+                            "marginTop": 12,
                           }
                         }
                       >
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -211,6 +230,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:remind/Button"
                         >
                           <Text
                             style={
@@ -233,7 +253,6 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -247,6 +266,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:cancel/Button"
                         >
                           <Text
                             style={
@@ -382,21 +402,41 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                     <Text
                       style={
                         Object {
-                          "color": "#81868B",
-                          "fontFamily": "Hind-Regular",
+                          "color": "#2E3338",
+                          "fontFamily": "Hind-SemiBold",
                           "fontSize": 14,
                           "lineHeight": 18,
                         }
                       }
+                      testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/Title"
                     >
-                      outgoingPaymentRequestNotificationTitle
+                      Requested
+                       
+                      <Text
+                        numberOfLines={1}
+                        style={
+                          Array [
+                            undefined,
+                            Object {
+                              "color": undefined,
+                            },
+                          ]
+                        }
+                      >
+                        
+                        $
+                        135.66
+                      </Text>
+                       
+                      from 
+                      0x15280126303735b625
                     </Text>
                     <View
                       style={
                         Object {
                           "justifyContent": "space-between",
                           "minHeight": 60,
-                          "paddingTop": 8,
+                          "paddingTop": 2,
                         }
                       }
                     >
@@ -416,14 +456,13 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         style={
                           Object {
                             "flexDirection": "row",
-                            "marginTop": 5,
+                            "marginTop": 12,
                           }
                         }
                       >
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -437,6 +476,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:remind/Button"
                         >
                           <Text
                             style={
@@ -459,7 +499,6 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -473,6 +512,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:cancel/Button"
                         >
                           <Text
                             style={
@@ -608,21 +648,41 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                     <Text
                       style={
                         Object {
-                          "color": "#81868B",
-                          "fontFamily": "Hind-Regular",
+                          "color": "#2E3338",
+                          "fontFamily": "Hind-SemiBold",
                           "fontSize": 14,
                           "lineHeight": 18,
                         }
                       }
+                      testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/Title"
                     >
-                      outgoingPaymentRequestNotificationTitle
+                      Requested
+                       
+                      <Text
+                        numberOfLines={1}
+                        style={
+                          Array [
+                            undefined,
+                            Object {
+                              "color": undefined,
+                            },
+                          ]
+                        }
+                      >
+                        
+                        $
+                        1.33
+                      </Text>
+                       
+                      from 
+                      0x15280126303735b625
                     </Text>
                     <View
                       style={
                         Object {
                           "justifyContent": "space-between",
                           "minHeight": 60,
-                          "paddingTop": 8,
+                          "paddingTop": 2,
                         }
                       }
                     >
@@ -642,14 +702,13 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         style={
                           Object {
                             "flexDirection": "row",
-                            "marginTop": 5,
+                            "marginTop": 12,
                           }
                         }
                       >
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -663,6 +722,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:remind/Button"
                         >
                           <Text
                             style={
@@ -685,7 +745,6 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                         <View
                           accessible={true}
                           focusable={true}
-                          isTVSelectable={true}
                           nativeBackgroundAndroid={
                             Object {
                               "attribute": "selectableItemBackgroundBorderless",
@@ -699,6 +758,7 @@ exports[`OutgoingPaymentRequestListScreen renders correctly with requests 1`] = 
                           onResponderTerminate={[Function]}
                           onResponderTerminationRequest={[Function]}
                           onStartShouldSetResponder={[Function]}
+                          testID="OutgoingPaymentRequestNotification/7363bvby2ba8270273/global:cancel/Button"
                         >
                           <Text
                             style={

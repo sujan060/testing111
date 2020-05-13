@@ -1,6 +1,5 @@
 pragma solidity ^0.5.3;
 
-import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./interfaces/IExchange.sol";
@@ -9,8 +8,9 @@ import "./interfaces/IReserve.sol";
 import "./interfaces/IStableToken.sol";
 import "../common/Initializable.sol";
 import "../common/FixidityLib.sol";
-import "../baklava/Freezable.sol";
+import "../common/Freezable.sol";
 import "../common/UsingRegistry.sol";
+import "../common/libraries/ReentrancyGuard.sol";
 
 /**
  * @title Contract that allows to exchange StableToken for GoldToken and vice versa
@@ -23,9 +23,10 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
   event Exchanged(address indexed exchanger, uint256 sellAmount, uint256 buyAmount, bool soldGold);
   event UpdateFrequencySet(uint256 updateFrequency);
   event MinimumReportsSet(uint256 minimumReports);
-  event StableTokenSet(address stable);
+  event StableTokenSet(address indexed stable);
   event SpreadSet(uint256 spread);
   event ReserveFractionSet(uint256 reserveFraction);
+  event BucketsUpdated(uint256 goldBucket, uint256 stableBucket);
 
   FixidityLib.Fraction public spread;
 
@@ -63,7 +64,6 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
    */
   function initialize(
     address registryAddress,
-    address _freezer,
     address stableToken,
     uint256 _spread,
     uint256 _reserveFraction,
@@ -71,7 +71,6 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
     uint256 _minimumReports
   ) external initializer {
     _transferOwnership(msg.sender);
-    setFreezer(_freezer);
     setRegistry(registryAddress);
     setStableToken(stableToken);
     setSpread(_spread);
@@ -116,7 +115,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
       stableBucket = stableBucket.add(sellAmount);
       goldBucket = goldBucket.sub(buyAmount);
       require(
-        IERC20Token(stable).transferFrom(msg.sender, address(this), sellAmount),
+        IERC20(stable).transferFrom(msg.sender, address(this), sellAmount),
         "Transfer of sell token failed"
       );
       IStableToken(stable).burn(sellAmount);
@@ -135,6 +134,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
    * @return The corresponding buyToken amount.
    */
   function getBuyTokenAmount(uint256 sellAmount, bool sellGold) external view returns (uint256) {
+    if (sellAmount == 0) return 0;
     uint256 sellTokenBucket;
     uint256 buyTokenBucket;
     (buyTokenBucket, sellTokenBucket) = getBuyAndSellBuckets(sellGold);
@@ -162,6 +162,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
    * @return The corresponding sellToken amount.
    */
   function getSellTokenAmount(uint256 buyAmount, bool sellGold) external view returns (uint256) {
+    if (buyAmount == 0) return 0;
     uint256 sellTokenBucket;
     uint256 buyTokenBucket;
     (buyTokenBucket, sellTokenBucket) = getBuyAndSellBuckets(sellGold);
@@ -214,10 +215,6 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
     emit MinimumReportsSet(newMininumReports);
   }
 
-  function setFreezer(address freezer) public onlyOwner {
-    _setFreezer(freezer);
-  }
-
   /**
     * @notice Allows owner to set the Stable Token address
     * @param newStableToken The new address for Stable Token
@@ -242,6 +239,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
     */
   function setReserveFraction(uint256 newReserveFraction) public onlyOwner {
     reserveFraction = FixidityLib.wrap(newReserveFraction);
+    require(reserveFraction.lt(FixidityLib.fixed1()), "reserve fraction must be smaller than 1");
     emit ReserveFractionSet(newReserveFraction);
   }
 
@@ -308,6 +306,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
       lastBucketUpdate = now;
 
       (goldBucket, stableBucket) = getUpdatedBuckets();
+      emit BucketsUpdated(goldBucket, stableBucket);
     }
   }
 
@@ -348,6 +347,7 @@ contract Exchange is IExchange, Initializable, Ownable, UsingRegistry, Reentranc
       registry.getAddressForOrDie(SORTED_ORACLES_REGISTRY_ID)
     )
       .medianRate(stable);
+    require(rateDenominator > 0, "exchange rate denominator must be greater than 0");
     return (rateNumerator, rateDenominator);
   }
 }

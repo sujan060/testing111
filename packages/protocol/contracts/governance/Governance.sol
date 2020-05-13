@@ -1,6 +1,5 @@
 pragma solidity ^0.5.3;
 
-import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/Math.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -14,6 +13,7 @@ import "../common/FixidityLib.sol";
 import "../common/linkedlists/IntegerSortedLinkedList.sol";
 import "../common/UsingRegistry.sol";
 import "../common/UsingPrecompiles.sol";
+import "../common/libraries/ReentrancyGuard.sol";
 
 // TODO(asa): Hardcode minimum times for queueExpiry, etc.
 /**
@@ -100,7 +100,7 @@ contract Governance is
   uint256[] public emptyIndices;
   ParticipationParameters private participationParameters;
 
-  event ApproverSet(address approver);
+  event ApproverSet(address indexed approver);
 
   event ConcurrentProposalsSet(uint256 concurrentProposals);
 
@@ -147,7 +147,7 @@ contract Governance is
 
   event ProposalExecuted(uint256 indexed proposalId);
 
-  event ProposalExpired(uint256 proposalId);
+  event ProposalExpired(uint256 indexed proposalId);
 
   event ParticipationBaselineUpdated(uint256 participationBaseline);
 

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { brandStyles } from 'src/brandkit/common/constants'
 import { I18nProps, NameSpaces, withNamespaces } from 'src/i18n'
 import Octocat from 'src/icons/Octocat'
 import LogoLightBg from 'src/logos/LogoLightBg'
@@ -17,12 +16,19 @@ export default withNamespaces(NameSpaces.common)(function TopBar({
   isMobile,
 }: I18nProps & Props) {
   return (
-    <View style={[brandStyles.bottomBorder, standardStyles.centered]}>
+    <View style={standardStyles.centered}>
       <View style={[standardStyles.row, styles.container]}>
         <a href={menuItems.BRAND.link}>
-          <TouchableOpacity style={standardStyles.row}>
+          <TouchableOpacity style={styles.logo}>
             <LogoLightBg height={30} />
-            {!isMobile && <Text style={[fonts.h3, styles.title]}>Brand Kit</Text>}
+            {!isMobile && (
+              <Text
+                // @ts-ignore -- added initial to the aug but it still isnt liking it
+                style={[fonts.h3, styles.title]}
+              >
+                BrandKit
+              </Text>
+            )}
           </TouchableOpacity>
         </a>
         <Button
@@ -39,7 +45,8 @@ export default withNamespaces(NameSpaces.common)(function TopBar({
 
 const styles = StyleSheet.create({
   title: {
-    marginLeft: 20,
+    marginLeft: 15,
+    lineHeight: 'initial', // fixes the vertical alignment
   },
   container: {
     maxWidth: 1600,
@@ -49,5 +56,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     flex: 1,
+  },
+  logo: {
+    alignContent: 'center',
+    flexDirection: 'row',
   },
 })

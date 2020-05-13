@@ -139,6 +139,7 @@ function SmartTopAlert(props: Props) {
     <View style={styles.overflowContainer} testID={testID}>
       <TouchableWithoutFeedback onPress={onPress}>
         <Animated.View
+          // @ts-ignore
           ref={animatedRef}
           style={[
             styles.container,
@@ -199,7 +200,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   errorIcon: {
-    marginHorizontal: 5,
+    marginLeft: 5,
+    marginRight: 8,
   },
   button: {
     marginTop: 8,

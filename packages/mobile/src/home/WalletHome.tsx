@@ -20,7 +20,7 @@ import {
 import SafeAreaView from 'react-native-safe-area-view'
 import { BoxShadow } from 'react-native-shadow'
 import { connect } from 'react-redux'
-import { hideAlert, showMessage } from 'src/alert/actions'
+import { showMessage } from 'src/alert/actions'
 import componentWithAnalytics from 'src/analytics/wrapper'
 import { exitBackupFlow } from 'src/app/actions'
 import { ALERT_BANNER_DURATION, DEFAULT_TESTNET, SHOW_TESTNET_BANNER } from 'src/config'
@@ -64,7 +64,6 @@ interface DispatchProps {
   exitBackupFlow: typeof exitBackupFlow
   setLoading: typeof setLoading
   showMessage: typeof showMessage
-  hideAlert: typeof hideAlert
 }
 
 type Props = StateProps & DispatchProps & WithTranslation
@@ -76,7 +75,6 @@ const mapDispatchToProps = {
   exitBackupFlow,
   setLoading,
   showMessage,
-  hideAlert,
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
@@ -88,7 +86,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
   appConnected: isAppConnected(state),
 })
 
-const AnimatedSectionList: SectionList<any> = Animated.createAnimatedComponent(SectionList)
+const AnimatedSectionList = Animated.createAnimatedComponent(SectionList)
 
 const HEADER_FADE_HEIGHT = 100
 const SHADOW_SCROLL_HEIGHT = 226
@@ -228,6 +226,8 @@ export class WalletHome extends React.Component<Props> {
             </HeaderButton>
           </View>
         </View>
+        {/*
+        // @ts-ignore */}
         <AnimatedSectionList
           onScroll={this.onScroll}
           refreshControl={refresh}

@@ -9,7 +9,7 @@ import {
 } from '@celo/utils/lib/signatureUtils'
 import Web3 from 'web3'
 import { Address } from '../base'
-import { Accounts } from '../generated/types/Accounts'
+import { Accounts } from '../generated/Accounts'
 import {
   BaseWrapper,
   bytesToString,
@@ -21,6 +21,7 @@ import {
 } from '../wrappers/BaseWrapper'
 
 interface AccountSummary {
+  address: string
   name: string
   authorizedSigners: {
     vote: Address
@@ -49,6 +50,16 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
   getAttestationSigner: (account: string) => Promise<Address> = proxyCall(
     this.contract.methods.getAttestationSigner
   )
+
+  /**
+   * Returns if the account has authorized an attestation signer
+   * @param account The address of the account.
+   * @return If the account has authorized an attestation signer
+   */
+  hasAuthorizedAttestationSigner: (account: string) => Promise<boolean> = proxyCall(
+    this.contract.methods.hasAuthorizedAttestationSigner
+  )
+
   /**
    * Returns the vote signer for the specified account.
    * @param account The address of the account.
@@ -87,14 +98,12 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
   /**
    * Returns the account associated with `signer`.
    * @param signer The address of the account or previously authorized signer.
-   * @param blockNumber Height of result, defaults to tip.
    * @dev Fails if the `signer` is not an account or previously authorized signer.
    * @return The associated account.
    */
-  signerToAccount(signer: Address, blockNumber?: number): Promise<Address> {
-    // @ts-ignore: Expected 0-1 arguments, but got 2
-    return this.contract.methods.signerToAccount(signer).call({}, blockNumber)
-  }
+  signerToAccount: (signer: Address) => Promise<Address> = proxyCall(
+    this.contract.methods.signerToAccount
+  )
 
   /**
    * Check if an account already exists.
@@ -112,6 +121,14 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
     this.contract.methods.isAuthorizedSigner
   )
 
+  getCurrentSigners(address: string): Promise<string[]> {
+    return Promise.all([
+      this.getVoteSigner(address),
+      this.getValidatorSigner(address),
+      this.getAttestationSigner(address),
+    ])
+  }
+
   async getAccountSummary(account: string): Promise<AccountSummary> {
     const ret = await Promise.all([
       this.getName(account),
@@ -123,6 +140,7 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
       this.getDataEncryptionKey(account),
     ])
     return {
+      address: account,
       name: ret[0],
       authorizedSigners: {
         vote: ret[1],
@@ -259,7 +277,7 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
     )
   }
 
-  async generateProofOfSigningKeyPossession(account: Address, signer: Address) {
+  async generateProofOfKeyPossession(account: Address, signer: Address) {
     return this.getParsedSignatureOfAddress(
       account,
       signer,
@@ -267,11 +285,7 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
     )
   }
 
-  async generateProofOfSigningKeyPossessionLocally(
-    account: Address,
-    signer: Address,
-    privateKey: string
-  ) {
+  async generateProofOfKeyPossessionLocally(account: Address, signer: Address, privateKey: string) {
     return this.getParsedSignatureOfAddress(account, signer, LocalSigner(privateKey))
   }
 
@@ -317,8 +331,42 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
    * @param name A string to set as the name of the account
    * @param dataEncryptionKey secp256k1 public key for data encryption. Preferably compressed.
    * @param walletAddress The wallet address to set for the account
+   * @param proofOfPossession Signature from the wallet address key over the sender's address
    */
-  setAccount = proxySend(this.kit, this.contract.methods.setAccount)
+  setAccount(
+    name: string,
+    dataEncryptionKey: string,
+    walletAddress: Address,
+    proofOfPossession: Signature | null = null
+  ): CeloTransactionObject<void> {
+    if (proofOfPossession) {
+      return toTransactionObject(
+        this.kit,
+        this.contract.methods.setAccount(
+          name,
+          // @ts-ignore
+          dataEncryptionKey,
+          walletAddress,
+          proofOfPossession.v,
+          proofOfPossession.r,
+          proofOfPossession.s
+        )
+      )
+    } else {
+      return toTransactionObject(
+        this.kit,
+        this.contract.methods.setAccount(
+          name,
+          // @ts-ignore
+          dataEncryptionKey,
+          walletAddress,
+          '0x0',
+          '0x0',
+          '0x0'
+        )
+      )
+    }
+  }
 
   /**
    * Sets the name for the account
@@ -336,7 +384,27 @@ export class AccountsWrapper extends BaseWrapper<Accounts> {
    * Sets the wallet address for the account
    * @param address The address to set
    */
-  setWalletAddress = proxySend(this.kit, this.contract.methods.setWalletAddress)
+  setWalletAddress(
+    walletAddress: Address,
+    proofOfPossession: Signature | null = null
+  ): CeloTransactionObject<void> {
+    if (proofOfPossession) {
+      return toTransactionObject(
+        this.kit,
+        this.contract.methods.setWalletAddress(
+          walletAddress,
+          proofOfPossession.v,
+          proofOfPossession.r,
+          proofOfPossession.s
+        )
+      )
+    } else {
+      return toTransactionObject(
+        this.kit,
+        this.contract.methods.setWalletAddress(walletAddress, '0x0', '0x0', '0x0')
+      )
+    }
+  }
 
   parseSignatureOfAddress(address: Address, signer: string, signature: string) {
     const hash = Web3.utils.soliditySha3({ type: 'address', value: address })

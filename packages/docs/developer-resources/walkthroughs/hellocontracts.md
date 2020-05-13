@@ -105,7 +105,7 @@ When you are ready to deploy your contract to Alfajores, you'll need a Celo clie
 
 ```bash
 export CELO_IMAGE=us.gcr.io/celo-testnet/celo-node:alfajores
-export NETWORK_ID=44785
+export NETWORK_ID=44786
 ```
 
 ### Pull the Celo Docker image
@@ -166,7 +166,7 @@ export BOOTNODE_ENODES=`docker run --rm --entrypoint cat $CELO_IMAGE /celo/bootn
 This command specifies the settings needed to run the node, and gets it started.
 
 ```bash
-docker run --name celo-ultralight-node -d --restart always -p 127.0.0.1:8545:8545 -v $PWD:/root/.celo $CELO_IMAGE --verbosity 3 --networkid $NETWORK_ID --syncmode ultralight --rpc --rpcaddr 0.0.0.0 --rpcapi eth,net,web3,debug,admin,personal --etherbase $CELO_ACCOUNT_ADDRESS --bootnodes $BOOTNODE_ENODES
+docker run --name celo-ultralight-node -d --restart unless-stopped -p 127.0.0.1:8545:8545 -v $PWD:/root/.celo $CELO_IMAGE --verbosity 3 --networkid $NETWORK_ID --syncmode lightest --rpc --rpcaddr 0.0.0.0 --rpcapi eth,net,web3,debug,admin,personal --etherbase $CELO_ACCOUNT_ADDRESS --bootnodes $BOOTNODE_ENODES --allow-insecure-unlock
 ```
 
 You can follow the logs with
@@ -175,7 +175,7 @@ You can follow the logs with
 docker logs -f celo-ultralight-node
 ```
 
-After a few seconds of syncing (with [Celo's ultralight sync](celo-codebase/protocol/consensus/ultralight-sync)), you should be able to query the balance of your account:
+After a few seconds of syncing (with [Celo's ultralight sync](../../celo-codebase/protocol/consensus/ultralight-sync.md)), you should be able to query the balance of your account:
 
 ```bash
 docker exec celo-ultralight-node geth attach --exec 'eth.getBalance("<YOUR-ACCOUNT-ADDRESS>")'
@@ -197,7 +197,7 @@ In your `truffle-config.js` reference your node:
 alfajores: {
   host: "127.0.0.1",
   port: 8545,
-  network_id: 44785
+  network_id: 44786
 }
 ```
 

@@ -15,9 +15,9 @@ spec:
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
-  name: {{ template "ethereum.fullname" . }}-validators
+  name: {{ template "common.fullname" . }}-validators
   labels:
-{{ include "standard.labels" .  | indent 4 }}
+{{ include "common.standard.labels" .  | indent 4 }}
     component: validators
 spec:
   volumeClaimTemplates:
@@ -28,7 +28,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 100Gi
+          storage: 15Gi
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
@@ -36,12 +36,12 @@ spec:
   serviceName: validators
   selector:
     matchLabels:
-{{ include "standard.labels" .  | indent 6 }}
+{{ include "common.standard.labels" .  | indent 6 }}
       component: validators
   template:
     metadata:
       labels:
-{{ include "standard.labels" .  | indent 8 }}
+{{ include "common.standard.labels" .  | indent 8 }}
         component: validators
     spec:
       initContainers:
@@ -60,7 +60,7 @@ spec:
             celotooljs.sh generate bip32 --mnemonic "$MNEMONIC" --accountType validator --index $RID > /root/.celo/pkey
             echo 'Generating address'
             celotooljs.sh generate account-address --private-key `cat /root/.celo/pkey` > /root/.celo/address
-            echo -n $IP_ADDRESSES | cut -d '/' -f $((RID + 1)) > /root/.celo/externalIpAddress
+            echo -n $IP_ADDRESSES | cut -d ',' -f $((RID + 1)) > /root/.celo/externalIpAddress
 
             if [[ -z $IP_ADDRESSES || "$RID" -lt "{{ .Values.geth.proxiedValidators }}" ]]; then
               echo $POD_IP > /root/.celo/ipAddress
@@ -123,10 +123,10 @@ spec:
         - name: MNEMONIC
           valueFrom:
             secretKeyRef:
-              name: {{ template "ethereum.fullname" . }}-geth-account
+              name: {{ template "common.fullname" . }}-geth-account
               key: mnemonic
         - name: IP_ADDRESSES
-          value: {{ .Values.geth.validator_ip_addresses }}
+          value: {{ join "," .Values.geth.validator_ip_addresses }}
         - name: BOOTNODE_IP_ADDRESS
           value: "{{ default "none" .Values.geth.bootnodeIpAddress  }}"
         volumeMounts:
@@ -142,20 +142,15 @@ spec:
         - "-c"
         - |-
           set -euo pipefail
-          if [[ "$GETH_DEBUG" != "true" ]]; then
-            rm /root/.celo/pkey
-          fi
+          rm /root/.celo/pkey || true
 
           ACCOUNT_ADDRESS=`cat /root/.celo/address`
           RID=`cat /root/.celo/replica_id`
 
           FAULTY_NODE_FLAGS=`if [ "$RID" -lt "$FAULTY_NODES" ]; then echo -n "--istanbul.faultymode $FAULTY_NODE_TYPE"; fi`
 
-          PROXY_ALLOW_PRIVATE_IP_FLAG=""
-          [[ "$GETH_DEBUG" == "true" ]] && PROXY_ALLOW_PRIVATE_IP_FLAG="--proxy.allowprivateip"
-
           PROXIED_FLAGS=""
-          [ "$RID" -lt "{{ .Values.geth.proxiedValidators }}" ] && PROXIED_FLAGS="--proxy.proxied --proxy.proxyenodeurlpair=`cat /root/.celo/proxyInternalEnode`;`cat /root/.celo/proxyExternalEnode` --nodiscover $PROXY_ALLOW_PRIVATE_IP_FLAG"
+          [ "$RID" -lt "{{ .Values.geth.proxiedValidators }}" ] && PROXIED_FLAGS="--proxy.proxied --proxy.proxyenodeurlpair=`cat /root/.celo/proxyInternalEnode`;`cat /root/.celo/proxyExternalEnode` --nodiscover --proxy.allowprivateip"
 
           PING_IP_FROM_PACKET_FLAG=""
           [[ "$PING_IP_FROM_PACKET" == "true" ]] && PING_IP_FROM_PACKET_FLAG="--ping-ip-from-packet"
@@ -190,6 +185,7 @@ spec:
             --maxpeers=125 \
             --nat=extip:`cat /root/.celo/ipAddress` \
             --metrics \
+            --allow-insecure-unlock \
             ${PING_IP_FROM_PACKET_FLAG} \
             ${IN_MEMORY_DISCOVERY_TABLE_FLAG} \
             ${PROXIED_FLAGS}
@@ -199,14 +195,12 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.podIP
-        - name: GETH_DEBUG
-          value: "{{ default "false" .Values.geth.debug }}"
         - name: ETHSTATS_SVC
-          value: {{ template "ethereum.fullname" . }}-ethstats.{{ .Release.Namespace }}
+          value: {{ template "common.fullname" . }}-ethstats.{{ .Release.Namespace }}
         - name: NETWORK_ID
           valueFrom:
             configMapKeyRef:
-              name: {{ template "ethereum.fullname" . }}-geth-config
+              name: {{ template "common.fullname" . }}-geth-config
               key: networkid
         - name: FAULTY_NODES
           value: {{ .Values.geth.faultyValidators | quote }}
@@ -229,9 +223,7 @@ spec:
         - name: ws
           containerPort: 8546
         resources:
-          requests:
-            memory: {{ .Values.geth.node.memory_request }}
-            cpu: {{ .Values.geth.node.cpu_request }}
+{{ toYaml .Values.geth.resources | indent 8 }}
         volumeMounts:
         - name: data
           mountPath: /root/.celo
@@ -245,7 +237,7 @@ spec:
         emptyDir: {}
       - name: config
         configMap:
-          name: {{ template "ethereum.fullname" . }}-geth-config
+          name: {{ template "common.fullname" . }}-geth-config
       - name: account
         secret:
-          secretName: {{ template "ethereum.fullname" . }}-geth-account
+          secretName: {{ template "common.fullname" . }}-geth-account

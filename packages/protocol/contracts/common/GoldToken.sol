@@ -1,13 +1,14 @@
 pragma solidity ^0.5.3;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 import "./CalledByVm.sol";
+import "./Freezable.sol";
 import "./Initializable.sol";
-import "./interfaces/IERC20Token.sol";
 import "./interfaces/ICeloToken.sol";
 
-contract GoldToken is Initializable, CalledByVm, IERC20Token, ICeloToken {
+contract GoldToken is Initializable, CalledByVm, Freezable, IERC20, ICeloToken {
   using SafeMath for uint256;
 
   // Address of the TRANSFER precompiled contract.
@@ -29,9 +30,12 @@ contract GoldToken is Initializable, CalledByVm, IERC20Token, ICeloToken {
 
   /**
    * @notice Used in place of the constructor to allow the contract to be upgradable via proxy.
+   * @param registryAddress Address of the Registry contract.
    */
-  function initialize() external initializer {
+  function initialize(address registryAddress) external initializer {
     totalSupply_ = 0;
+    _transferOwnership(msg.sender);
+    setRegistry(registryAddress);
   }
 
   /**
@@ -110,7 +114,11 @@ contract GoldToken is Initializable, CalledByVm, IERC20Token, ICeloToken {
    * @param value The amount of Celo Gold to transfer.
    * @return True if the transaction succeeds.
    */
-  function transferFrom(address from, address to, uint256 value) external returns (bool) {
+  function transferFrom(address from, address to, uint256 value)
+    external
+    onlyWhenNotFrozen
+    returns (bool)
+  {
     require(to != address(0), "transfer attempted to reserved address 0x0");
     require(value <= balanceOf(from), "transfer value exceeded balance of sender");
     require(
@@ -124,6 +132,26 @@ contract GoldToken is Initializable, CalledByVm, IERC20Token, ICeloToken {
 
     allowed[from][msg.sender] = allowed[from][msg.sender].sub(value);
     emit Transfer(from, to, value);
+    return true;
+  }
+
+  /**
+   * @notice Mints new cGLD and gives it to 'to'.
+   * @param to The account for which to mint tokens.
+   * @param value The amount of cGLD to mint.
+   */
+  function mint(address to, uint256 value) external onlyVm returns (bool) {
+    if (value == 0) {
+      return true;
+    }
+
+    totalSupply_ = totalSupply_.add(value);
+
+    bool success;
+    (success, ) = TRANSFER.call.value(0).gas(gasleft())(abi.encode(address(0), to, value));
+    require(success, "Celo Gold transfer failed");
+
+    emit Transfer(address(0), to, value);
     return true;
   }
 
@@ -188,7 +216,7 @@ contract GoldToken is Initializable, CalledByVm, IERC20Token, ICeloToken {
    * @param value The amount of Celo Gold to transfer.
    * @return True if the transaction succeeds.
    */
-  function _transfer(address to, uint256 value) internal returns (bool) {
+  function _transfer(address to, uint256 value) internal onlyWhenNotFrozen returns (bool) {
     require(to != address(0), "transfer attempted to reserved address 0x0");
     require(value <= balanceOf(msg.sender), "transfer value exceeded balance of sender");
 
