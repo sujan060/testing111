@@ -12,7 +12,7 @@ import { cutAddress, formatNumber } from 'src/utils/utils'
 const unknownGroupName = 'Unnamed Group'
 const unknownValidatorName = 'Unnamed Validator'
 
-const localStoragePinnedKey = 'pinnedValidators'
+export const localStoragePinnedKey = 'pinnedValidators'
 
 class Text extends RNText {
   render() {
@@ -79,8 +79,6 @@ class ValidatorsListRow extends React.PureComponent<Props & I18nProps, State> {
   constructor(...args) {
     super(...(args as [any]))
 
-    this.state.isPinned = this.isPinned()
-
     const onDocumentClick = (event) => {
       if (!this.state.tooltip || !this.tooltipRef.current) {
         return
@@ -96,6 +94,10 @@ class ValidatorsListRow extends React.PureComponent<Props & I18nProps, State> {
       document.removeEventListener('click', onDocumentClick, false)
   }
 
+  componentDidMount() {
+    this.setState({ isPinned: this.isPinned() })
+  }
+
   componentWillUnmount() {
     this.removeDocumentListener()
   }
@@ -105,9 +107,10 @@ class ValidatorsListRow extends React.PureComponent<Props & I18nProps, State> {
     let list = (localStorage.getItem(localStoragePinnedKey) || '').split(',') || []
     let isPinned = list.includes(address)
     if (toggle) {
-      list = list.filter((_) => _ !== address)
       if (!isPinned) {
         list.push(address)
+      } else {
+        list = list.filter((_) => _ !== address)
       }
       isPinned = !isPinned
       localStorage.setItem(localStoragePinnedKey, list.join(','))
@@ -119,14 +122,14 @@ class ValidatorsListRow extends React.PureComponent<Props & I18nProps, State> {
   render() {
     const { group, expanded } = this.props
     const { tooltip, isPinned } = this.state
-    const stopPropagation = (event: any) => {
+    const stopPropagation = (event) => {
       event.stopPropagation()
     }
-    const toggleTooltip = (event: any) => {
+    const toggleTooltip = (event) => {
       stopPropagation(event)
       this.setState({ tooltip: !tooltip })
     }
-    const togglePinned: any = (event: any) => {
+    const togglePinned: any = (event) => {
       stopPropagation(event)
       const is = this.isPinned(true)
       this.setState({ isPinned: is })
