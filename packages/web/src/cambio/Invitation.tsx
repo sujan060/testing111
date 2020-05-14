@@ -1,13 +1,18 @@
-import { GridRow, Cell, Spans } from 'src/layout/GridRow'
-import { standardStyles, fonts } from 'src/styles'
 import * as React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
+import CButton, { Kind } from 'src/cambio/CButton'
 import frames from 'src/cambio/incarnation-frames/index'
 import { H2 } from 'src/fonts/Fonts'
-import CButton, { Kind } from 'src/cambio/CButton'
-
-import { colors } from './standards'
 import TwitterLogo from 'src/icons/TwitterLogo'
+import { Cell, GridRow, Spans } from 'src/layout/GridRow'
+import { CeloLinks, pagePaths } from 'src/shared/menu-items'
+import { fonts, standardStyles } from 'src/styles'
+import { copyToClipboad } from 'src/utils/utils'
+import { colors } from './standards'
+
+function copy() {
+  copyToClipboad('https://celo.org/cambio')
+}
 
 export default function Invitation() {
   return (
@@ -27,10 +32,10 @@ export default function Invitation() {
               style={styles.buttonMobile}
               children="Join the Celo Community"
               kind={Kind.dark}
-              href={''}
+              href={pagePaths.COMMUNITY.link}
             />
             <Text style={[fonts.h6, standardStyles.elementalMarginTop]}>Share</Text>
-            <CButton style={styles.buttonMobile} kind={Kind.light} href={''}>
+            <CButton style={styles.buttonMobile} kind={Kind.light} href={CeloLinks.twitter}>
               <Text style={styles.twitter}>
                 <TwitterLogo
                   height={15}
@@ -41,11 +46,12 @@ export default function Invitation() {
               on Twitter
             </CButton>
             <CButton
-              style={styles.buttonMobile}
-              children="Copy site url"
+              style={[styles.buttonMobile, styles.copyButton]}
               kind={Kind.light}
-              href={''}
-            />
+              onPress={copy}
+            >
+              Copy site url
+            </CButton>
           </View>
         </Cell>
       </GridRow>
@@ -54,7 +60,7 @@ export default function Invitation() {
 }
 
 const styles = StyleSheet.create({
-  root: { backgroundColor: colors.lightest, marginTop: '150vh', zIndex: -10 },
+  root: { backgroundColor: colors.lightest, marginTop: '150vh' },
   image: {
     alignSelf: 'center',
     width: 267,
@@ -67,5 +73,8 @@ const styles = StyleSheet.create({
   },
   buttonMobile: {
     width: 226,
+  },
+  copyButton: {
+    cursor: 'copy',
   },
 })

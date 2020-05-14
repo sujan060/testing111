@@ -91,7 +91,6 @@ export default function Footer() {
       >
         <Cell span={Spans.full} style={isMobile ? standardStyles.centered : styles.toes}>
           <Lazy once={true}>
-            {' '}
             <ChangeStory />
           </Lazy>
           <Copyright />

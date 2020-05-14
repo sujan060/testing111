@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextStyle } from 'react-native'
+import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native'
 import { colors } from 'src/cambio/standards'
 import { fonts } from 'src/styles'
 
@@ -12,7 +12,7 @@ interface Props {
   href?: string
   kind: Kind
   children: React.ReactNode
-  style?: TextStyle
+  style?: StyleProp<TextStyle>
 }
 
 export default function CButton({ children, href, onPress, kind, style }: Props) {
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingVertical: 12,
     paddingHorizontal: 16,
+    zIndex: 150,
   },
   dark: {
     color: colors.lightest,

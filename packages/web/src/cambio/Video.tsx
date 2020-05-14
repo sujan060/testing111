@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { InView } from 'react-intersection-observer'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import YouTube from 'react-youtube'
+import coverImage from 'src/cambio/video-preview.jpg'
 import { Cell, GridRow, Spans } from 'src/layout/GridRow'
+import PlayCircle from 'src/shared/PlayCircle'
 import { fonts, standardStyles, textStyles } from 'src/styles'
 import { colors, getFade } from './standards'
-// import coverImage from 'src/cambio/Hibiscus/full-green.png'
-import PlayCircle from 'src/shared/PlayCircle'
 
 const opts = {
   // height: this.playerHeight(),
@@ -71,7 +71,7 @@ export default function Video() {
         {({ ref, inView }) => (
           <View style={styles.root}>
             <GridRow allStyle={standardStyles.centered}>
-              <Cell span={Spans.half}>
+              <Cell span={Spans.full}>
                 <div ref={ref} style={{ position: 'relative' }}>
                   <TouchableOpacity
                     onPressIn={onPressIn}
@@ -83,9 +83,11 @@ export default function Video() {
                     ]}
                     onPress={onPressPlay}
                   >
-                    <View style={isPressing && styles.isPressing}>
-                      <PlayCircle outline={colors.forest} background={colors.dew} />
-                    </View>
+                    <ImageBackground source={coverImage} style={styles.coverImage}>
+                      <View style={isPressing && styles.isPressing}>
+                        <PlayCircle outline={colors.forest} background={colors.forest} />
+                      </View>
+                    </ImageBackground>
                   </TouchableOpacity>
                   <YouTube
                     videoId={'bMwDj-vkQQs'}
@@ -127,17 +129,11 @@ const styles = StyleSheet.create({
     width: '100vw',
     backgroundColor: colors.darkest,
   },
-  coverImage: {
-    width: '100%',
-    height: '100%',
-  },
+  coverImage: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   pressable: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderColor: colors.dew,
-    backgroundColor: colors.lightest,
-    borderWidth: 1,
   },
   isPressing: {
     transitionDuration: '200ms',
