@@ -54,7 +54,7 @@ interface State {
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {
-    account: state.web3.account,
+    account: state.geth.account,
     devModeActive: state.account.devModeActive || false,
     e164PhoneNumber: state.account.e164PhoneNumber,
     analyticsEnabled: state.app.analyticsEnabled,

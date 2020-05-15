@@ -57,7 +57,7 @@ const mapStateToProps = (state: PersistedRootState): PersistedStateProps | null 
     e164Number: state.account.e164PhoneNumber,
     pincodeType: state.account.pincodeType,
     redeemComplete: state.invite.redeemComplete,
-    account: state.web3.account,
+    account: state.geth.account,
     hasSeenVerificationNux: state.identity.hasSeenVerificationNux,
     acceptedTerms: state.account.acceptedTerms,
   }

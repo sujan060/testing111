@@ -1,10 +1,10 @@
 import { FetchMock } from 'jest-fetch-mock'
 import { expectSaga } from 'redux-saga-test-plan'
 import { select } from 'redux-saga/effects'
+import { currentAccountSelector } from 'src/geth/selectors'
 import { updateE164PhoneNumberSalts } from 'src/identity/actions'
 import { fetchPhoneHashPrivate, getSaltFromThresholdSignature } from 'src/identity/privacy'
 import { e164NumberToSaltSelector } from 'src/identity/reducer'
-import { currentAccountSelector } from 'src/web3/selectors'
 import { mockAccount, mockE164Number } from 'test/values'
 
 jest.mock('react-native-blind-threshold-bls', () => ({

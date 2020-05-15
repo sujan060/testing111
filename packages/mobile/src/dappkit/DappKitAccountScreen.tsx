@@ -15,7 +15,7 @@ import DappkitExchangeIcon from 'src/icons/DappkitExchange'
 import { navigateBack, navigateHome } from 'src/navigator/NavigationService'
 import { RootState } from 'src/redux/reducers'
 import Logger from 'src/utils/Logger'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector } from 'src/geth/selectors'
 
 const TAG = 'dappkit/DappKitAccountScreen'
 

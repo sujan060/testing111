@@ -19,7 +19,7 @@ import { Screens } from 'src/navigator/Screens'
 import QRCode from 'src/qrcode/QRGen'
 import { RootState } from 'src/redux/reducers'
 import { shareQRCode, SVG } from 'src/send/actions'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector } from 'src/geth/selectors'
 
 interface DispatchProps {
   shareQRCode: typeof shareQRCode

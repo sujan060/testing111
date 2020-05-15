@@ -14,7 +14,7 @@ import NoActivity from 'src/transactions/NoActivity'
 import { TransactionStatus } from 'src/transactions/reducer'
 import TransferFeedItem from 'src/transactions/TransferFeedItem'
 import Logger from 'src/utils/Logger'
-import { privateCommentKeySelector } from 'src/web3/selectors'
+import { privateCommentKeySelector } from 'src/geth/selectors'
 
 const TAG = 'transactions/TransactionFeed'
 

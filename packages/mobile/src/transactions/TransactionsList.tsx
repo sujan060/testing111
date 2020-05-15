@@ -19,7 +19,7 @@ import {
 } from 'src/transactions/reducer'
 import TransactionFeed, { FeedItem, FeedType } from 'src/transactions/TransactionFeed'
 import { isPresent } from 'src/utils/typescript'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector } from 'src/geth/selectors'
 
 // Query poll interval
 const POLL_INTERVAL = 10000 // 10 secs

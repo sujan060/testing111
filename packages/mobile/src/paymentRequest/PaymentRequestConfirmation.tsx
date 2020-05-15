@@ -23,7 +23,7 @@ import { Recipient } from 'src/recipients/recipient'
 import { RootState } from 'src/redux/reducers'
 import DisconnectBanner from 'src/shared/DisconnectBanner'
 import Logger from 'src/utils/Logger'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector } from 'src/geth/selectors'
 
 // @ts-ignore
 const TAG = 'paymentRequest/confirmation'

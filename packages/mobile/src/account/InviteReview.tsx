@@ -29,7 +29,7 @@ import { Recipient } from 'src/recipients/recipient'
 import { RootState } from 'src/redux/reducers'
 import TransferReviewCard from 'src/send/TransferReviewCard'
 import { fetchDollarBalance } from 'src/stableToken/actions'
-import { currentAccountSelector } from 'src/web3/selectors'
+import { currentAccountSelector } from 'src/geth/selectors'
 
 interface State {
   amountIsValid: boolean

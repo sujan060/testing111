@@ -17,6 +17,7 @@ import { transferEscrowedPayment } from 'src/escrow/actions'
 import { calculateFee } from 'src/fees/saga'
 import { generateShortInviteLink } from 'src/firebase/dynamicLinks'
 import { CURRENCY_ENUM } from 'src/geth/consts'
+import { getConnectedUnlockedAccount, getOrCreateAccount } from 'src/geth/saga'
 import i18n from 'src/i18n'
 import { setHasSeenVerificationNux, updateE164PhoneNumberAddresses } from 'src/identity/actions'
 import { fetchPhoneHashPrivate } from 'src/identity/privacy'
@@ -50,7 +51,7 @@ import {
   getContractKitOutsideGenerator,
   web3ForUtils,
 } from 'src/web3/contracts'
-import { getConnectedUnlockedAccount, getOrCreateAccount, waitWeb3LastBlock } from 'src/web3/saga'
+import { waitWeb3LastBlock } from 'src/web3/saga'
 import { fornoSelector } from 'src/web3/selectors'
 
 const TAG = 'invite/saga'
